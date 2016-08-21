@@ -1,0 +1,98 @@
+buildscript {
+  dependencies {
+    repositories {
+      jcenter()
+      mavenLocal()
+    }
+
+    classpath 'com.android.tools.build:gradle:1.0.0'
+    classpath 'com.github.jcandksolutions.gradle:android-unit-test:2.1.2-SNAPSHOT'
+  }
+}
+
+apply plugin: 'com.android.application'
+
+android {
+  compileSdkVersion 21
+  buildToolsVersion '21.1.2'
+
+  buildTypes {
+    debug {
+      applicationIdSuffix ".debug"
+    }
+  }
+
+  splits {
+    abi {
+      enable true
+    }
+  }
+
+  productFlavors {
+    flavorDimensions "pricing", "releaseType"
+
+    beta {
+      flavorDimension "releaseType"
+    }
+
+    normal {
+      flavorDimension "releaseType"
+    }
+
+    free {
+      flavorDimension "pricing"
+      applicationId "com.example.appfree"
+    }
+
+    paid {
+      flavorDimension "pricing"
+      applicationId "com.example.apppaid"
+    }
+  }
+
+  defaultConfig {
+    applicationId "com.example.app"
+  }
+}
+
+apply plugin: 'android-unit-test'
+
+androidUnitTest {
+  testReleaseBuildType true
+  downloadDependenciesSources true
+  downloadDependenciesJavadoc true
+  downloadTestDependenciesSources true
+  downloadTestDependenciesJavadoc true
+  sourceSets {
+    testBeta {
+      java.srcDirs = ["src/testBeta/java"]
+      resources.srcDirs = ["src/testBeta/resources"]
+    }
+  }
+  testTasks {
+    all {
+      maxParallelForks = 2
+      forkEvery = 10
+      minHeapSize = '128m'
+      maxHeapSize = '1024m'
+      jvmArgs '-XX:MaxPermSize=256m'
+      exclude 'src/notests/**'
+      systemProperty 'test.prop1', 'value1'
+      systemProperties(['test.prop2': 'value2', 'test.prop3': 'value3'])
+    }
+    testFreeBetaDebug {
+      //debug = true
+      include '**/*Test.class'
+    }
+  }
+}
+
+dependencies {
+  repositories {
+    jcenter()
+  }
+  compile project(':exampleLibrary')
+  testCompile 'junit:junit:4.11'
+  testCompile 'org.robolectric:robolectric:2.4'
+  testCompile 'com.squareup:fest-android:1.0.8'
+}
