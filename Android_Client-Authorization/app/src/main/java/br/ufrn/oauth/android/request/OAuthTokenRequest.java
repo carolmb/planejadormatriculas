@@ -31,15 +31,20 @@ import java.util.Map;
 /**
  * Created by Mario on 04/11/2015.
  * Singleton.
+ * Fonte: Projeto Exemplo disponível no site da API do SIGAA.
  */
 public class OAuthTokenRequest {
 
+    // Thread-safe OAuth 2.0 helper for accessing protected resources using an access token.
     private Credential credential;
 
+    // The Default OAuth Authorization Server class that validates whether
+    // a given HttpServletRequest is a valid OAuth Token request.
     private static OAuthTokenRequest oAuthTokenRequest;
 
     private String clientId, clientSecret;
 
+    // OAuth authorization flow for an installed Android app that persists end-user credentials.
     private OAuthManager oauth;
 
     public static OAuthTokenRequest getInstance() {

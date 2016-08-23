@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void login(View v) {
         Intent i = new Intent(this, ResultActivity.class);
-        OAuthTokenRequest.getInstance().getTokenCredential(this,"http://apitestes.info.ufrn.br/authz-server","client_id", "client_secret", i);
+        OAuthTokenRequest.getInstance().getTokenCredential(this,"http://apitestes.info.ufrn.br/authz-server","plan-mat-id", "segredo", i);
     }
 
     public void getData(View v){

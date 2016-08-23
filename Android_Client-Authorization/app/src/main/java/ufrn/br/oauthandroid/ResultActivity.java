@@ -50,12 +50,12 @@ public class ResultActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
 
-                    String name = jsonObject.getString("nome");
-                    String login = jsonObject.getString("login");
+                    String username = jsonObject.getString("username");
+                    String name = jsonObject.getString("pessoa");
 
                     jsonResponse = "";
+                    jsonResponse += "Username: " + username + "\n\n";
                     jsonResponse += "Name: " + name + "\n\n";
-                    jsonResponse += "Login: " + login + "\n\n";
 
                     text.setText(jsonResponse);
                 } catch (JSONException e) {
