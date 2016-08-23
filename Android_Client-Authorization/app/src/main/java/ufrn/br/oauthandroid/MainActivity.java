@@ -21,17 +21,16 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    public void logar(View v) {
+    public void login(View v) {
         Intent i = new Intent(this, ResultActivity.class);
         OAuthTokenRequest.getInstance().getTokenCredential(this,"http://apitestes.info.ufrn.br/authz-server","client_id", "client_secret", i);
     }
 
-    public void obterDados(View v){
+    public void getData(View v){
         Intent intent = new Intent(this, ResultActivity.class);
         //intent.putExtra("token", credential.getAccessToken());
         startActivity(intent);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void sair(View view) {
+    public void logout(View view) {
         OAuthTokenRequest.getInstance().logout(this, "http://apitestes.info.ufrn.br/sso-server/logout");
     }
 }

@@ -30,6 +30,7 @@ import java.util.Map;
 
 /**
  * Created by Mario on 04/11/2015.
+ * Singleton.
  */
 public class OAuthTokenRequest {
 
@@ -41,7 +42,7 @@ public class OAuthTokenRequest {
 
     private OAuthManager oauth;
 
-    public static OAuthTokenRequest getInstance(){
+    public static OAuthTokenRequest getInstance() {
         if(oAuthTokenRequest == null)
             oAuthTokenRequest = new OAuthTokenRequest();
 
@@ -51,7 +52,7 @@ public class OAuthTokenRequest {
     private OAuthTokenRequest() {
     }
 
-    public Credential getTokenCredential(final Activity activity,String oauthServerURL, String clientId,String clientSecret, final Intent i){
+    public Credential getTokenCredential(final Activity activity, String oauthServerURL, String clientId, String clientSecret, final Intent i) {
 
         this.clientId = clientId;
         this.clientSecret = clientSecret;
@@ -109,11 +110,11 @@ public class OAuthTokenRequest {
         return credential;
     }
 
-    public void resourceRequest(Context context,int method,String url, Response.Listener<String> listener, Response.ErrorListener errorListener){
+    public void resourceRequest(Context context, int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener){
         RequestQueue queue = Volley.newRequestQueue(context);
 
         // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,listener, errorListener) {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, listener, errorListener) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<String, String>();
@@ -128,7 +129,7 @@ public class OAuthTokenRequest {
     }
 
     public void logout(Context context, String url) {
-        WebView w= new WebView(context);
+        WebView w = new WebView(context);
         w.loadUrl(url);
         credential = null;
     }

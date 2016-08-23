@@ -24,7 +24,7 @@ public class ResultActivity extends AppCompatActivity {
     // Progress dialog
     private ProgressDialog pDialog;
 
-    private TextView texto;
+    private TextView text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +32,12 @@ public class ResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_result);
 
         pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Aguarde ...");
+        pDialog.setMessage("Aguarde...");
         pDialog.setCancelable(false);
 
         reqJson();
 
-        texto = (TextView) findViewById(R.id.textoJson);
+        text = (TextView) findViewById(R.id.textoJson);
 
     }
 
@@ -50,14 +50,14 @@ public class ResultActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
 
-                    String nome = jsonObject.getString("nome");
+                    String name = jsonObject.getString("nome");
                     String login = jsonObject.getString("login");
 
                     jsonResponse = "";
-                    jsonResponse += "Name: " + nome + "\n\n";
+                    jsonResponse += "Name: " + name + "\n\n";
                     jsonResponse += "Login: " + login + "\n\n";
 
-                    texto.setText(jsonResponse);
+                    text.setText(jsonResponse);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
