@@ -14,7 +14,7 @@ import com.android.volley.VolleyLog;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import br.ufrn.oauth.android.request.OAuthTokenRequest;
+import externaldata.DataRequest;
 
 public class ResultActivity extends AppCompatActivity {
 
@@ -44,7 +44,7 @@ public class ResultActivity extends AppCompatActivity {
     private void reqJson(){
 
         String urlJsonObj = "http://apitestes.info.ufrn.br/usuario-services/services/usuario/info";
-        OAuthTokenRequest.getInstance().resourceRequest(this, Request.Method.GET, urlJsonObj, new Response.Listener<String>() {
+        DataRequest.getInstance().resourceRequest(this, urlJsonObj, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {

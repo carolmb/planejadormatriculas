@@ -1,4 +1,4 @@
-package br.ufrn.oauth.android.request;
+package externaldata;
 
 import android.app.Activity;
 import android.content.Context;
@@ -29,39 +29,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Mario on 04/11/2015.
- * Singleton.
- * Fonte: Projeto Exemplo disponível no site da API do SIGAA.
+ * Created by User on 26/08/2016.
  */
-public class OAuthTokenRequest {
-
+public class DataRequest {
     // Thread-safe OAuth 2.0 helper for accessing protected resources using an access token.
     private Credential credential;
 
     // The Default OAuth Authorization Server class that validates whether
     // a given HttpServletRequest is a valid OAuth Token request.
-    private static OAuthTokenRequest oAuthTokenRequest;
-
-    private String clientId, clientSecret;
+    private static DataRequest dataRequest;
 
     // OAuth authorization flow for an installed Android app that persists end-user credentials.
     private OAuthManager oauth;
 
-    public static OAuthTokenRequest getInstance() {
-        if(oAuthTokenRequest == null)
-            oAuthTokenRequest = new OAuthTokenRequest();
+    public static DataRequest getInstance() {
+        if(dataRequest == null)
+            dataRequest = new DataRequest();
 
-        return oAuthTokenRequest;
+        return dataRequest;
     }
 
-    private OAuthTokenRequest() {
+    private DataRequest() {
     }
 
-    public Credential getTokenCredential(final Activity activity, String oauthServerURL, String clientId, String clientSecret, final Intent i) {
-
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-
+    private AuthorizationFlow getAuthFlow(String oauthServerURL, String clientId, String clientSecret) {
         AuthorizationFlow.Builder builder = new AuthorizationFlow.Builder(
                 BearerToken.authorizationHeaderAccessMethod(),
                 AndroidHttp.newCompatibleTransport(),
@@ -71,13 +62,16 @@ public class OAuthTokenRequest {
                 clientId,
                 oauthServerURL +"/oauth/authorize");
 
-        AuthorizationFlow flow = builder.build();
+        return builder.build();
+    }
+
+    void createOAuthManager(String oauthServerURL, String clientId, String clientSecret, final Activity activity) {
+
+        AuthorizationFlow flow = getAuthFlow(oauthServerURL, clientId, clientSecret);
 
         AuthorizationUIController controller = new DialogFragmentController(activity.getFragmentManager()) {
-
             @Override
             public String getRedirectUri() throws IOException {
-                //return "http://android.local/";
                 return "http://localhost/Callback";
             }
 
@@ -89,7 +83,9 @@ public class OAuthTokenRequest {
         };
 
         oauth = new OAuthManager(flow, controller);
+    }
 
+    Credential getTokenCredential(final Activity activity, final Intent i) {
         try {
             OAuthManager.OAuthCallback<Credential> callback = new OAuthManager.OAuthCallback<Credential>() {
                 @Override public void run(OAuthManager.OAuthFuture<Credential> future) {
@@ -115,7 +111,7 @@ public class OAuthTokenRequest {
         return credential;
     }
 
-    public void resourceRequest(Context context, int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener){
+    public void resourceRequest(Context context, String url, Response.Listener<String> listener, Response.ErrorListener errorListener){
         RequestQueue queue = Volley.newRequestQueue(context);
 
         // Request a string response from the provided URL.
@@ -130,7 +126,12 @@ public class OAuthTokenRequest {
         };
 
         // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        queue.add(stringRequest); //por que não apenas retornar a string com resposta?
+    }
+
+    public void inicializeAccess(Activity activity, Intent intent){
+        createOAuthManager("http://apitestes.info.ufrn.br/authz-server","plan-mat-id", "segredo", activity);
+        getTokenCredential(activity, intent);
     }
 
     public void logout(Context context, String url) {
@@ -139,5 +140,3 @@ public class OAuthTokenRequest {
         credential = null;
     }
 }
-
-

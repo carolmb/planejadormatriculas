@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 
-import br.ufrn.oauth.android.request.OAuthTokenRequest;
+import externaldata.DataRequest;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void login(View v) {
         Intent i = new Intent(this, ResultActivity.class);
-        OAuthTokenRequest.getInstance().getTokenCredential(this,"http://apitestes.info.ufrn.br/authz-server","plan-mat-id", "segredo", i);
+        DataRequest.getInstance().inicializeAccess(this, i);
     }
 
     public void getData(View v){
@@ -55,6 +55,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void logout(View view) {
-        OAuthTokenRequest.getInstance().logout(this, "http://apitestes.info.ufrn.br/sso-server/logout");
+        DataRequest.getInstance().logout(this, "http://apitestes.info.ufrn.br/sso-server/logout");
     }
 }
