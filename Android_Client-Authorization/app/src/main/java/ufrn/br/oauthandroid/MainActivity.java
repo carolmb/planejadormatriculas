@@ -7,11 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.WebView;
 
-import externaldata.DataRequest;
-import interfaceTemporary.SolicitationInfo;
+import android.view.View;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,10 +31,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getData(View v){
-        SIGAAServerAccessor.getSIGAAServerAccessor().getRequirements("TECNOLOGIA DA INFORMAÇÃO", this.getBaseContext());
+        ActionRequest action = new ActionRequest() {
+            @Override
+            public void run(String response) {
+                try {
+                    JSONArray jsonObject = new JSONArray(response);
+                    JSONtoRequirements(response.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        SIGAAServerAccessor.getSIGAAServerAccessor().getRequirements(action, "TECNOLOGIA DA INFORMAÇÃO", 2014, 1, this.getBaseContext());
         //Intent intent = new Intent(this, SolicitationInfo.class);
         //intent.putExtra("token", credential.getAccessToken());
         //startActivity(intent);
+    }
+
+    private void JSONtoRequirements(String json) {
+        System.out.print(json);
     }
 
     @Override
