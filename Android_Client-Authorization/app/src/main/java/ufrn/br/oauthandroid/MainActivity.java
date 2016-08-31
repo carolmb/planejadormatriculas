@@ -1,5 +1,6 @@
 package ufrn.br.oauthandroid;
 
+import externaldata.*;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.webkit.WebView;
 
 import externaldata.DataRequest;
+import interfaceTemporary.SolicitationInfo;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,14 +24,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void login(View v) {
-        Intent i = new Intent(this, ResultActivity.class);
+        Intent i = new Intent(this, MainActivity.class);
         DataRequest.getInstance().inicializeAccess(this, i);
     }
 
     public void getData(View v){
-        Intent intent = new Intent(this, ResultActivity.class);
+        SIGAAServerAccessor.getSIGAAServerAccessor().getRequirements("TECNOLOGIA DA INFORMAÇÃO", this.getBaseContext());
+        //Intent intent = new Intent(this, SolicitationInfo.class);
         //intent.putExtra("token", credential.getAccessToken());
-        startActivity(intent);
+        //startActivity(intent);
     }
 
     @Override

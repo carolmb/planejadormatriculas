@@ -1,4 +1,4 @@
-package ufrn.br.oauthandroid;
+package interfaceTemporary;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
@@ -16,9 +15,11 @@ import org.json.JSONObject;
 
 import externaldata.DataRequest;
 
-public class ResultActivity extends AppCompatActivity {
-
-    // temporary string to show the parsed response
+/**
+ * Created by User on 30/08/2016.
+ */
+public class SolicitationInfo extends AppCompatActivity {
+    /*// temporary string to show the parsed response
     private String jsonResponse;
 
     // Progress dialog
@@ -42,7 +43,6 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     private void reqJson(){
-
         String urlJsonObj = "http://apitestes.info.ufrn.br/usuario-services/services/usuario/info";
         DataRequest.getInstance().resourceRequest(this, urlJsonObj, new Response.Listener<String>() {
             @Override
@@ -73,5 +73,5 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
     }
-
+*/
 }

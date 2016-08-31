@@ -79,7 +79,6 @@ public class DataRequest {
             public boolean isJavascriptEnabledForWebView() {
                 return true;
             }
-
         };
 
         oauth = new OAuthManager(flow, controller);
@@ -130,7 +129,7 @@ public class DataRequest {
     }
 
     public void inicializeAccess(Activity activity, Intent intent){
-        createOAuthManager("http://apitestes.info.ufrn.br/authz-server","plan-mat-id", "segredo", activity);
+        createOAuthManager("http://apitestes.info.ufrn.br/authz-server", "plan-mat-id", "segredo", activity);
         getTokenCredential(activity, intent);
     }
 
