@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void login() {
         Intent i = new Intent(this, ResultActivity.class);
-        DataRequest.getInstance().inicializeAccess(this, i);
+        DataRequest.getInstance().initializeAccess(this, i);
     }
 
     public void getData(View v){

@@ -128,7 +128,7 @@ public class DataRequest {
         queue.add(stringRequest); //por que não apenas retornar a string com resposta?
     }
 
-    public void inicializeAccess(Activity activity, Intent intent){
+    public void initializeAccess(Activity activity, Intent intent){
         createOAuthManager("http://apitestes.info.ufrn.br/authz-server", "plan-mat-id", "segredo", activity);
         getTokenCredential(activity, intent);
     }
