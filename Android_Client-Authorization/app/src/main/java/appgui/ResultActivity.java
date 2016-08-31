@@ -36,7 +36,7 @@ public class ResultActivity extends AppCompatActivity {
                 if (requirements == null) {
                     text.setText("NULL");
                 } else {
-                    //text.setText("" + requirements.getID());
+                    text.setText("" + requirements.getID());
                 }
             }
         };
