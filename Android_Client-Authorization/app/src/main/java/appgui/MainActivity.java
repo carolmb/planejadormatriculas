@@ -12,6 +12,11 @@ import appcore.*;
 import datarepresentation.Student;
 import externaldata.DataRequest;
 import ufrn.br.oauthandroid.R;
+import android.webkit.WebView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,9 +47,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getData(View v){
-        Intent intent = new Intent(this, ResultActivity.class);
-        //intent.putExtra("token", credential.getAccessToken());
-        startActivity(intent);
+        ActionRequest action = new ActionRequest() {
+            @Override
+            public void run(String response) {
+                try {
+                    JSONArray jsonObject = new JSONArray(response);
+                    JSONtoRequirements(response.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        SIGAAServerAccessor.getSIGAAServerAccessor().getRequirements(action, "TECNOLOGIA DA INFORMAÇÃO", 2014, 1, this.getBaseContext());
+    }
+
+    private void JSONtoRequirements(String json) {
+        System.out.print(json);
     }
 
     @Override
