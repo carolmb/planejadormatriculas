@@ -42,5 +42,6 @@
         android:layout_above="@+id/dadosBtn"
         android:layout_alignRight="@+id/dadosBtn"
         android:layout_alignEnd="@+id/dadosBtn"
-        android:onClick="logout"/>
+        android:onClick="logout"
+        android:nestedScrollingEnabled="true" />
 </RelativeLayout>
