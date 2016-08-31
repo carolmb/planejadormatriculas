@@ -10,9 +10,8 @@ import android.view.View;
 
 import appcore.*;
 import datarepresentation.Student;
-import externaldata.DataRequest;
+import externaldata.*;
 import ufrn.br.oauthandroid.R;
-import android.webkit.WebView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,11 +33,12 @@ public class MainActivity extends AppCompatActivity {
                 printPlanning();
             }
         };
-        ApplicationCore.getInstance().getStudent();
+        ApplicationCore.getInstance().getStudent(receiver);
     }
 
     private void printPlanning() {
         // TODO
+        System.out.println("CHEGOU ATÉ AQUI. VALOR DO USER: " + user);
     }
 
     public void login() {
