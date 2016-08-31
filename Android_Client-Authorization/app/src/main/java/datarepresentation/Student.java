@@ -7,13 +7,27 @@ import java.util.ArrayList;
  * Representa um aluno.
  */
 public class Student {
-    private String student;
-    private Requirements requirements;
-    private ArrayList<ComponentClass> coursedComponents;
 
-    public Student(String student, Requirements requirements, ArrayList<ComponentClass> coursedComponents) {
-        this.student = student;
+    private int id;
+    private Requirements requirements;
+    private ArrayList<ComponentClass> classes;
+
+    public Student(int id, Requirements requirements, ArrayList<ComponentClass> classes) {
+        this.id = id;
         this.requirements = requirements;
-        this.coursedComponents = coursedComponents;
+        this.classes = classes;
     }
+
+    public int getID() {
+        return id;
+    }
+
+    public Requirements getRequirements() {
+        return requirements;
+    }
+
+    public ArrayList<ComponentClass> getClasses() {
+        return classes;
+    }
+
 }

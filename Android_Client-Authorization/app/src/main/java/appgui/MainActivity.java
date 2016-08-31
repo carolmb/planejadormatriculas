@@ -1,6 +1,5 @@
-package ufrn.br.oauthandroid;
+package appgui;
 
-import externaldata.*;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,12 +7,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebView;
 
+import appcore.*;
+import datarepresentation.Student;
 import externaldata.DataRequest;
-import interfaceTemporary.SolicitationInfo;
+import ufrn.br.oauthandroid.R;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Student user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,18 +23,28 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        DataReceiver receiver = new DataReceiver() {
+            public void onReceive(Student student) {
+                user = student;
+                printPlanning();
+            }
+        };
+        ApplicationCore.getInstance().getStudent();
     }
 
-    public void login(View v) {
-        Intent i = new Intent(this, MainActivity.class);
+    private void printPlanning() {
+        // TODO
+    }
+
+    public void login() {
+        Intent i = new Intent(this, ResultActivity.class);
         DataRequest.getInstance().inicializeAccess(this, i);
     }
 
     public void getData(View v){
-        SIGAAServerAccessor.getSIGAAServerAccessor().getRequirements("TECNOLOGIA DA INFORMAÇÃO", this.getBaseContext());
-        //Intent intent = new Intent(this, SolicitationInfo.class);
+        Intent intent = new Intent(this, ResultActivity.class);
         //intent.putExtra("token", credential.getAccessToken());
-        //startActivity(intent);
+        startActivity(intent);
     }
 
     @Override

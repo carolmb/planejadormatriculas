@@ -7,9 +7,21 @@ import java.util.ArrayList;
  * Representa o currículo de um curso.
  */
 public class Requirements {
+
+    private int id;
     private ArrayList<Semester> semesters;
 
-    public Requirements(ArrayList<Semester> semesters) {
-        this.semesters = semesters;
+    public Requirements(int id) {
+        this.id = id;
+        this.semesters = new ArrayList<Semester>();
     }
+
+    public int getID() {
+        return id;
+    }
+
+    public ArrayList<Semester> getSemesters() {
+        return semesters;
+    }
+
 }
