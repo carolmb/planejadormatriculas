@@ -34,41 +34,41 @@ public class SIGAAServerAccessor implements ServerAccessor {
         return _SIGAAServerAccessor;
     }
 
-    // GET /consulta/curso/componentes/{idCurriculo}
-    // GET /consulta/curso/{nivel}
-    public void getRequirements(final ActionRequest finalAction, final String nameMajor, final int year, final int semester, final Context context) {
+    public void getRequirements(final ActionRequest finalAction, final String nameMajor, final int year, final int semester) {
         ActionRequest action = new ActionRequest() {
             @Override
             public void run(String response) {
                 try {
-                    JSONArray jsonObject = new JSONArray(response);
-                    String idMajor = searchIDMajor(jsonObject, nameMajor); //pega o id do curso
-                    getAllRequirements(finalAction, idMajor, context, year, semester);
+                    JSONArray json = new JSONArray(response);
+                    System.out.print("Try select idMajor");
+                    String idMajor = searchIDMajor(json, nameMajor); //pega o id do curso
+                    System.out.print("Selected idMajor");
+                    //getAllRequirements(finalAction, idMajor, context, year, semester);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         };
-        jsonRequester("https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/GRADUACAO", action, context);
+        jsonRequester("https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/GRADUACAO", action);
     }
 
-    private void getAllRequirements(final ActionRequest finalAction, String idMajor, final Context context, final int year, final int semester) {
+    private void getAllRequirements(final ActionRequest finalAction, String idMajor, final int year, final int semester) {
         ActionRequest action = new ActionRequest() {
             @Override
             public void run(String response) {
                 try {
                     JSONArray json = new JSONArray(response);
                     int idRequirements = searchIDRequirements(json, year, semester); //pega o id curriculo especifico
-                    getRequirementsFromId(idRequirements, finalAction, context);
+                    getRequirementsFromId(idRequirements, finalAction);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         };
-        jsonRequester("https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/matriz/graduacao/" + idMajor, action, context);
+        jsonRequester("https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/matriz/graduacao/" + idMajor, action);
     }
 
-    private void getRequirementsFromId(int idRequirements, final ActionRequest finalAction, Context context) {
+    private void getRequirementsFromId(int idRequirements, final ActionRequest finalAction) {
         ActionRequest action = new ActionRequest() {
             @Override
             public void run(String response) {
@@ -80,7 +80,7 @@ public class SIGAAServerAccessor implements ServerAccessor {
                 }
             }
         };
-        jsonRequester("https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/componentes/" + idRequirements, action, context);
+        jsonRequester("https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/componentes/" + idRequirements, action);
     }
 
     private int searchIDRequirements(JSONArray json, int year, int semester) {
@@ -105,6 +105,7 @@ public class SIGAAServerAccessor implements ServerAccessor {
             for (int i = 0; i < json.length(); i++) {
                 JSONObject j = json.getJSONObject(i);
                 if(j.getString("curso").equals(major)) {
+                    System.out.print(j.getString("idCurso"));
                     return j.getString("idCurso");
                 }
             }
@@ -114,7 +115,7 @@ public class SIGAAServerAccessor implements ServerAccessor {
         return null;
     }
 
-    private void getUserInfo(final Context context) {
+    private void getUserInfo() {
         ActionRequest action = new ActionRequest() {
             @Override
             public void run(String response) {
@@ -126,7 +127,7 @@ public class SIGAAServerAccessor implements ServerAccessor {
                 }
             }
         };
-        jsonRequester("http://apitestes.info.ufrn.br/usuario-services/services/usuario/info", action, context);
+        jsonRequester("http://apitestes.info.ufrn.br/usuario-services/services/usuario/info", action);
     }
 
     // GET /consulta/matriculacomponente/discente/{idDiscente}/all
@@ -140,8 +141,8 @@ public class SIGAAServerAccessor implements ServerAccessor {
         return null;
     }
 
-    private void jsonRequester(String urlRequester, final ActionRequest action, final Context context) {
-         DataRequest.getInstance().resourceRequest(context, urlRequester, new Response.Listener<String>() {
+    private void jsonRequester(String urlRequester, final ActionRequest action) {
+         DataRequest.getInstance().resourceRequest(urlRequester, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 action.run(response);
@@ -150,9 +151,6 @@ public class SIGAAServerAccessor implements ServerAccessor {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("OUTPUT", "Error: " + error.getMessage());
-                Toast.makeText(context,
-                        error.getMessage(), Toast.LENGTH_SHORT).show();
-                // hide the progress dialog
             }
         });
     }

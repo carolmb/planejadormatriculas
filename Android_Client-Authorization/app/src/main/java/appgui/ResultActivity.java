@@ -40,7 +40,7 @@ public class ResultActivity extends AppCompatActivity {
                 }
             }
         };
-        ApplicationCore.getInstance().getRequirements(this.getBaseContext(), receiver);
+        ApplicationCore.getInstance().getRequirements(receiver);
     }
 
 }

@@ -11,7 +11,7 @@ import datarepresentation.Student;
  * Created by User on 24/08/2016.
  */
 public interface ServerAccessor {
-    void getRequirements(final ActionRequest finalAction, final String nameMajor, final int year, final int semester, final Context context);
+    void getRequirements(final ActionRequest finalAction, final String nameMajor, final int year, final int semester);
     Student getStudent(String idStudent);
     Component getComponent(String code);
     ComponentClass getComponentClass();

@@ -5,7 +5,7 @@ package internaldata;
  */
 public class UserDataManager {
     public UserData load() {
-
+        return null;
     }
 
     public void store(UserData data) {

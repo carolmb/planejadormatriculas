@@ -25,14 +25,14 @@ public class ApplicationCore {
     }
 
     public void login(Activity activity, Intent i) {
-        DataRequest.getInstance().inicializeAccess(activity, i);
+        DataRequest.getInstance().initializeAccess(activity, i);
     }
 
     public void logout(final Activity activity) {
         DataRequest.getInstance().logout(activity, "http://apitestes.info.ufrn.br/sso-server/logout");
     }
 
-    public void getRequirements(final Context context, final DataReceiver receiver){
+    public void getRequirements(final DataReceiver receiver){
         ActionRequest action = new ActionRequest() {
             @Override
             public void run(String response) {
@@ -45,8 +45,7 @@ public class ApplicationCore {
                 }
             }
         };
-        SIGAAServerAccessor.getSIGAAServerAccessor().getRequirements(action,
-                "TECNOLOGIA DA INFORMAÇÃO", 2014, 1, context);
+        //SIGAAServerAccessor.getSIGAAServerAccessor().getRequirements(action, "TECNOLOGIA DA INFORMAÇÃO", 2014, 1);
     }
 
     private Requirements JSONtoRequirements(JSONArray jsonArray) {
@@ -63,8 +62,7 @@ public class ApplicationCore {
                 receiver.onReceive(student);
             }
         };
-        SIGAAServerAccessor.getSIGAAServerAccessor().getRequirements(action,
-                "TECNOLOGIA DA INFORMAÇÃO", 2014, 1, context);
+       // SIGAAServerAccessor.getSIGAAServerAccessor().getRequirements(action, "TECNOLOGIA DA INFORMAÇÃO", 2014, 1);
     }
 
 }

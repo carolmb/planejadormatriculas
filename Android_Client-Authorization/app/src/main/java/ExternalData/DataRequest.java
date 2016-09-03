@@ -7,10 +7,15 @@ import android.util.Log;
 import android.webkit.WebView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Cache;
+import com.android.volley.Network;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.api.client.auth.oauth2.BearerToken;
@@ -34,6 +39,8 @@ import java.util.Map;
 public class DataRequest {
     // Thread-safe OAuth 2.0 helper for accessing protected resources using an access token.
     private Credential credential;
+
+    private RequestQueue requestQueue;
 
     // The Default OAuth Authorization Server class that validates whether
     // a given HttpServletRequest is a valid OAuth Token request.
@@ -67,7 +74,16 @@ public class DataRequest {
 
     void createOAuthManager(String oauthServerURL, String clientId, String clientSecret, final Activity activity) {
 
-        AuthorizationFlow flow = getAuthFlow(oauthServerURL, clientId, clientSecret);
+        AuthorizationFlow.Builder builder = new AuthorizationFlow.Builder(
+                BearerToken.authorizationHeaderAccessMethod(),
+                AndroidHttp.newCompatibleTransport(),
+                new JacksonFactory(),
+                new GenericUrl(oauthServerURL +"/oauth/token"),
+                new ClientParametersAuthentication(clientId, clientSecret),
+                clientId,
+                oauthServerURL +"/oauth/authorize");
+
+        AuthorizationFlow flow = builder.build();
 
         AuthorizationUIController controller = new DialogFragmentController(activity.getFragmentManager()) {
             @Override
@@ -86,23 +102,23 @@ public class DataRequest {
 
     Credential getTokenCredential(final Activity activity, final Intent i) {
         try {
-            OAuthManager.OAuthCallback<Credential> callback = new OAuthManager.OAuthCallback<Credential>() {
-                @Override public void run(OAuthManager.OAuthFuture<Credential> future) {
-                    try {
-                        credential = future.getResult();
-                        activity.startActivity(i);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            /*cria uma credencial nova quando não tem ou cria uma nova quando a antiga está inválida*/
+            if(credential == null || credential.getExpiresInSeconds() <= 0) {
+                OAuthManager.OAuthCallback<Credential> callback = new OAuthManager.OAuthCallback<Credential>() {
+                    @Override
+                    public void run(OAuthManager.OAuthFuture<Credential> future) {
+                        try {
+                            credential = future.getResult();
+                            activity.startActivity(i);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    // make API queries with credential.getAccessToken()
-                }
-            };
-
-            oauth.authorizeExplicitly("userId", callback, null);
-            if(credential != null){
-                Log.d("TOKEN", credential.getAccessToken());
+                };
+                oauth.authorizeExplicitly("userId", callback, null);
+                if(credential != null)
+                    Log.d("TOKEN", credential.getAccessToken());
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -110,9 +126,12 @@ public class DataRequest {
         return credential;
     }
 
-    public void resourceRequest(Context context, String url, Response.Listener<String> listener, Response.ErrorListener errorListener){
-        RequestQueue queue = Volley.newRequestQueue(context);
+    private void createRequestQueue(Context context) {
+        requestQueue = Volley.newRequestQueue(context);
+        requestQueue.start();
+    }
 
+    public void resourceRequest(String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, listener, errorListener) {
             @Override
@@ -125,12 +144,13 @@ public class DataRequest {
         };
 
         // Add the request to the RequestQueue.
-        queue.add(stringRequest); //por que não apenas retornar a string com resposta?
+        requestQueue.add(stringRequest);
     }
 
-    public void initializeAccess(Activity activity, Intent intent){
+    public void initializeAccess(Activity activity, Intent intent) {
         createOAuthManager("http://apitestes.info.ufrn.br/authz-server", "plan-mat-id", "segredo", activity);
         getTokenCredential(activity, intent);
+        createRequestQueue(activity.getApplicationContext()); //verificar se da pra fazer isso mesmo
     }
 
     public void logout(Context context, String url) {
