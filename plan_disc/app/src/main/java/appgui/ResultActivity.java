@@ -6,11 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.android.volley.Response;
 
-import externaldata.ActionRequest;
-import externaldata.DataRequest;
+import appcore.ApplicationCore;
 import externaldata.SIGAAServerAccessor;
 import ufrn.br.oauthandroid.R;
 
@@ -19,7 +17,7 @@ public class ResultActivity extends AppCompatActivity {
     // Progress dialog
     private ProgressDialog pDialog;
 
-    private TextView texto;
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +28,16 @@ public class ResultActivity extends AppCompatActivity {
         pDialog.setMessage("Aguarde ...");
         pDialog.setCancelable(false);
 
-        SIGAAServerAccessor.getInstance().getRequirements();
+        Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("Requirements", response);
+                textView.setText(response);
+            }
+        };
+        ApplicationCore.getInstance().getRequirements(listener);
 
-        texto = (TextView) findViewById(R.id.textoJson);
+        textView = (TextView) findViewById(R.id.textoJson);
 
     }
 }

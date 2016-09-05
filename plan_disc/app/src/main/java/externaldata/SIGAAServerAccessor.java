@@ -2,34 +2,116 @@ package externaldata;
 
 import android.util.Log;
 
+import com.android.volley.Response;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import datarepresentation.Requirements;
 
 /**
  * Created by Ana Caroline on 03/09/2016.
  */
 public class SIGAAServerAccessor {
 
-    static private SIGAAServerAccessor sigaaServerAccessor;
+    static private SIGAAServerAccessor instance;
 
     private SIGAAServerAccessor() {}
 
     public static SIGAAServerAccessor getInstance() {
-        if(sigaaServerAccessor == null)
-            sigaaServerAccessor = new SIGAAServerAccessor();
+        if(instance == null)
+            instance = new SIGAAServerAccessor();
 
-        return sigaaServerAccessor;
+        return instance;
     }
 
-    public void getRequirements() {
-        getStudentInfo();
+    // ------------------------------------------------------------------------------
+    // Public methods
+    // ------------------------------------------------------------------------------
+
+    public void getRequirements(final Response.Listener<String> finalListener) {
+
+        final Response.Listener<String> requirementByID = new Response.Listener<String>() {
+            public void onResponse(String response) {
+                int id = getRequirementsIDFromJSON(response);
+                getRequirementByID(id, finalListener);
+            }
+        };
+
+        final Response.Listener<String> requirementListByMajorID = new Response.Listener<String>() {
+            public void onResponse(String response) {
+                final String majorName = getMajorFromStudentJSON(response);
+                getAllMajorList(new Response.Listener<String>() {
+                    public void onResponse(String response) {
+                        int id = searchMajorIDFromJSON(response, majorName);
+                        getRequirementListByMajorID(id, requirementByID);
+                    }
+                });
+            }
+        };
+
+        final Response.Listener<String> studentInfoByUserID = new Response.Listener<String>() {
+            public void onResponse(String response) {
+                int id = getUserIDFromJSON(response);
+                getStudentInfoByUserID(id, requirementListByMajorID);
+            }
+        };
+
+        getUserInfo(studentInfoByUserID);
     }
 
-    public String getMajor(String studentInfo) {
+    // ------------------------------------------------------------------------------
+    // Data request methods
+    // ------------------------------------------------------------------------------
+
+    private void getUserInfo(Response.Listener<String> listener) {
+        SIGAADataRequester.getInstance().requestData(listener,
+                "http://apitestes.info.ufrn.br/usuario-services/services/usuario/info");
+    }
+
+    private void getStudentInfoByUserID(int id, Response.Listener<String> listener) {
+        SIGAADataRequester.getInstance().requestData(listener,
+                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/perfilusuario/" + id);
+    }
+
+    private void getAllMajorList(Response.Listener<String> listener) {
+        SIGAADataRequester.getInstance().requestData(listener,
+                "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/GRADUACAO");
+    }
+
+    private void getRequirementListByMajorID(int id, Response.Listener<String> listener) {
+        SIGAADataRequester.getInstance().requestData(listener,
+                "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/matriz/stricto/" + id);
+    }
+
+    private void getRequirementByID(int id, Response.Listener<String> listener) {
+        SIGAADataRequester.getInstance().requestData(listener,
+                "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/componentes/" + id);
+    }
+
+    // ------------------------------------------------------------------------------
+    // Auxiliary methods
+    // ------------------------------------------------------------------------------
+
+    private int getRequirementsIDFromJSON(String jsonArray) {
         try {
-            JSONObject jsonObject = new JSONObject(studentInfo);
-            String major = jsonObject.getString("curso");
+            //TODO: critério para escolher curriculo do aluno
+            JSONArray matrixList = new JSONArray(jsonArray);
+            return matrixList.getJSONObject(0).getInt("idCurriculo");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    private String getMajorFromStudentJSON(String response) {
+        try {
+            JSONObject studentInfo = new JSONObject(response);
+            JSONObject list = studentInfo.getJSONObject("listaVinculosUsuario");
+            String studentString = list.getJSONArray("discentes").get(0).toString();
+            studentInfo = new JSONObject(studentString);
+            String major = studentInfo.getString("curso");
             return major.substring(7); //considera que sempre inicia com "CURSO: "
         } catch (JSONException e) {
             e.printStackTrace();
@@ -37,120 +119,31 @@ public class SIGAAServerAccessor {
         return "";
     }
 
-    public void getRequirementsFromMajor(final String major) {
-        ActionRequest action = new ActionRequest() {
-            @Override
-            public void run(String response) {
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    Log.e("CURSOS", jsonArray.toString());
-                    String idMajor = searchIdMajor(jsonArray, major);
-                    Log.e("IDCURSO", idMajor);
-                    getCurriculumMatrices(idMajor);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        DataRequest.getInstance().requestJson(action, "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/GRADUACAO");
-    }
-
-    private void getCurriculumMatrices(String idMajor) {
-        ActionRequest action = new ActionRequest() {
-            @Override
-            public void run(String response) {
-                 try {
-                     JSONArray jsonArray = new JSONArray(response);
-                     String curriculumMatrix = searchCurriculumMatrix(jsonArray);
-                     getRequirements(curriculumMatrix);
-                     //Log.d("CURRICULUM", jsonArray.toString());
-                 } catch (JSONException e) {
-                     e.printStackTrace();
-                 }
-            }
-        };
-        DataRequest.getInstance().requestJson(action, "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/matriz/stricto/" + idMajor);
-    }
-
-    private void getRequirements(String idRequirements) {
-        ActionRequest action = new ActionRequest() {
-            @Override
-            public void run(String response) {
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    Log.d("CURRICULO DO ALUNO", jsonArray.toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        DataRequest.getInstance().requestJson(action, "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/componentes/" + idRequirements);
-    }
-
-    private String searchCurriculumMatrix(JSONArray jsonArray) {
+    private int searchMajorIDFromJSON(String response, String major) {
         try {
-            //TODO: critério para escolher curriculo do aluno
-            return jsonArray.getJSONObject(0).getString("idCurriculo");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private String searchIdMajor(JSONArray jsonArray, String major) {
-        try {
+            JSONArray jsonArray = new JSONArray(response);
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject majorJSON = jsonArray.getJSONObject(i);
                 if(major.contains(majorJSON.getString("curso"))) {
                     if(major.contains(majorJSON.getString("municipio"))) {
-                        return majorJSON.getString("idCurso");
+                        return majorJSON.getInt("idCurso");
                     }
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return null;
+        return -1;
     }
 
-    public void getStudentInfo() {
-        ActionRequest action = new ActionRequest() {
-            @Override
-            public void run(String response) {
-                try {
-                    String jsonResponse;
-                    JSONObject jsonObject = new JSONObject(response);
-
-                    String username = jsonObject.getString("username");
-                    String id = jsonObject.getString("id");
-
-                    jsonResponse = "";
-                    jsonResponse += "Name: " + username + "\n\n";
-                    jsonResponse += "Login: " + id + "\n\n";
-
-                    Log.d("JSON", jsonResponse);
-                    ActionRequest action = new ActionRequest() {
-                        @Override
-                        public void run(String response) {
-                            try {
-                                String jsonResponse;
-                                JSONObject jsonObject = new JSONObject(response);
-                                JSONObject jsonObject1 = jsonObject.getJSONObject("listaVinculosUsuario");
-                                jsonResponse = jsonObject1.getJSONArray("discentes").get(0).toString();
-                                String major = SIGAAServerAccessor.getInstance().getMajor(jsonResponse);
-                                SIGAAServerAccessor.getInstance().getRequirementsFromMajor(major);
-                                Log.d("JSON", jsonResponse.toString());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    };
-                    DataRequest.getInstance().requestJson(action, "https://apitestes.info.ufrn.br/ensino-services/services/consulta/perfilusuario/" + jsonObject.getString("id"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        DataRequest.getInstance().requestJson(action, "http://apitestes.info.ufrn.br/usuario-services/services/usuario/info");
+    private int getUserIDFromJSON(String response) {
+        try {
+            JSONObject userInfo = new JSONObject(response);
+            return userInfo.getInt("id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
+
 }

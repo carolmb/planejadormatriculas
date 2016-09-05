@@ -3,11 +3,11 @@ package appcore;
 import android.app.Activity;
 import android.content.Intent;
 
-import org.json.JSONArray;
+import com.android.volley.Response;
 
-import appgui.ResultActivity;
+import datarepresentation.Requirements;
 import externaldata.*;
-import datarepresentation.*;
+
 /**
  * Created by User on 03/09/2016.
  */
@@ -20,19 +20,23 @@ public class ApplicationCore {
         return instance;
     }
 
-    public void login(Activity activity, Intent i) {
-        DataRequest.getInstance().createTokenCredential(activity, i);
+    public void login(final Activity activity, final Intent i) {
+        SIGAADataRequester.getInstance().createRequestQueue(activity);
+        Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                activity.startActivity(i);
+            }
+        };
+        SIGAAAuthorizationRequester.getInstance().createTokenCredential(activity, listener);
     }
 
     public void logout(final Activity activity) {
-        DataRequest.getInstance().logout(activity, "http://apitestes.info.ufrn.br/sso-server/logout");
+        SIGAAAuthorizationRequester.getInstance().logout(activity, "http://apitestes.info.ufrn.br/sso-server/logout");
     }
 
-    public void getRequirements() {}
-
-    private Requirements JSONtoRequirements(JSONArray jsonArray) {
-        System.out.print(jsonArray);
-        return new Requirements(0);
+    public void getRequirements(Response.Listener<String> listener) {
+        SIGAAServerAccessor.getInstance().getRequirements(listener);
     }
 
     public void getStudent() {}
