@@ -30,7 +30,7 @@ public class ResultActivity extends AppCompatActivity {
         pDialog.setMessage("Aguarde ...");
         pDialog.setCancelable(false);
 
-        SIGAAServerAccessor.getRequeriments();
+        SIGAAServerAccessor.getInstance().getRequirements();
 
         texto = (TextView) findViewById(R.id.textoJson);
 
