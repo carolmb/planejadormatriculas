@@ -13,7 +13,7 @@ import datarepresentation.Requirements;
 /**
  * Created by Ana Caroline on 03/09/2016.
  */
-public class SIGAAServerAccessor {
+public class SIGAAServerAccessor implements ServerAccessor {
 
     static private SIGAAServerAccessor instance;
 
@@ -61,6 +61,17 @@ public class SIGAAServerAccessor {
         getUserInfo(studentInfoByUserID);
     }
 
+    public void getStudent(final Response.Listener<String> finalListener) {
+        final Response.Listener<String> studentInfoByUserID = new Response.Listener<String>() {
+            public void onResponse(String response) {
+                int id = getUserIDFromJSON(response);
+                getStudentInfoByUserID(id, finalListener);
+            }
+        };
+
+        getUserInfo(studentInfoByUserID);
+    }
+
     // ------------------------------------------------------------------------------
     // Data request methods
     // ------------------------------------------------------------------------------
@@ -98,6 +109,7 @@ public class SIGAAServerAccessor {
         try {
             //TODO: critério para escolher curriculo do aluno
             JSONArray matrixList = new JSONArray(jsonArray);
+            Log.d("CURRICULOS", matrixList.toString());
             return matrixList.getJSONObject(0).getInt("idCurriculo");
         } catch (JSONException e) {
             e.printStackTrace();

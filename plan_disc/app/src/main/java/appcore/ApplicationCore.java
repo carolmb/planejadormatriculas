@@ -39,6 +39,8 @@ public class ApplicationCore {
         SIGAAServerAccessor.getInstance().getRequirements(listener);
     }
 
-    public void getStudent() {}
+    public void getStudent(Response.Listener<String> listener) {
+        SIGAAServerAccessor.getInstance().getRequirements(listener);
+    }
 
 }

@@ -36,7 +36,7 @@ public class ResultActivity extends AppCompatActivity {
             }
         };
         ApplicationCore.getInstance().getRequirements(listener);
-
+        
         textView = (TextView) findViewById(R.id.textoJson);
 
     }
