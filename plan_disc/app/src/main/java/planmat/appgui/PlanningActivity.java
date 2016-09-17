@@ -1,4 +1,4 @@
-package appgui;
+package planmat.appgui;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -8,11 +8,10 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 
-import appcore.ApplicationCore;
-import externaldata.SIGAAServerAccessor;
+import planmat.appcore.ApplicationCore;
 import ufrn.br.oauthandroid.R;
 
-public class ResultActivity extends AppCompatActivity {
+public class PlanningActivity extends AppCompatActivity {
 
     // Progress dialog
     private ProgressDialog pDialog;
@@ -22,7 +21,7 @@ public class ResultActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_result);
+        setContentView(R.layout.activity_planning);
 
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Aguarde ...");
@@ -31,13 +30,13 @@ public class ResultActivity extends AppCompatActivity {
         Response.Listener<String> listener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("Requirements", response);
-                textView.setText(response);
+                Log.d("Response (requirements)", response);
+                //textView.setText(response);
             }
         };
         ApplicationCore.getInstance().getRequirements(listener);
         
-        textView = (TextView) findViewById(R.id.textoJson);
+        //textView = (TextView) findViewById(R.id.textoJson);
 
     }
 }

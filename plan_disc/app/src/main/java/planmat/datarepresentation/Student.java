@@ -1,4 +1,4 @@
-package datarepresentation;
+package planmat.datarepresentation;
 
 import java.util.ArrayList;
 

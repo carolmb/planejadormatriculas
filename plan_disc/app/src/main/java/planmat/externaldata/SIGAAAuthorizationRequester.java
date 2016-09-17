@@ -1,4 +1,4 @@
-package externaldata;
+package planmat.externaldata;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,28 +19,14 @@ import com.wuman.android.auth.OAuthManager;
 
 import java.io.IOException;
 
-/**
- * Created by Ana Caroline on 04/11/2015.
- */
-public class SIGAAAuthorizationRequester {
+class SIGAAAuthorizationRequester {
 
     private Credential credential;
 
-    private static SIGAAAuthorizationRequester instance;
-
-    private static String clientId = "plan-mat-id";
-    private static String clientSecret = "segredo";
+    private String clientId = "plan-mat-id";
+    private String clientSecret = "segredo";
 
     private OAuthManager oauth;
-
-    public static SIGAAAuthorizationRequester getInstance(){
-        if(instance == null)
-            instance = new SIGAAAuthorizationRequester();
-
-        return instance;
-    }
-
-    private SIGAAAuthorizationRequester() {}
 
     public String getAccessToken() {
         return credential.getAccessToken();

@@ -1,5 +1,6 @@
-package externaldata;
+package planmat.externaldata;
 
+import android.app.Activity;
 import android.util.Log;
 
 import com.android.volley.Response;
@@ -8,8 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import datarepresentation.Requirements;
-
 /**
  * Created by Ana Caroline on 03/09/2016.
  */
@@ -17,18 +16,26 @@ public class SIGAAServerAccessor implements ServerAccessor {
 
     static private SIGAAServerAccessor instance;
 
-    private SIGAAServerAccessor() {}
+    private SIGAADataRequester dataRequester;
+    private SIGAAAuthorizationRequester authorizationRequester;
 
-    public static SIGAAServerAccessor getInstance() {
-        if(instance == null)
-            instance = new SIGAAServerAccessor();
-
-        return instance;
+    public SIGAAServerAccessor() {
+        this.dataRequester = new SIGAADataRequester();
+        this.authorizationRequester = new SIGAAAuthorizationRequester();
     }
 
     // ------------------------------------------------------------------------------
     // Public methods
     // ------------------------------------------------------------------------------
+
+    public void login(Activity activity, final Response.Listener<String> listener) {
+        dataRequester.createRequestQueue(activity);
+        authorizationRequester.createTokenCredential(activity, listener);
+    }
+
+    public void logout(Activity activity) {
+        authorizationRequester.logout(activity, "http://apitestes.info.ufrn.br/sso-server/logout");
+    }
 
     public void getRequirements(final Response.Listener<String> finalListener) {
 
@@ -77,27 +84,27 @@ public class SIGAAServerAccessor implements ServerAccessor {
     // ------------------------------------------------------------------------------
 
     private void getUserInfo(Response.Listener<String> listener) {
-        SIGAADataRequester.getInstance().requestData(listener,
+        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
                 "http://apitestes.info.ufrn.br/usuario-services/services/usuario/info");
     }
 
     private void getStudentInfoByUserID(int id, Response.Listener<String> listener) {
-        SIGAADataRequester.getInstance().requestData(listener,
+        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
                 "https://apitestes.info.ufrn.br/ensino-services/services/consulta/perfilusuario/" + id);
     }
 
     private void getAllMajorList(Response.Listener<String> listener) {
-        SIGAADataRequester.getInstance().requestData(listener,
+        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
                 "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/GRADUACAO");
     }
 
     private void getRequirementListByMajorID(int id, Response.Listener<String> listener) {
-        SIGAADataRequester.getInstance().requestData(listener,
+        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
                 "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/matriz/stricto/" + id);
     }
 
     private void getRequirementByID(int id, Response.Listener<String> listener) {
-        SIGAADataRequester.getInstance().requestData(listener,
+        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
                 "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/componentes/" + id);
     }
 

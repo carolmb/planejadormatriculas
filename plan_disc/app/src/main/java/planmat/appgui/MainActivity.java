@@ -1,4 +1,4 @@
-package appgui;
+package planmat.appgui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,8 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import appcore.ApplicationCore;
-import externaldata.SIGAAAuthorizationRequester;
+import planmat.appcore.ApplicationCore;
 import ufrn.br.oauthandroid.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,14 +22,9 @@ public class MainActivity extends AppCompatActivity {
         login();
     }
 
-    public void login() {
-        Intent i = new Intent(this, ResultActivity.class);
+    private void login() {
+        Intent i = new Intent(this, PlanningActivity.class);
         ApplicationCore.getInstance().login(this, i);
-    }
-
-    public void getData(View v){
-        Intent intent = new Intent(this, ResultActivity.class);
-        startActivity(intent);
     }
 
     @Override
@@ -48,7 +42,4 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void logout(View view) {
-        ApplicationCore.getInstance().logout(this);
-    }
 }

@@ -1,4 +1,4 @@
-package externaldata;
+package planmat.externaldata;
 
 import android.content.Context;
 
@@ -14,18 +14,7 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Luisa on 05/09/2016.
- */
-public class SIGAADataRequester {
-
-    private static SIGAADataRequester instance = new SIGAADataRequester();
-
-    private SIGAADataRequester() {}
-
-    public static SIGAADataRequester getInstance() {
-        return instance;
-    }
+class SIGAADataRequester {
 
     private RequestQueue requestQueue;
 
@@ -33,23 +22,23 @@ public class SIGAADataRequester {
         requestQueue = Volley.newRequestQueue(context);
     }
 
-    public void requestData(final Response.Listener<String> listener, String url) {
+    public void requestData(final String accessToken, final Response.Listener<String> listener, String url) {
         requestData(url, listener, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("OUT", "Error: " + error.getMessage());
             }
-        });
+        }, accessToken);
     }
 
-    private void requestData(String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+    private void requestData(String url, Response.Listener<String> listener, Response.ErrorListener errorListener, final String accessToken) {
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, listener, errorListener) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<String, String>();
-                String auth = "Bearer "+ SIGAAAuthorizationRequester.getInstance().getAccessToken();
+                String auth = "Bearer "+ accessToken;
                 headers.put("Authorization", auth);
                 return headers;
             }

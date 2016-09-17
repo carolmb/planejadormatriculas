@@ -1,4 +1,4 @@
-package datarepresentation;
+package planmat.datarepresentation;
 
 /**
  * Created by User on 03/09/2016.
