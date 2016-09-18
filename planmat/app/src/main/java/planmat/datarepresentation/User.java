@@ -12,12 +12,18 @@ public class User implements Serializable {
         public int id;
     }
 
+    private int id;
     private String name;
     private ArrayList<Entry> entries;
 
-    public User(String name, ArrayList<Entry> entries) {
+    public User(int id, String name, ArrayList<Entry> entries) {
+        this.id = id;
         this.name = name;
         this.entries = entries;
+    }
+
+    public int getID() {
+        return id;
     }
 
     public String getName() {

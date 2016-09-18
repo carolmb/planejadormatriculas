@@ -44,31 +44,28 @@ public class SIGAAServerAccessor implements ServerAccessor {
     }
 
     public void getUser(final Response.Listener<User> finalListener) {
-
-        final Response.Listener<String> jsonToUser = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                User user = dataConverter.createUser(response);
-                finalListener.onResponse(user);
-            }
-        };
-
         final Response.Listener<String> studentInfoByUserID = new Response.Listener<String>() {
             public void onResponse(String response) {
                 int id = getUserIDFromJSON(response);
+                final String loginResponse = response;
+                final Response.Listener<String> jsonToUser = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        User user = dataConverter.createUser(response, loginResponse);
+                        finalListener.onResponse(user);
+                    }
+                };
                 getStudentInfoByUserID(id, jsonToUser);
             }
         };
-
         getUserInfo(studentInfoByUserID);
     }
 
     public void getStudent(final Response.Listener<Student> finalListener) {
-
+        // TODO: pegar informações de disciplinas feitas
     }
 
     public void getRequirements(final Response.Listener<Requirements> finalListener) {
-
         final Response.Listener<String> jsonToRequirements = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -76,14 +73,12 @@ public class SIGAAServerAccessor implements ServerAccessor {
                 finalListener.onResponse(requirements);
             }
         };
-
         final Response.Listener<String> requirementByID = new Response.Listener<String>() {
             public void onResponse(String response) {
                 int id = getRequirementsIDFromJSON(response);
                 getRequirementByID(id, jsonToRequirements);
             }
         };
-
         final Response.Listener<String> requirementListByMajorID = new Response.Listener<String>() {
             public void onResponse(String response) {
                 final String majorName = getMajorFromStudentJSON(response);
@@ -95,14 +90,12 @@ public class SIGAAServerAccessor implements ServerAccessor {
                 });
             }
         };
-
         final Response.Listener<String> studentInfoByUserID = new Response.Listener<String>() {
             public void onResponse(String response) {
                 int id = getUserIDFromJSON(response);
                 getStudentInfoByUserID(id, requirementListByMajorID);
             }
         };
-
         getUserInfo(studentInfoByUserID);
     }
 

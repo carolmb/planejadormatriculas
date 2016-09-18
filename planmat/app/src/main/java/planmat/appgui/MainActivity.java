@@ -1,5 +1,6 @@
 package planmat.appgui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,10 +14,16 @@ import java.io.Serializable;
 
 import planmat.appcore.ApplicationCore;
 import planmat.datarepresentation.User;
+import planmat.internaldata.UserPrefs;
+import planmat.internaldata.UserPrefsAccessor;
 import ufrn.br.planmat.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * Inicializa a tela. Faz o login logo no início.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,19 +33,44 @@ public class MainActivity extends AppCompatActivity {
         login();
     }
 
+    /**
+     * Autentica o acesso atrás do login pela página do sigaa.
+     * Logo em seguida, redireciona o usuário para a próxima
+     * página.
+     */
     private void login() {
-        final Intent i = new Intent(this, ChooseMajorActivity.class);
         Response.Listener<User> listener = new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
                 if (response != null) {
-                    i.putExtra("User", (Serializable) response);
-                    finish();
-                    startActivity(i);
+                    redirect(response);
                 }
             }
         };
         ApplicationCore.getInstance().login(this, listener);
+    }
+
+    /**
+     * Redireciona o usuário para a próxima tela. Se ele já tiver um
+     * arquivo de preferências no celular, pula para a PlanningActivity.
+     * Caso contrário, vai para a ChooseMajorActivity para que possa
+     * ser criado um arquivo de preferências.
+     * @param user o usuário que acabou de logar.
+     */
+    private void redirect(User user) {
+        final Activity activity = this;
+        UserPrefs prefs = UserPrefsAccessor.getInstance().loadUserPrefs(user.getID());
+        if (prefs != null) {
+            final Intent i = new Intent(activity, PlanningActivity.class);
+            i.putExtra("UserPrefs", prefs);
+            finish();
+            activity.startActivity(i);
+        } else {
+            final Intent i = new Intent(activity, ChooseMajorActivity.class);
+            i.putExtra("User", user);
+            finish();
+            activity.startActivity(i);
+        }
     }
 
     @Override

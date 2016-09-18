@@ -16,19 +16,20 @@ class SIGAADataConverter {
 
     public Requirements createRequirements(String json) {
         Log.d("Response (requirements)", json);
+        // TODO: converter para requirements
         return null;
     }
 
-    public User createUser(String jsonStudent) {
+    public User createUser(String jsonUser, String jsonLogin) {
         try {
-            JSONObject studentInfo = new JSONObject(jsonStudent);
+            JSONObject loginInfo = new JSONObject(jsonLogin);
+            JSONObject studentInfo = new JSONObject(jsonUser);
             ArrayList<User.Entry> entries = new ArrayList<>();
             // TODO: preencher as entries com os dados da lista de vínculos do tipo discente
-            return new User(studentInfo.getString("nome"), entries);
+            return new User(loginInfo.getInt("id"), studentInfo.getString("nome"), entries);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.d("Response (user)", jsonStudent);
         return null;
     }
 
