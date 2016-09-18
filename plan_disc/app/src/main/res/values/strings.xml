@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">OAuthAndroid</string>
-    <string name="action_settings">Settings</string>
-    <string name="logintxt">Logar</string>
-    <string name="obter_dados_btn">Obter dados</string>
-    <string name="sair_btn">Sair</string>
-</resources>
