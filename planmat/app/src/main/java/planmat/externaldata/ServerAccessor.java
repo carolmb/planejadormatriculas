@@ -13,7 +13,7 @@ public interface ServerAccessor {
     void login(Activity activity, final Response.Listener<String> finalListener);
     void logout(Activity activity);
     void getUser(final Response.Listener<User> finalListener);
-    void getMajorList(final Response.Listener<MajorList> finalListener);
-    void getRequirementsList(final Response.Listener<RequirementsList> finalListener, int majorID);
+    void getMajorList(final Response.Listener<IDList> finalListener);
+    void getRequirementsList(final Response.Listener<IDList> finalListener, int majorID);
     void getRequirements(final Response.Listener<Requirements> finalListener, int id);
 }

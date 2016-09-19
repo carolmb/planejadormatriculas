@@ -35,11 +35,11 @@ public class ApplicationCore {
         serverAccessor.logout(activity);
     }
 
-    public void requestMajorList(final Response.Listener<MajorList> listener) {
+    public void requestMajorList(final Response.Listener<IDList> listener) {
         serverAccessor.getMajorList(listener);
     }
 
-    public void requestRequirementsList(final Response.Listener<RequirementsList> listener, int majorID) {
+    public void requestRequirementsList(final Response.Listener<IDList> listener, int majorID) {
         serverAccessor.getRequirementsList(listener, majorID);
     }
 

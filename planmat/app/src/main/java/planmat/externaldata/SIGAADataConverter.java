@@ -12,7 +12,7 @@ import planmat.datarepresentation.*;
 
 class SIGAADataConverter {
 
-    public MajorList createMajorList(String json) {
+    public IDList createMajorList(String json) {
         try {
             JSONArray array = new JSONArray(json);
             // TODO
@@ -22,7 +22,7 @@ class SIGAADataConverter {
         return null;
     }
 
-    public RequirementsList createRequirementsList(String json) {
+    public IDList createRequirementsList(String json) {
         try {
             JSONArray array = new JSONArray(json);
             //TODO

@@ -1,6 +1,5 @@
 package planmat.appgui;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,9 +12,7 @@ import android.widget.TextView;
 import com.android.volley.Response;
 
 import planmat.appcore.ApplicationCore;
-import planmat.datarepresentation.MajorList;
-import planmat.datarepresentation.Requirements;
-import planmat.datarepresentation.RequirementsList;
+import planmat.datarepresentation.IDList;
 import planmat.datarepresentation.User;
 import planmat.internaldata.UserPrefs;
 import planmat.internaldata.UserPrefsAccessor;
@@ -47,9 +44,9 @@ public class ChooseMajorActivity extends AppCompatActivity {
      * Requisita a lista de cursos do sistema e cria a lista a partir do retorno.
      */
     private void requestMajorList() {
-        ApplicationCore.getInstance().requestMajorList(new Response.Listener<MajorList>() {
+        ApplicationCore.getInstance().requestMajorList(new Response.Listener<IDList>() {
             @Override
-            public void onResponse(MajorList response) {
+            public void onResponse(IDList response) {
                 initializeMajorSpinner(response);
             }
         });
@@ -59,7 +56,7 @@ public class ChooseMajorActivity extends AppCompatActivity {
      * Inicializa o spinner dos cursos.
      * @param list a lista de cursos
      */
-    private void initializeMajorSpinner(MajorList list) {
+    private void initializeMajorSpinner(IDList list) {
         spnMajor = (Spinner) findViewById(R.id.spMajor);
         AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
             @Override
@@ -79,9 +76,9 @@ public class ChooseMajorActivity extends AppCompatActivity {
      * Requisita a lista de matrizes do sistema e cria a lista a partir do retorno.
      */
     private void requestRequirementsList() {
-        ApplicationCore.getInstance().requestRequirementsList(new Response.Listener<RequirementsList>() {
+        ApplicationCore.getInstance().requestRequirementsList(new Response.Listener<IDList>() {
             @Override
-            public void onResponse(RequirementsList response) {
+            public void onResponse(IDList response) {
                 initializeRequirementsSpinner(response);
             }
         }, selectedMajorID);
@@ -91,7 +88,7 @@ public class ChooseMajorActivity extends AppCompatActivity {
      * Inicializa o spinner das matrizes curriculates.
      * @param list a lista de matrizes.
      */
-    private void initializeRequirementsSpinner(RequirementsList list) {
+    private void initializeRequirementsSpinner(IDList list) {
         spnRequirements = (Spinner) findViewById(R.id.spnRequirements);
         AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
             @Override

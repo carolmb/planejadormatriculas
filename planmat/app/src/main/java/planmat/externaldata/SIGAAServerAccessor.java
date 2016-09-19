@@ -59,22 +59,22 @@ public class SIGAAServerAccessor implements ServerAccessor {
         getUserInfo(studentInfoByUserID);
     }
 
-    public void getMajorList(final Response.Listener<MajorList> finalListener) {
+    public void getMajorList(final Response.Listener<IDList> finalListener) {
         final Response.Listener<String> listener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                MajorList list = dataConverter.createMajorList(response);
+                IDList list = dataConverter.createMajorList(response);
                 finalListener.onResponse(list);
             }
         };
         getAllMajors(listener);
     }
 
-    public void getRequirementsList(final Response.Listener<RequirementsList> finalListener, int majorID) {
+    public void getRequirementsList(final Response.Listener<IDList> finalListener, int majorID) {
         final Response.Listener<String> listener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                RequirementsList list = dataConverter.createRequirementsList(response);
+                IDList list = dataConverter.createRequirementsList(response);
                 finalListener.onResponse(list);
             }
         };

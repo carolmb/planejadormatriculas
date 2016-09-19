@@ -18,13 +18,15 @@ import ufrn.br.planmat.R;
 
 public class PlanningActivity extends AppCompatActivity {
 
+    private UserPrefs userPrefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_planning);
 
-        UserPrefs user = (UserPrefs) getIntent().getSerializableExtra("UserPrefs");
-        Log.d("User name", user.getName());
+        userPrefs = (UserPrefs) getIntent().getSerializableExtra("UserPrefs");
+        Log.d("User name", userPrefs.getName());
 
         // TODO: mostrar o planejamento
     }
@@ -43,7 +45,7 @@ public class PlanningActivity extends AppCompatActivity {
                 startActivity(i);
             }
         };
-        ApplicationCore.getInstance().requestRequirements(listener);
+        ApplicationCore.getInstance().requestRequirements(listener, userPrefs.getRequirementsID());
     }
 
 }

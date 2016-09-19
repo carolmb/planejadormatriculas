@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * Created by Luisa on 19/09/2016.
  */
-public class RequirementsList {
+public class IDList {
 
     public static class Entry {
 
@@ -25,11 +25,15 @@ public class RequirementsList {
             return name;
         }
 
+        public String toString() {
+            return name;
+        }
+
     }
 
     private ArrayList<Entry> entries;
 
-    public RequirementsList() {
+    public IDList() {
         this.entries = new ArrayList<>();
     }
 
