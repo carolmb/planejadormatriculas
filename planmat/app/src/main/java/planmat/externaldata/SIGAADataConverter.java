@@ -2,17 +2,35 @@ package planmat.externaldata;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import planmat.datarepresentation.ComponentClass;
-import planmat.datarepresentation.Requirements;
-import planmat.datarepresentation.Student;
-import planmat.datarepresentation.User;
+import planmat.datarepresentation.*;
 
 class SIGAADataConverter {
+
+    public MajorList createMajorList(String json) {
+        try {
+            JSONArray array = new JSONArray(json);
+            // TODO
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public RequirementsList createRequirementsList(String json) {
+        try {
+            JSONArray array = new JSONArray(json);
+            //TODO
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public Requirements createRequirements(String json) {
         Log.d("Response (requirements)", json);

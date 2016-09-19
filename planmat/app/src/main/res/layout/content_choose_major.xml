@@ -12,9 +12,56 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textView2"
+        android:text="Choose Major:"
+        android:id="@+id/txtMajor"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="67dp"
+        android:textColor="@color/abc_primary_text_material_light"
+        android:textSize="20dp"
+        android:inputType="none" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spMajor"
+        android:transitionGroup="false"
+        android:touchscreenBlocksFocus="false"
+        android:spinnerMode="dropdown"
+        android:scrollIndicators="top|bottom"
+        android:layout_below="@+id/txtMajor"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose Requirements:"
+        android:id="@+id/txtRequirements"
+        android:layout_marginTop="42dp"
+        android:textColor="@color/abc_primary_text_material_light"
+        android:textSize="20dp"
+        android:inputType="none"
+        android:layout_below="@+id/spMajor"
+        android:layout_centerHorizontal="true" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spnRequirements"
+        android:transitionGroup="false"
+        android:touchscreenBlocksFocus="false"
+        android:spinnerMode="dropdown"
+        android:scrollIndicators="top|bottom"
+        android:layout_below="@+id/txtRequirements"
+        android:layout_alignLeft="@+id/spMajor"
+        android:layout_alignStart="@+id/spMajor" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Continue"
+        android:id="@+id/buttonOK"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="buttonOK" />
 </RelativeLayout>

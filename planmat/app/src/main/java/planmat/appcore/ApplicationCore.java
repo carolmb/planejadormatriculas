@@ -1,14 +1,10 @@
 package planmat.appcore;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.util.Log;
 
 import com.android.volley.Response;
 
-import planmat.datarepresentation.Requirements;
-import planmat.datarepresentation.Student;
-import planmat.datarepresentation.User;
+import planmat.datarepresentation.*;
 import planmat.externaldata.ServerAccessor;
 import planmat.externaldata.SIGAAServerAccessor;
 
@@ -39,8 +35,16 @@ public class ApplicationCore {
         serverAccessor.logout(activity);
     }
 
-    public void requestRequirements(final Response.Listener<Requirements> listener) {
-        serverAccessor.getRequirements(listener);
+    public void requestMajorList(final Response.Listener<MajorList> listener) {
+        serverAccessor.getMajorList(listener);
+    }
+
+    public void requestRequirementsList(final Response.Listener<RequirementsList> listener, int majorID) {
+        serverAccessor.getRequirementsList(listener, majorID);
+    }
+
+    public void requestRequirements(final Response.Listener<Requirements> listener, int id) {
+        serverAccessor.getRequirements(listener, id);
     }
 
 }

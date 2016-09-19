@@ -9,9 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import planmat.datarepresentation.Requirements;
-import planmat.datarepresentation.Student;
-import planmat.datarepresentation.User;
+import planmat.datarepresentation.*;
 
 /**
  * Created by Ana Caroline on 03/09/2016.
@@ -61,42 +59,37 @@ public class SIGAAServerAccessor implements ServerAccessor {
         getUserInfo(studentInfoByUserID);
     }
 
-    public void getStudent(final Response.Listener<Student> finalListener) {
-        // TODO: pegar informações de disciplinas feitas
-    }
-
-    public void getRequirements(final Response.Listener<Requirements> finalListener) {
-        final Response.Listener<String> jsonToRequirements = new Response.Listener<String>() {
+    public void getMajorList(final Response.Listener<MajorList> finalListener) {
+        final Response.Listener<String> listener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Requirements requirements = dataConverter.createRequirements(response);
-                finalListener.onResponse(requirements);
+                MajorList list = dataConverter.createMajorList(response);
+                finalListener.onResponse(list);
             }
         };
-        final Response.Listener<String> requirementByID = new Response.Listener<String>() {
+        getAllMajors(listener);
+    }
+
+    public void getRequirementsList(final Response.Listener<RequirementsList> finalListener, int majorID) {
+        final Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
             public void onResponse(String response) {
-                int id = getRequirementsIDFromJSON(response);
-                getRequirementByID(id, jsonToRequirements);
+                RequirementsList list = dataConverter.createRequirementsList(response);
+                finalListener.onResponse(list);
             }
         };
-        final Response.Listener<String> requirementListByMajorID = new Response.Listener<String>() {
+        getRequirementListByMajorID(majorID, listener);
+    }
+
+    public void getRequirements(final Response.Listener<Requirements> finalListener, int id) {
+        final Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
             public void onResponse(String response) {
-                final String majorName = getMajorFromStudentJSON(response);
-                getAllMajorList(new Response.Listener<String>() {
-                    public void onResponse(String response) {
-                        int id = searchMajorIDFromJSON(response, majorName);
-                        getRequirementListByMajorID(id, requirementByID);
-                    }
-                });
+                Requirements list = dataConverter.createRequirements(response);
+                finalListener.onResponse(list);
             }
         };
-        final Response.Listener<String> studentInfoByUserID = new Response.Listener<String>() {
-            public void onResponse(String response) {
-                int id = getUserIDFromJSON(response);
-                getStudentInfoByUserID(id, requirementListByMajorID);
-            }
-        };
-        getUserInfo(studentInfoByUserID);
+        getRequirementByID(id, listener);
     }
 
     // ------------------------------------------------------------------------------
@@ -113,7 +106,7 @@ public class SIGAAServerAccessor implements ServerAccessor {
                 "https://apitestes.info.ufrn.br/ensino-services/services/consulta/perfilusuario/" + id);
     }
 
-    private void getAllMajorList(Response.Listener<String> listener) {
+    private void getAllMajors(Response.Listener<String> listener) {
         dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
                 "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/GRADUACAO");
     }

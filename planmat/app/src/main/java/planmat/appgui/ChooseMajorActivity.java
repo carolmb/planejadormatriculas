@@ -6,10 +6,16 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.volley.Response;
 
+import planmat.appcore.ApplicationCore;
+import planmat.datarepresentation.MajorList;
+import planmat.datarepresentation.Requirements;
+import planmat.datarepresentation.RequirementsList;
 import planmat.datarepresentation.User;
 import planmat.internaldata.UserPrefs;
 import planmat.internaldata.UserPrefsAccessor;
@@ -20,6 +26,12 @@ public class ChooseMajorActivity extends AppCompatActivity {
     private TextView textView;
     private User user;
 
+    private Spinner spnMajor;
+    private Spinner spnRequirements;
+
+    private int selectedMajorID = -1;
+    private int selectedRequirementsID = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,10 +40,70 @@ public class ChooseMajorActivity extends AppCompatActivity {
         user = (User) getIntent().getSerializableExtra("User");
         Log.d("User name", user.getName());
 
-        textView = (TextView) findViewById(R.id.textView2);
-        textView.setText(user.getName());
+        requestMajorList();
+    }
 
-        // TODO: criar listinha com opções de curso e de matriz curricular
+    /**
+     * Requisita a lista de cursos do sistema e cria a lista a partir do retorno.
+     */
+    private void requestMajorList() {
+        ApplicationCore.getInstance().requestMajorList(new Response.Listener<MajorList>() {
+            @Override
+            public void onResponse(MajorList response) {
+                initializeMajorSpinner(response);
+            }
+        });
+    }
+
+    /**
+     * Inicializa o spinner dos cursos.
+     * @param list a lista de cursos
+     */
+    private void initializeMajorSpinner(MajorList list) {
+        spnMajor = (Spinner) findViewById(R.id.spMajor);
+        AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedMajorID = position;
+                requestRequirementsList();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //Bla.
+            }
+        };
+        spnMajor.setOnItemSelectedListener(listener);
+    }
+
+    /**
+     * Requisita a lista de matrizes do sistema e cria a lista a partir do retorno.
+     */
+    private void requestRequirementsList() {
+        ApplicationCore.getInstance().requestRequirementsList(new Response.Listener<RequirementsList>() {
+            @Override
+            public void onResponse(RequirementsList response) {
+                initializeRequirementsSpinner(response);
+            }
+        }, selectedMajorID);
+    }
+
+    /**
+     * Inicializa o spinner das matrizes curriculates.
+     * @param list a lista de matrizes.
+     */
+    private void initializeRequirementsSpinner(RequirementsList list) {
+        spnRequirements = (Spinner) findViewById(R.id.spnRequirements);
+        AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedRequirementsID = position;
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //Bla.
+            }
+        };
+        spnRequirements.setOnItemSelectedListener(listener);
     }
 
     /**
@@ -40,8 +112,7 @@ public class ChooseMajorActivity extends AppCompatActivity {
      * @param view o view que faz a chamada ao método
      */
     public void buttonOK(View view) {
-        // TODO: pegar IDs dos curso e matriz curricular escolhidos
-        UserPrefs userPrefs = new UserPrefs(user.getName(), user.getID(), -1, -1);
+        UserPrefs userPrefs = new UserPrefs(user.getName(), user.getID(), selectedMajorID, selectedRequirementsID);
         UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs);
         Intent i = new Intent(this, PlanningActivity.class);
         i.putExtra("UserPrefs", userPrefs);

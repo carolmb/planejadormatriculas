@@ -20,10 +20,6 @@ import ufrn.br.planmat.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    /**
-     * Inicializa a tela. Faz o login logo no início.
-     * @param savedInstanceState
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
