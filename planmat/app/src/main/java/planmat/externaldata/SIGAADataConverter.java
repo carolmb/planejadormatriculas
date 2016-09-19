@@ -14,8 +14,16 @@ class SIGAADataConverter {
 
     public IDList createMajorList(String json) {
         try {
-            JSONArray array = new JSONArray(json);
-            // TODO
+            IDList list = new IDList();
+            JSONArray jsonArray = new JSONArray(json);
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                int id = obj.getInt("idCurso");
+                String name = obj.getString("curso");
+                IDList.Entry entry = new IDList.Entry(id, name);
+                list.getEntries().add(entry);
+            }
+            return list;
         } catch (JSONException e) {
             e.printStackTrace();
         }
