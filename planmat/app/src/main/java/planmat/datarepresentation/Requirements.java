@@ -12,7 +12,7 @@ public class Requirements implements Serializable {
 
     public Requirements(int id) {
         this.id = id;
-        this.semesters = new ArrayList<Semester>();
+        this.semesters = new ArrayList<>();
     }
 
     public int getID() {

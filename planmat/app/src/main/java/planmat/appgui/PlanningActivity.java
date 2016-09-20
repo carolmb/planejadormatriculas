@@ -21,10 +21,9 @@ public class PlanningActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_planning);
-        Log.d("oi", "chegou aqui");
 
-        //userPrefs = (UserPrefs) getIntent().getSerializableExtra("UserPrefs");
-        //Log.d("User name", userPrefs.getName());
+        userPrefs = (UserPrefs) getIntent().getSerializableExtra("UserPrefs");
+        Log.d("User Prefs", "Nome: " + userPrefs.getName() + ", ID: " + userPrefs.getUserID());
 
         // TODO: mostrar o planejamento
     }
@@ -35,7 +34,7 @@ public class PlanningActivity extends AppCompatActivity {
      * @param view o view que fez a chamada ao método
      */
     public void seeRequirements(View view) {
-        final Intent i = new Intent(this, Requirements.class);
+        final Intent i = new Intent(this, RequirementsActivity.class);
         Response.Listener<Requirements> listener = new Response.Listener<Requirements>() {
             @Override
             public void onResponse(Requirements response) {

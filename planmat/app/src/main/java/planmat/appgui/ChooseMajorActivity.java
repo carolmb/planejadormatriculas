@@ -123,6 +123,7 @@ public class ChooseMajorActivity extends AppCompatActivity {
             UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs);
             Intent i = new Intent(this, PlanningActivity.class);
             i.putExtra("UserPrefs", userPrefs);
+            finish();
             startActivity(i);
         }
     }

@@ -81,11 +81,11 @@ public class SIGAAServerAccessor implements ServerAccessor {
         getRequirementListByMajorID(majorID, listener);
     }
 
-    public void getRequirements(final Response.Listener<Requirements> finalListener, int id) {
+    public void getRequirements(final Response.Listener<Requirements> finalListener, final int id) {
         final Response.Listener<String> listener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Requirements list = dataConverter.createRequirements(response);
+                Requirements list = dataConverter.createRequirements(id, response);
                 finalListener.onResponse(list);
             }
         };

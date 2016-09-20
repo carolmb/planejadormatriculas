@@ -54,10 +54,16 @@ class SIGAADataConverter {
         return null;
     }
 
-    public Requirements createRequirements(String json) {
-        Log.d("Response (requirements)", json);
-        // TODO: converter para requirements
-        return null;
+    public Requirements createRequirements(int id, String json) {
+        Requirements requirements = new Requirements(id);
+        try {
+            JSONObject obj = new JSONObject(json);
+            // TODO: converter os compomentes e adicionar ao requirements
+            Log.d("Response (requirements)", json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return requirements;
     }
 
     public User createUser(String jsonUser, String jsonLogin) {

@@ -20,7 +20,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="planmat.appgui.ChooseMajorActivity" >
+        <activity
+            android:name="planmat.appgui.ChooseMajorActivity" >
+        </activity>
+        <activity
+            android:name="planmat.appgui.PlanningActivity" >
+        </activity>
+        <activity
+            android:name="planmat.appgui.RequirementsActivity" >
         </activity>
     </application>
 
