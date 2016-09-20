@@ -1,18 +1,15 @@
 package planmat.appgui;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import com.android.volley.Response;
 
 import planmat.appcore.ApplicationCore;
 import planmat.datarepresentation.Requirements;
-import planmat.datarepresentation.User;
 import planmat.internaldata.UserPrefs;
 import ufrn.br.planmat.R;
 
@@ -24,9 +21,10 @@ public class PlanningActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_planning);
+        Log.d("oi", "chegou aqui");
 
-        userPrefs = (UserPrefs) getIntent().getSerializableExtra("UserPrefs");
-        Log.d("User name", userPrefs.getName());
+        //userPrefs = (UserPrefs) getIntent().getSerializableExtra("UserPrefs");
+        //Log.d("User name", userPrefs.getName());
 
         // TODO: mostrar o planejamento
     }

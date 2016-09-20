@@ -113,7 +113,7 @@ public class SIGAAServerAccessor implements ServerAccessor {
 
     private void getRequirementListByMajorID(int id, Response.Listener<String> listener) {
         dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
-                "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/matriz/stricto/" + id);
+                "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/matriz/graduacao/" + id);
     }
 
     private void getRequirementByID(int id, Response.Listener<String> listener) {

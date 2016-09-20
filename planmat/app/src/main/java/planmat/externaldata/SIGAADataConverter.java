@@ -19,7 +19,7 @@ class SIGAADataConverter {
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject obj = jsonArray.getJSONObject(i);
                 int id = obj.getInt("idCurso");
-                String name = obj.getString("curso");
+                String name = obj.getString("curso") + " (" + obj.getString("municipio") + ")";
                 IDList.Entry entry = new IDList.Entry(id, name);
                 list.getEntries().add(entry);
             }
@@ -32,8 +32,22 @@ class SIGAADataConverter {
 
     public IDList createRequirementsList(String json) {
         try {
-            JSONArray array = new JSONArray(json);
-            //TODO
+            IDList list = new IDList();
+            JSONArray jsonArray = new JSONArray(json);
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                if (obj.getBoolean("ativo")) {
+                    int id = obj.getInt("idCurriculo");
+                    String name = obj.getString("nome") + " (" + obj.getInt("ano") + ")";
+                    String e = obj.getString("enfase");
+                    if (e != null && !e.isEmpty() && !e.equals("null")) {
+                        name += " - " + e;
+                    }
+                    IDList.Entry entry = new IDList.Entry(id, name);
+                    list.getEntries().add(entry);
+                }
+            }
+            return list;
         } catch (JSONException e) {
             e.printStackTrace();
         }
