@@ -57,13 +57,35 @@ class SIGAADataConverter {
     public Requirements createRequirements(int id, String json) {
         Requirements requirements = new Requirements(id);
         try {
-            JSONObject obj = new JSONObject(json);
-            // TODO: converter os compomentes e adicionar ao requirements
+            JSONArray arr = new JSONArray(json);
+            // converter os compomentes e adicionar ao requirements
+            // TODO: colocar os componentes nos semestres corretos
+            ArrayList<Component> components = new ArrayList<Component>();
+            for(int i = 0; i < arr.length(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+                Component component = JSONtoComponent(obj);
+                components.add(component);
+            }
+            Semester semester = new Semester(components);
+            requirements.getSemesters().add(semester);
             Log.d("Response (requirements)", json);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return requirements;
+    }
+
+    public Component JSONtoComponent(JSONObject obj) {
+        try {
+            String name, code;
+            name = obj.getString("nome");
+            code = obj.getString("codigo");
+            Component component = new Component(name, code);
+            return component;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public User createUser(String jsonUser, String jsonLogin) {
@@ -72,6 +94,7 @@ class SIGAADataConverter {
             JSONObject studentInfo = new JSONObject(jsonUser);
             ArrayList<User.Entry> entries = new ArrayList<>();
             // TODO: preencher as entries com os dados da lista de vínculos do tipo discente
+            // alterar entry para ter matricula, curso etc?
             return new User(loginInfo.getInt("id"), studentInfo.getString("nome"), entries);
         } catch (JSONException e) {
             e.printStackTrace();
