@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.android.volley.Response;
+import com.google.api.client.googleapis.auth.clientlogin.ClientLogin;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,6 +93,16 @@ public class SIGAAServerAccessor implements ServerAccessor {
         getRequirementByID(id, listener);
     }
 
+    public void getInstitutionalRatingByProfessor(final Response.Listener<String> finalListener, final int institutionalCode, final int year, final int semester) {
+        final Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        };
+        getInstitutionalRating(institutionalCode, year, semester, listener);
+    }
+
     // ------------------------------------------------------------------------------
     // Data request methods
     // ------------------------------------------------------------------------------
@@ -121,52 +132,14 @@ public class SIGAAServerAccessor implements ServerAccessor {
                 "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/componentes/" + id);
     }
 
+    private void getInstitutionalRating(int institutionalCode, int year, int semester, Response.Listener<String> listener) {
+        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/avaliacaoInstitucional/docente/" + institutionalCode + "/" + year + "/" + semester);
+    }
+
     // ------------------------------------------------------------------------------
     // Auxiliary methods
     // ------------------------------------------------------------------------------
-
-    private int getRequirementsIDFromJSON(String jsonArray) {
-        try {
-            //TODO: critério para escolher curriculo do aluno
-            JSONArray matrixList = new JSONArray(jsonArray);
-            Log.d("CURRICULOS", matrixList.toString());
-            return matrixList.getJSONObject(0).getInt("idCurriculo");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
-    private String getMajorFromStudentJSON(String response) {
-        try {
-            JSONObject studentInfo = new JSONObject(response);
-            JSONObject list = studentInfo.getJSONObject("listaVinculosUsuario");
-            String studentString = list.getJSONArray("discentes").get(0).toString();
-            studentInfo = new JSONObject(studentString);
-            String major = studentInfo.getString("curso");
-            return major.substring(7); //considera que sempre inicia com "CURSO: "
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-    private int searchMajorIDFromJSON(String response, String major) {
-        try {
-            JSONArray jsonArray = new JSONArray(response);
-            for(int i = 0; i < jsonArray.length(); i++) {
-                JSONObject majorJSON = jsonArray.getJSONObject(i);
-                if(major.contains(majorJSON.getString("curso"))) {
-                    if(major.contains(majorJSON.getString("municipio"))) {
-                        return majorJSON.getInt("idCurso");
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
 
     private int getUserIDFromJSON(String response) {
         try {
