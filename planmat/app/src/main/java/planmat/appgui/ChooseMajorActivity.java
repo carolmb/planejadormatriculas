@@ -120,7 +120,7 @@ public class ChooseMajorActivity extends AppCompatActivity {
     public void buttonOK(View view) {
         if (selectedMajorID >= 0 && selectedRequirementsID >= 0) {
             UserPrefs userPrefs = new UserPrefs(user.getName(), user.getID(), selectedMajorID, selectedRequirementsID);
-            UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs);
+            UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, this);
             Intent i = new Intent(this, PlanningActivity.class);
             i.putExtra("UserPrefs", userPrefs);
             finish();
