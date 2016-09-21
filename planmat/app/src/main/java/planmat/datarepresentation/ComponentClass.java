@@ -1,9 +1,11 @@
 package planmat.datarepresentation;
 
+import java.io.Serializable;
+
 /**
  * Created by User on 03/09/2016.
  */
-public class ComponentClass {
+public class ComponentClass implements Serializable {
     private Component component;
     private String semester;
     private String professor;
