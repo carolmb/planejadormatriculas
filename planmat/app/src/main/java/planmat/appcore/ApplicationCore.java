@@ -13,6 +13,7 @@ public class ApplicationCore {
 
     private static ApplicationCore instance = new ApplicationCore();
     private ServerAccessor serverAccessor;
+    private Requirements requirements = null;
 
     private ApplicationCore() {
         serverAccessor = new SIGAAServerAccessor();
@@ -45,21 +46,37 @@ public class ApplicationCore {
     }
 
     public void requestRequirements(final Response.Listener<Requirements> listener, int id) {
-        serverAccessor.getRequirements(listener, id);
+        if (requirements != null && requirements.getID() == id) {
+            listener.onResponse(requirements);
+        } else {
+            serverAccessor.getRequirements(new Response.Listener<Requirements>() {
+                @Override
+                public void onResponse(Requirements response) {
+                    requirements = response;
+                    listener.onResponse(requirements);
+                }
+            }, id);
+        }
     }
 
-    public void requestComponent(final Response.Listener<Component> listener, final UserPrefs.Component comp) {
-        final Response.Listener<ClassList> classListener = new Response.Listener<ClassList>() {
-            @Override
-            public void onResponse(ClassList response) {
-                Component component = new Component(comp.getCode(), comp.getName(), response);
-                listener.onResponse(component);
-            }
-        };
-        serverAccessor.getClassList(classListener, comp.getCode());
+    public void requestComponent(final Response.Listener<Component> listener, String code) {
+        final Component component = requirements.getComponent(code);
+        if (component.getClassList() == null) {
+            final Response.Listener<ClassList> classListener = new Response.Listener<ClassList>() {
+                @Override
+                public void onResponse(ClassList response) {
+                    component.setClassList(response);
+                    listener.onResponse(component);
+                }
+            };
+            serverAccessor.getClassList(classListener, code);
+        } else {
+            listener.onResponse(component);
+        }
     }
 
-    public void requestStatistics(final Response.Listener<StatisticsClass> listener, final String code) {
-        serverAccessor.getStatistics(listener, "GRADUACAO", code);
+    public Requirements getRequirements() {
+        return requirements;
     }
+
 }

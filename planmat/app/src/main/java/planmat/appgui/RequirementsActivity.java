@@ -1,23 +1,17 @@
 package planmat.appgui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
-import java.util.ArrayList;
-
+import planmat.appcore.ApplicationCore;
 import planmat.datarepresentation.Component;
 import planmat.datarepresentation.Requirements;
 import planmat.datarepresentation.Semester;
-import planmat.internaldata.UserPrefs;
 import ufrn.br.planmat.R;
 
 public class RequirementsActivity extends AppCompatActivity {
@@ -26,12 +20,11 @@ public class RequirementsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requirements);
-
-        Requirements requirements = (Requirements) getIntent().getSerializableExtra("Requirements");
-        createListView(requirements);
+        createListView();
     }
 
-    private void createListView(final Requirements requirements) {
+    private void createListView() {
+        final Requirements requirements = ApplicationCore.getInstance().getRequirements();
         RelativeLayout relativeLayout = new RelativeLayout(this);
         String[] semesters = new String[requirements.getSemesters().size()];
         for(int i = 0; i < requirements.getSemesters().size(); i++) {
@@ -61,7 +54,7 @@ public class RequirementsActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Component comp = selectedSemester.getComponents().get(position);
-                        getIntent().putExtra("Component", new UserPrefs.Component(comp.getCode(), comp.getName()));
+                        getIntent().putExtra("Code", comp.getCode());
                         setResult(RESULT_OK, getIntent());
                         finish();
                     }

@@ -94,25 +94,22 @@ public class SIGAAServerAccessor implements ServerAccessor {
     }
 
     public void getClassList(final Response.Listener<ClassList> finalListener, final String code) {
-        final Response.Listener<String> listener = new Response.Listener<String>() {
+        final Response.Listener classListener = new Response.Listener<String>() {
             @Override
-            public void onResponse(String response) {
-                ClassList classList = dataConverter.createClassList(response);
-                finalListener.onResponse(classList);
+            public void onResponse(final String classJson) {
+                Log.d("RESPONSE", "Class json");
+                final Response.Listener<String> statListener = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String statJson) {
+                        Log.d("RESPONSE", "Stat json");
+                        ClassList list = dataConverter.createClassList(classJson, statJson);
+                        finalListener.onResponse(list);
+                    }
+                };
+                getStatisticsByCode(code, statListener);
             }
         };
-        getClassListByCode(code, listener);
-    }
-
-    public void getStatistics(final Response.Listener<StatisticsClass> finalListener, final String level, final String code) {
-        final Response.Listener<String> listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                StatisticsClass statisticsClass = dataConverter.createStatisticsClass(response);
-                finalListener.onResponse(statisticsClass);
-            }
-        };
-        getStatisticsByCodeLevel(level, code, listener);
+        getClassListByCode(code, classListener);
     }
 
     public void getInstitutionalRatingByProfessor(final Response.Listener<String> finalListener,
@@ -165,9 +162,9 @@ public class SIGAAServerAccessor implements ServerAccessor {
                 "https://apitestes.info.ufrn.br/ensino-services/services/consulta/turmas/usuario/docente/componente/" + code);
     }
 
-    private void getStatisticsByCodeLevel(String level, String code, Response.Listener<String> listener) {
+    private void getStatisticsByCode(String code, Response.Listener<String> listener) {
         dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
-                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/turmas/estatisticas/" + level + "/" + code);
+                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/turmas/estatisticas/GRADUACAO/" + code);
     }
 
     // ------------------------------------------------------------------------------

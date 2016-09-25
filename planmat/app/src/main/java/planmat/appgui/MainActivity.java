@@ -13,6 +13,7 @@ import com.android.volley.Response;
 import java.io.Serializable;
 
 import planmat.appcore.ApplicationCore;
+import planmat.datarepresentation.Requirements;
 import planmat.datarepresentation.User;
 import planmat.internaldata.UserPrefs;
 import planmat.internaldata.UserPrefsAccessor;
@@ -55,12 +56,18 @@ public class MainActivity extends AppCompatActivity {
      */
     private void redirect(User user) {
         final Activity activity = this;
-        UserPrefs prefs = UserPrefsAccessor.getInstance().loadUserPrefs(user.getID(), activity);
+        final UserPrefs prefs = UserPrefsAccessor.getInstance().loadUserPrefs(user.getID(), activity);
         if (prefs != null) {
             final Intent i = new Intent(activity, PlanningActivity.class);
-            i.putExtra("UserPrefs", prefs);
-            finish();
-            activity.startActivity(i);
+            Response.Listener<Requirements> listener = new Response.Listener<Requirements>() {
+                @Override
+                public void onResponse(Requirements response) {
+                    i.putExtra("UserPrefs", prefs);
+                    finish();
+                    activity.startActivity(i);
+                }
+            };
+            ApplicationCore.getInstance().requestRequirements(listener, prefs.getRequirementsID());
         } else {
             final Intent i = new Intent(activity, ChooseMajorActivity.class);
             i.putExtra("User", user);

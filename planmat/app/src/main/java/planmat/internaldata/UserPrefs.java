@@ -9,36 +9,14 @@ import java.util.ArrayList;
 public class UserPrefs implements Serializable {
 
     public static class Semester implements Serializable {
-        private ArrayList<Component> components;
+        private ArrayList<String> components;
 
         public Semester() {
             this.components = new ArrayList<>();
         }
 
-        public ArrayList<Component> getComponents() {
+        public ArrayList<String> getComponents() {
             return components;
-        }
-    }
-
-    public static class Component implements Serializable {
-        private String code;
-        private String name;
-
-        public Component(String code, String name) {
-            this.code = code;
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getCode() {
-            return code;
-        }
-
-        public String toString() {
-            return code + " - " + name;
         }
     }
 

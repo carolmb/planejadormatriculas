@@ -49,6 +49,7 @@ public class PlanningActivity extends AppCompatActivity {
     // ------------------------------------------------------------------------------
 
     private void createSemesterList() {
+        final Requirements requirements = ApplicationCore.getInstance().getRequirements();
         layout.removeAllViews();
         int i = 1;
         for (final UserPrefs.Semester s : userPrefs.getPlanning()) {
@@ -57,20 +58,22 @@ public class PlanningActivity extends AppCompatActivity {
             i++;
             layout.addView(newText);
             if (s.getComponents().size() == 0) {
-                createComponentButton(-1, s);
+                createComponentButton(-1, s, requirements);
             } else {
                 for (int j = 0; j < s.getComponents().size(); j++) {
-                    createComponentButton(j, s);
+                    createComponentButton(j, s, requirements);
                 }
             }
         }
     }
 
-    private Button createComponentButton(final int id, final UserPrefs.Semester s) {
+    private Button createComponentButton(final int id, final UserPrefs.Semester s, Requirements requirements) {
         Button button = new Button(this);
         button.setLayoutParams(new ViewGroup.LayoutParams(-1, -2));
         if (id >= 0) {
-            button.setText(s.getComponents().get(id).toString());
+            String code = s.getComponents().get(id);
+            Component comp = requirements.getComponent(code);
+            button.setText(code + " - " + comp.getName());
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -137,7 +140,7 @@ public class PlanningActivity extends AppCompatActivity {
         btnStatistics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                seeStatictics(v);
+                seeStatistics(v);
                 dialog.cancel();
             }
         });
@@ -202,11 +205,17 @@ public class PlanningActivity extends AppCompatActivity {
         }
     }
 
-    public void seeStatictics(View view) {
-        Intent i = new Intent(this, StatisticsActivity.class);
-        UserPrefs.Component comp = selectedSemester.getComponents().get(selectedID);
-        i.putExtra("Component", comp);
-        startActivity(i);
+    public void seeStatistics(View view) {
+        final Intent i = new Intent(this, StatisticsActivity.class);
+        Response.Listener<Component> listener = new Response.Listener<Component>() {
+            @Override
+            public void onResponse(Component response) {
+                i.putExtra("Component", response);
+                startActivity(i);
+            }
+        };
+        String code = selectedSemester.getComponents().get(selectedID);
+        ApplicationCore.getInstance().requestComponent(listener, code);
     }
 
     public void showDetails(View view) {
@@ -218,15 +227,15 @@ public class PlanningActivity extends AppCompatActivity {
                 startActivity(i);
             }
         };
-        UserPrefs.Component comp = selectedSemester.getComponents().get(selectedID);
-        ApplicationCore.getInstance().requestComponent(listener, comp);
+        String code = selectedSemester.getComponents().get(selectedID);
+        ApplicationCore.getInstance().requestComponent(listener, code);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            Serializable s = data.getSerializableExtra("Component");
-            if (s != null) {
-                selectedSemester.getComponents().add(selectedID + 1, (UserPrefs.Component) s);
+            String code = data.getStringExtra("Code");
+            if (code != null) {
+                selectedSemester.getComponents().add(selectedID + 1, code);
                 savePrefs();
                 createSemesterList();
             }

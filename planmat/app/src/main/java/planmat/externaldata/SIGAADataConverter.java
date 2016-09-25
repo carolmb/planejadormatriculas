@@ -55,15 +55,14 @@ class SIGAADataConverter {
     }
 
     public Requirements createRequirements(int id, String json) {
-        Requirements requirements = new Requirements(id);
         try {
             JSONArray arr = new JSONArray(json);
-            ArrayList<Semester> semesters = requirements.getSemesters();
+            ArrayList<Semester> semesters = new ArrayList<>();
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject obj = arr.getJSONObject(i);
                 int semesterOffer = obj.getInt("semestreOferta");
 
-                Component component = JSONtoComponent(obj);
+                Component component = createComponent(obj);
 
                 while (semesters.size() <= semesterOffer) { /* Caso ainda não tenha o semestre da componente atual */
                     ArrayList<Component> components = new ArrayList<Component>();
@@ -72,18 +71,19 @@ class SIGAADataConverter {
                 }
                 semesters.get(semesterOffer).getComponents().add(component);
             }
+            return new Requirements(id, semesters);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return requirements;
+        return null;
     }
 
-    public Component JSONtoComponent(JSONObject obj) {
+    private Component createComponent(JSONObject obj) {
         try {
             String name, code;
             name = obj.getString("nome");
             code = obj.getString("codigo");
-            Component component = new Component(name, code, null);
+            Component component = new Component(code, name, null);
             return component;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -91,45 +91,15 @@ class SIGAADataConverter {
         return null;
     }
 
-    public StatisticsClass createStatisticsClass(String json) {
-        try {
-            JSONArray arr = new JSONArray(json);
-            StatisticsClass statisticsClass = new StatisticsClass();
-            for(int i = 0; i < arr.length(); i++) {
-                JSONObject obj = arr.getJSONObject(i);
-                StatisticsClass.Component component = JSONtoStatisticsComponent(obj);
-                statisticsClass.getStatistics().add(component);
-            }
-            return statisticsClass;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private StatisticsClass.Component JSONtoStatisticsComponent(JSONObject obj) {
-        try {
-            String name = obj.getString("nomeComponente");
-            String code = obj.getString("codigoComponente");
-            int year = obj.getInt("ano");
-            int semester = obj.getInt("periodo");
-            int passed = obj.getInt("aprovados");
-            int failed = obj.getInt("reprovados");
-            StatisticsClass.Component component = new StatisticsClass.Component(name, code, year, semester, passed, failed);
-            return component;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public ClassList createClassList(String json) {
+    public ClassList createClassList(String classJson, String statJson) {
         try {
             ClassList classList = new ClassList();
-            JSONArray jsonArray = new JSONArray(json);
-            for(int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                ClassList.Entry entry = JSONtoClass(jsonObject);
+            JSONArray classArray = new JSONArray(classJson);
+            JSONArray statArray = new JSONArray(statJson);
+            for(int i = 0; i < classArray.length(); i++) {
+                JSONObject classObj = classArray.getJSONObject(i);
+                JSONObject statObj = statArray.getJSONObject(i);
+                ClassList.Entry entry = createClassEntry(classObj, statObj);
                 if (entry == null) {
                     Log.d("NULL ENTRY", "NULL ENTRY");
                 } else {
@@ -143,21 +113,23 @@ class SIGAADataConverter {
         return null;
     }
 
-    private ClassList.Entry JSONtoClass(JSONObject jsonObject) {
+    private ClassList.Entry createClassEntry(JSONObject classObj, JSONObject statObj) {
         try {
-            int id = jsonObject.getInt("id");
-            String code = jsonObject.getString("codigo");
-            String semester = jsonObject.getString("anoPeriodoString");
+            int id = classObj.getInt("id");
+            String code = classObj.getString("codigo");
+            String semester = classObj.getString("anoPeriodoString");
             ArrayList<String> professors = new ArrayList<>();
-            JSONArray array = jsonObject.getJSONArray("docentesList");
+            JSONArray array = classObj.getJSONArray("docentesList");
             for (int i = 0; i < array.length(); i++) {
                 JSONObject prof = array.getJSONObject(i);
                 professors.add(prof.getString("nome"));
             }
-            String hour = jsonObject.getString("descricaoHorario");
-            Log.e("json", jsonObject.toString());
-            ClassList.Entry entry = new ClassList.Entry(id, code, semester, professors, hour);
-            return entry;
+            String hour = classObj.getString("descricaoHorario");
+            Log.e("json", classObj.toString());
+            int successes = statObj.getInt("aprovados");
+            int quits = statObj.getInt("trancados");
+            int fails = statObj.getInt("reprovados");
+            return new ClassList.Entry(id, code, semester, professors, hour, successes, quits, fails);
         } catch (JSONException e) {
             e.printStackTrace();
         }
