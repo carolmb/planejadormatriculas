@@ -23,6 +23,8 @@ public class UserPrefs implements Serializable {
     public static class Component implements Serializable {
         private String code;
         private String name;
+        private float averagePassed;
+        private float averageFailed;
 
         public Component(String code, String name) {
             this.code = code;
@@ -40,6 +42,10 @@ public class UserPrefs implements Serializable {
         public String toString() {
             return code + " - " + name;
         }
+
+        public void setAveragePassed(float a) { averagePassed = a; }
+
+        public void setAverageFailed(float a) { averageFailed = a; }
     }
 
     private String name;

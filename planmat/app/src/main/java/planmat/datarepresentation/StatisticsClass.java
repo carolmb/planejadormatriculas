@@ -37,4 +37,20 @@ public class StatisticsClass {
     public ArrayList<Component> getStatistics() {
         return statistics;
     }
+
+    public float averagePassed() {
+        float average = 0;
+        for (Component c: statistics) {
+            average+=c.passed;
+        }
+        return average/statistics.size();
+    }
+
+    public float averageFailed() {
+        float average = 0;
+        for (Component c: statistics) {
+            average+=c.failed;
+        }
+        return average/statistics.size();
+    }
 }

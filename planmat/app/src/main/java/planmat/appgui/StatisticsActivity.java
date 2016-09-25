@@ -29,11 +29,13 @@ public class StatisticsActivity extends AppCompatActivity {
         seeComponentStatistics(component);
     }
 
-    private void seeComponentStatistics(UserPrefs.Component component) {
+    private void seeComponentStatistics(final UserPrefs.Component component) {
         Log.e("component", component.getName());
         Response.Listener<StatisticsClass> listener = new Response.Listener<StatisticsClass>() {
             @Override
             public void onResponse(StatisticsClass response) {
+                component.setAveragePassed(response.averagePassed());
+                component.setAverageFailed(response.averageFailed());
                 for(StatisticsClass.Component c : response.getStatistics()) {
                     Log.e("estatisticas", c.toString());
                 }
