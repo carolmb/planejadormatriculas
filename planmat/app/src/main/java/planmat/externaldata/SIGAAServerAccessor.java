@@ -101,7 +101,7 @@ public class SIGAAServerAccessor implements ServerAccessor {
                 finalListener.onResponse(classList);
             }
         };
-        getAllComponentClassByCode(code, listener);
+        getClassListByCode(code, listener);
     }
 
     public void getInstitutionalRatingByProfessor(final Response.Listener<String> finalListener, final int institutionalCode, final int year, final int semester) {
@@ -148,7 +148,7 @@ public class SIGAAServerAccessor implements ServerAccessor {
                 "https://apitestes.info.ufrn.br/ensino-services/services/consulta/avaliacaoInstitucional/docente/" + institutionalCode + "/" + year + "/" + semester);
     }
 
-    private void getAllComponentClassByCode(String code, Response.Listener<String> listener) {
+    private void getClassListByCode(String code, Response.Listener<String> listener) {
         dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
                 "https://apitestes.info.ufrn.br/ensino-services/services/consulta/turmas/usuario/docente/componente/" + code);
     }
