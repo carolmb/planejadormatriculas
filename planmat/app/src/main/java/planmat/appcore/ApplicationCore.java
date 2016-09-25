@@ -59,4 +59,7 @@ public class ApplicationCore {
         serverAccessor.getClassList(classListener, comp.getCode());
     }
 
+    public void requestStatistics(final Response.Listener<StatisticsClass> listener, final String code) {
+        serverAccessor.getStatistics(listener, "GRADUACAO", code);
+    }
 }

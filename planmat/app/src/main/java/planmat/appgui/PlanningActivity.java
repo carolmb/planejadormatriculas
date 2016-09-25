@@ -107,6 +107,7 @@ public class PlanningActivity extends AppCompatActivity {
         Button btnAdd = (Button) dialog.findViewById(R.id.buttonAdd);
         Button btnRemove = (Button) dialog.findViewById(R.id.buttonRemove);
         Button btnDetails = (Button) dialog.findViewById(R.id.buttonDetails);
+        Button btnStatistics = (Button) dialog.findViewById(R.id.buttonStatistics);
         Button btnCancel = (Button) dialog.findViewById(R.id.buttonCancel);
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
@@ -132,6 +133,15 @@ public class PlanningActivity extends AppCompatActivity {
                 }
             });
         }
+
+        btnStatistics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                seeStatictics(v);
+                dialog.cancel();
+            }
+        });
+
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,6 +200,13 @@ public class PlanningActivity extends AppCompatActivity {
             createSemesterList();
             selectedSemester = null;
         }
+    }
+
+    public void seeStatictics(View view) {
+        Intent i = new Intent(this, StatisticsActivity.class);
+        UserPrefs.Component comp = selectedSemester.getComponents().get(selectedID);
+        i.putExtra("Component", comp);
+        startActivity(i);
     }
 
     public void showDetails(View view) {
