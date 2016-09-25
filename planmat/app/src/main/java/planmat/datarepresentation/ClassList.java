@@ -12,14 +12,16 @@ public class ClassList implements Serializable {
 
     public static class Entry implements Serializable {
         private int id;
+        private String code;
         private String semester;
-        private String professor;
+        private ArrayList<String> professors;
         private String hour;
 
-        public Entry(int id, String semester, String professor, String hour) {
+        public Entry(int id, String code, String semester, ArrayList<String> professors, String hour) {
             this.id = id;
+            this.code = code;
             this.semester = semester;
-            this.professor = professor;
+            this.professors = professors;
             this.hour = hour;
         }
 
@@ -31,8 +33,8 @@ public class ClassList implements Serializable {
             return semester;
         }
 
-        public String getProfessor() {
-            return professor;
+        public ArrayList<String> getProfessors() {
+            return professors;
         }
 
         public String getHour() {
@@ -40,7 +42,7 @@ public class ClassList implements Serializable {
         }
 
         public String toString() {
-            return semester + " - " + id;
+            return semester + " - " + code;
         }
     }
 

@@ -25,7 +25,7 @@ public class ComponentActivity extends AppCompatActivity {
 
     private void addText(String string) {
         TextView text = new TextView(this);
-        text.setText("Nome: " + string);
+        text.setText(string);
         layout.addView(text);
     }
 
@@ -35,7 +35,10 @@ public class ComponentActivity extends AppCompatActivity {
         addText("Turmas:");
         for (ClassList.Entry entry : component.getClassList().getEntries()) {
             addText(entry.toString());
-            addText("   Docente(s):" + entry.getProfessor());
+            addText("   Docente(s):");
+            for (String prof : entry.getProfessors()) {
+                addText("       " + prof);
+            }
             addText("   Horário:" + entry.getHour());
         }
     }

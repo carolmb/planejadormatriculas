@@ -83,8 +83,48 @@ class SIGAADataConverter {
             String name, code;
             name = obj.getString("nome");
             code = obj.getString("codigo");
-            Component component = new Component(name, code);
+            Component component = new Component(name, code, null);
             return component;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ClassList createClassList(String json) {
+        try {
+            ClassList classList = new ClassList();
+            JSONArray jsonArray = new JSONArray(json);
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                ClassList.Entry entry = JSONtoClass(jsonObject);
+                if (entry == null) {
+                    Log.d("NULL ENTRY", "NULL ENTRY");
+                } else {
+                    classList.getEntries().add(entry);
+                }
+            }
+            return classList;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private ClassList.Entry JSONtoClass(JSONObject jsonObject) {
+        try {
+            int id = jsonObject.getInt("id");
+            String code = jsonObject.getString("codigo");
+            String semester = jsonObject.getString("anoPeriodoString");
+            ArrayList<String> professors = new ArrayList<>();
+            JSONArray array = jsonObject.getJSONArray("docentesList");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject prof = array.getJSONObject(i);
+                professors.add(prof.getString("nome"));
+            }
+            String hour = jsonObject.getString("descricaoHorario");
+            ClassList.Entry entry = new ClassList.Entry(id, code, semester, professors, hour);
+            return entry;
         } catch (JSONException e) {
             e.printStackTrace();
         }
