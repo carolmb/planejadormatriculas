@@ -19,11 +19,23 @@ public class Component implements Serializable {
         this.corequisite = new ArrayList<Component>();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
     public ArrayList<Component> getPrerequisite() {
         return prerequisite;
     }
 
     public ArrayList<Component> getCorequisite() {
         return corequisite;
+    }
+
+    public String toString() {
+        return code + " - " + name;
     }
 }

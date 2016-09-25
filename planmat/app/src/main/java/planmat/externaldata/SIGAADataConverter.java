@@ -58,17 +58,20 @@ class SIGAADataConverter {
         Requirements requirements = new Requirements(id);
         try {
             JSONArray arr = new JSONArray(json);
-            // converter os compomentes e adicionar ao requirements
-            // TODO: colocar os componentes nos semestres corretos
-            ArrayList<Component> components = new ArrayList<Component>();
-            for(int i = 0; i < arr.length(); i++) {
+            ArrayList<Semester> semesters = requirements.getSemesters();
+            for (int i = 0; i < arr.length(); i++) {
                 JSONObject obj = arr.getJSONObject(i);
+                int semesterOffer = obj.getInt("semestreOferta");
+
                 Component component = JSONtoComponent(obj);
-                components.add(component);
+
+                while (semesters.size() <= semesterOffer) { /* Caso ainda não tenha o semestre da componente atual */
+                    ArrayList<Component> components = new ArrayList<Component>();
+                    Semester newSemester = new Semester(components);
+                    semesters.add(newSemester);
+                }
+                semesters.get(semesterOffer).getComponents().add(component);
             }
-            Semester semester = new Semester(components);
-            requirements.getSemesters().add(semester);
-            Log.d("Response (requirements)", json);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -93,8 +96,6 @@ class SIGAADataConverter {
             JSONObject loginInfo = new JSONObject(jsonLogin);
             JSONObject studentInfo = new JSONObject(jsonUser);
             ArrayList<User.Entry> entries = new ArrayList<>();
-            // TODO: preencher as entries com os dados da lista de vínculos do tipo discente
-            // alterar entry para ter matricula, curso etc?
             return new User(loginInfo.getInt("id"), studentInfo.getString("nome"), entries);
         } catch (JSONException e) {
             e.printStackTrace();

@@ -1,5 +1,7 @@
 package planmat.datarepresentation;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -11,5 +13,21 @@ public class Semester implements Serializable {
 
     public Semester(ArrayList<Component> components) {
         this.components = components;
+    }
+
+    public ArrayList<Component> getComponents() {
+        return components;
+    }
+
+    public String[] getComponentsToString() {
+        if(components == null) {
+            Log.e("COMPONENTS", "components is null");
+            return null;
+        }
+        String[] strings = new String[components.size()];
+        for(int i = 0; i < components.size(); i++) {
+            strings[i] = components.get(i).toString();
+        }
+        return strings;
     }
 }
