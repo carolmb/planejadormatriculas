@@ -1,7 +1,9 @@
 package planmat.appgui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -52,6 +54,16 @@ public class RequirementsActivity extends AppCompatActivity {
                         componentsOfSemester);
                 ListView listView = new ListView(view.getContext());
                 listView.setAdapter(arrayAdapter);
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent i = new Intent(view.getContext(), AddComponentPlanning.class);
+                        //TODO: mandar código e nome do componente
+                        startActivity(i);
+                    }
+                });
+
                 relativeLayout.addView(listView);
                 setContentView(relativeLayout);
             }
