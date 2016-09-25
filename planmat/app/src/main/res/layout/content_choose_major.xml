@@ -14,12 +14,11 @@
         android:layout_height="wrap_content"
         android:text="Choose Major:"
         android:id="@+id/txtMajor"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="67dp"
         android:textColor="@color/abc_primary_text_material_light"
         android:textSize="20dp"
-        android:inputType="none" />
+        android:inputType="none"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <Spinner
         android:layout_width="wrap_content"
@@ -62,7 +61,7 @@
         android:text="Continue"
         android:id="@+id/buttonOK"
         android:onClick="buttonOK"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/spnRequirements"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="141dp" />
+        android:layout_marginTop="51dp" />
 </RelativeLayout>

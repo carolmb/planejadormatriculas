@@ -9,14 +9,70 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="planmat.appgui.PlanningActivity">
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ver estrutura curricular"
-        android:id="@+id/buttonRequirements"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:onClick="seeRequirements" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Novo"
+                android:id="@+id/addButton"
+                android:layout_below="@+id/expandableListView"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remover"
+                android:id="@+id/rmvButton" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ver estrutura"
+                android:id="@+id/reqButton"
+                android:onClick="seeRequirements" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="369dp"
+            android:layout_height="match_parent"
+            android:id="@+id/scrollView" >
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/semesters">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="30dp"
+                    android:text="Semestre"
+                    android:id="@+id/textView" />
+
+                <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp"
+                    android:id="@+id/listView"
+                    tools:listitem="@android:layout/simple_list_item_single_choice"
+                    android:choiceMode="singleChoice" />
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+
 </RelativeLayout>
