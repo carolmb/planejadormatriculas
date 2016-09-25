@@ -29,6 +29,14 @@ public class UserPrefs implements Serializable {
             this.name = name;
         }
 
+        public String getName() {
+            return name;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
         public String toString() {
             return code + " - " + name;
         }

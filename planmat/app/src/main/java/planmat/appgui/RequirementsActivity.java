@@ -61,7 +61,7 @@ public class RequirementsActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Component comp = selectedSemester.getComponents().get(position);
-                        getIntent().putExtra("Component", new UserPrefs.Component(comp.getName(), comp.getCode()));
+                        getIntent().putExtra("Component", new UserPrefs.Component(comp.getCode(), comp.getName()));
                         setResult(RESULT_OK, getIntent());
                         finish();
                     }

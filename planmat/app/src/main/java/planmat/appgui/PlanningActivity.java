@@ -2,31 +2,21 @@ package planmat.appgui;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.android.volley.Response;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.Serializable;
 
 import planmat.appcore.ApplicationCore;
+import planmat.datarepresentation.Component;
 import planmat.datarepresentation.Requirements;
 import planmat.internaldata.UserPrefs;
 import planmat.internaldata.UserPrefsAccessor;
@@ -40,11 +30,6 @@ public class PlanningActivity extends AppCompatActivity {
 
     private int selectedID = -1;
     private UserPrefs.Semester selectedSemester = null;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,7 +193,16 @@ public class PlanningActivity extends AppCompatActivity {
     }
 
     public void showDetails(View view) {
-        // TODO: abrir uma nova Actitivy com os detalhes do componente
+        final Intent i = new Intent(this, ComponentActivity.class);
+        Response.Listener<Component> listener = new Response.Listener<Component>() {
+            @Override
+            public void onResponse(Component response) {
+                i.putExtra("Component", response);
+                startActivity(i);
+            }
+        };
+        UserPrefs.Component comp = selectedSemester.getComponents().get(selectedID);
+        ApplicationCore.getInstance().requestComponent(listener, comp.getCode());
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

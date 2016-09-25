@@ -9,14 +9,13 @@ import java.util.ArrayList;
 public class Component implements Serializable {
     private String name;
     private String code;
-    private ArrayList<Component> prerequisite;
-    private ArrayList<Component> corequisite;
+
+    private ClassList classList;
 
     public Component(String name, String code) {
         this.name = name;
         this.code = code;
-        this.prerequisite = new ArrayList<Component>();
-        this.corequisite = new ArrayList<Component>();
+        this.classList = new ClassList();
     }
 
     public String getName() {
@@ -27,12 +26,8 @@ public class Component implements Serializable {
         return code;
     }
 
-    public ArrayList<Component> getPrerequisite() {
-        return prerequisite;
-    }
-
-    public ArrayList<Component> getCorequisite() {
-        return corequisite;
+    public ClassList getClassList() {
+        return classList;
     }
 
     public String toString() {

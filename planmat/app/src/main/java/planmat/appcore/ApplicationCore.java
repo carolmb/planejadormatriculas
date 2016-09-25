@@ -47,4 +47,8 @@ public class ApplicationCore {
         serverAccessor.getRequirements(listener, id);
     }
 
+    public void requestComponent(final Response.Listener<Component> listener, String code) {
+        // TODO
+    }
+
 }
