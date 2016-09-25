@@ -7,6 +7,7 @@ import com.android.volley.Response;
 import planmat.datarepresentation.*;
 import planmat.externaldata.ServerAccessor;
 import planmat.externaldata.SIGAAServerAccessor;
+import planmat.internaldata.UserPrefs;
 
 public class ApplicationCore {
 
@@ -47,8 +48,15 @@ public class ApplicationCore {
         serverAccessor.getRequirements(listener, id);
     }
 
-    public void requestComponent(final Response.Listener<Component> listener, String code) {
-        // TODO
+    public void requestComponent(final Response.Listener<Component> listener, final UserPrefs.Component comp) {
+        final Response.Listener<ClassList> classListener = new Response.Listener<ClassList>() {
+            @Override
+            public void onResponse(ClassList response) {
+                Component component = new Component(comp.getCode(), comp.getName(), response);
+                listener.onResponse(component);
+            }
+        };
+        serverAccessor.getClassList(classListener, comp.getCode());
     }
 
 }

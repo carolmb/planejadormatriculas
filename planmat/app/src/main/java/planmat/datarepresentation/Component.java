@@ -12,10 +12,10 @@ public class Component implements Serializable {
 
     private ClassList classList;
 
-    public Component(String name, String code) {
+    public Component(String code, String name, ClassList list) {
         this.name = name;
         this.code = code;
-        this.classList = new ClassList();
+        this.classList = list;
     }
 
     public String getName() {

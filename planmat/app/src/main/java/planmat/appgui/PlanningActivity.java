@@ -202,7 +202,7 @@ public class PlanningActivity extends AppCompatActivity {
             }
         };
         UserPrefs.Component comp = selectedSemester.getComponents().get(selectedID);
-        ApplicationCore.getInstance().requestComponent(listener, comp.getCode());
+        ApplicationCore.getInstance().requestComponent(listener, comp);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

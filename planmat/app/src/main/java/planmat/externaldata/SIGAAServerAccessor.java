@@ -93,6 +93,11 @@ public class SIGAAServerAccessor implements ServerAccessor {
         getRequirementByID(id, listener);
     }
 
+    @Override
+    public void getClassList(Response.Listener<ClassList> finalListener, String code) {
+
+    }
+
     public void getInstitutionalRatingByProfessor(final Response.Listener<String> finalListener, final int institutionalCode, final int year, final int semester) {
         final Response.Listener<String> listener = new Response.Listener<String>() {
             @Override

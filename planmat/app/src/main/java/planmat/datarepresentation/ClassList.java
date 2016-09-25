@@ -10,7 +10,7 @@ import planmat.internaldata.UserPrefs;
  */
 public class ClassList implements Serializable {
 
-    public class Entry implements Serializable {
+    public static class Entry implements Serializable {
         private int id;
         private String semester;
         private String professor;
