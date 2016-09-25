@@ -26,4 +26,8 @@ public class Component implements Serializable {
     public ArrayList<Component> getCorequisite() {
         return corequisite;
     }
+
+    public String toString() {
+        return "Nome: " + name + " \nCódigo: " + code;
+    }
 }
