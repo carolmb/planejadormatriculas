@@ -93,6 +93,17 @@ public class SIGAAServerAccessor implements ServerAccessor {
         getRequirementByID(id, listener);
     }
 
+    public void getClassList(final Response.Listener<ClassList> finalListener, final String code) {
+        final Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                ClassList classList = dataConverter.createClassList(code, response);
+                finalListener.onResponse(classList);
+            }
+        };
+        getAllComponentClassByCode(code, listener);
+    }
+
     public void getInstitutionalRatingByProfessor(final Response.Listener<String> finalListener, final int institutionalCode, final int year, final int semester) {
         final Response.Listener<String> listener = new Response.Listener<String>() {
             @Override
@@ -135,6 +146,11 @@ public class SIGAAServerAccessor implements ServerAccessor {
     private void getInstitutionalRating(int institutionalCode, int year, int semester, Response.Listener<String> listener) {
         dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
                 "https://apitestes.info.ufrn.br/ensino-services/services/consulta/avaliacaoInstitucional/docente/" + institutionalCode + "/" + year + "/" + semester);
+    }
+
+    private void getAllComponentClassByCode(String code, Response.Listener<String> listener) {
+        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/turmas/usuario/docente/componente/" + code);
     }
 
     // ------------------------------------------------------------------------------

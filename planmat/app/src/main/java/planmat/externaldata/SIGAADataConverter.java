@@ -91,6 +91,38 @@ class SIGAADataConverter {
         return null;
     }
 
+    public ClassList createClassList(String code, String json) {
+        try {
+            ClassList classList = new ClassList();
+            ArrayList<ClassList.Entry> entries = new ArrayList<ClassList.Entry>();
+            JSONArray jsonArray = new JSONArray(json);
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                ClassList.Entry entry = JSONtoEntry(jsonObject);
+                entries.add(entry);
+            }
+            classList.getEntries().addAll(entries);
+            return classList;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private ClassList.Entry JSONtoEntry(JSONObject jsonObject) {
+        try {
+            int id = jsonObject.getInt("id");
+            String semester = jsonObject.getString("anoPeriodoString");
+            String professor = jsonObject.getString("docentesTurma");
+            String hour = jsonObject.getString("descricaoHorario");
+            ClassList.Entry entry = new ClassList.Entry(id, semester, professor, hour);
+            return entry;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public User createUser(String jsonUser, String jsonLogin) {
         try {
             JSONObject loginInfo = new JSONObject(jsonLogin);

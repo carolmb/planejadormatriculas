@@ -47,6 +47,10 @@ public class ApplicationCore {
         serverAccessor.getRequirements(listener, id);
     }
 
+    public void requestClassList(final Response.Listener<ClassList> listener, String code) {
+        serverAccessor.getClassList(listener, code);
+    }
+
     public void requestComponent(final Response.Listener<Component> listener, String code) {
         // TODO
     }
