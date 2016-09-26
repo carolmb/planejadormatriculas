@@ -2,6 +2,7 @@ package planmat.appgui;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -262,6 +263,7 @@ public class PlanningActivity extends AppCompatActivity {
             TextView text = new TextView(this);
             LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.emptyLayout);
             text.setText("Tem muitas disciplina difíceis num semestre só!");
+            text.setTextColor(Color.BLACK);
             layout.addView(text);
             dialog.show();
         }
