@@ -32,6 +32,10 @@ public class StatList implements Serializable {
             return quits;
         }
 
+        public String toString() {
+            return "Aprovados: " + successes + "\nReprovados: " + quits + "\nTrancamentos: " + quits;
+        }
+
     }
 
 
