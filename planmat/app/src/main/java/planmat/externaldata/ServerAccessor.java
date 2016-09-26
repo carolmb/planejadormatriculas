@@ -17,4 +17,5 @@ public interface ServerAccessor {
     void getRequirementsList(final Response.Listener<IDList> finalListener, int majorID);
     void getRequirements(final Response.Listener<Requirements> finalListener, int id);
     void getClassList(final Response.Listener<ClassList> finalListener, final String code);
+    void getStatList(final Response.Listener<StatList> finalListener, final String code);
 }

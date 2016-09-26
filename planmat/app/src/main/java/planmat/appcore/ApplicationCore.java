@@ -59,14 +59,21 @@ public class ApplicationCore {
         }
     }
 
-    public void requestComponent(final Response.Listener<Component> listener, String code) {
+    public void requestComponent(final Response.Listener<Component> listener, final String code) {
         final Component component = requirements.getComponent(code);
         if (component.getClassList() == null) {
             final Response.Listener<ClassList> classListener = new Response.Listener<ClassList>() {
                 @Override
                 public void onResponse(ClassList response) {
                     component.setClassList(response);
-                    listener.onResponse(component);
+                    final Response.Listener<StatList> statListener = new Response.Listener<StatList>() {
+                        @Override
+                        public void onResponse(StatList response) {
+                            component.setStatList(response);
+                            listener.onResponse(component);
+                        }
+                    };
+                    serverAccessor.getStatList(statListener, code);
                 }
             };
             serverAccessor.getClassList(classListener, code);

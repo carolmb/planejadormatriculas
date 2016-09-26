@@ -91,17 +91,47 @@ class SIGAADataConverter {
         return null;
     }
 
-    public ClassList createClassList(String classJson, String statJson) {
+    public StatList createStatList(String statJson) {
+        try {
+            StatList statList = new StatList();
+            JSONArray statArray = new JSONArray(statJson);
+            for(int i = 0; i < statArray.length(); i++) {
+                JSONObject statObj = statArray.getJSONObject(i);
+                StatList.Entry entry = createStatEntry(statObj);
+                if (entry == null) {
+                    Log.e("NULL ENTRY", "NULL ENTRY");
+                } else {
+                    statList.getEntries().add(entry);
+                }
+            }
+            return statList;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private StatList.Entry createStatEntry(JSONObject statObj) {
+        try {
+            int successes = statObj.getInt("aprovados");
+            int quits = statObj.getInt("trancados");
+            int fails = statObj.getInt("reprovados");
+            return new StatList.Entry(successes, quits, fails);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ClassList createClassList(String classJson) {
         try {
             ClassList classList = new ClassList();
             JSONArray classArray = new JSONArray(classJson);
-            JSONArray statArray = new JSONArray(statJson);
             for(int i = 0; i < classArray.length(); i++) {
                 JSONObject classObj = classArray.getJSONObject(i);
-                JSONObject statObj = statArray.getJSONObject(i);
-                ClassList.Entry entry = createClassEntry(classObj, statObj);
+                ClassList.Entry entry = createClassEntry(classObj);
                 if (entry == null) {
-                    Log.d("NULL ENTRY", "NULL ENTRY");
+                    Log.e("NULL ENTRY", "NULL ENTRY");
                 } else {
                     classList.getEntries().add(entry);
                 }
@@ -113,7 +143,7 @@ class SIGAADataConverter {
         return null;
     }
 
-    private ClassList.Entry createClassEntry(JSONObject classObj, JSONObject statObj) {
+    private ClassList.Entry createClassEntry(JSONObject classObj) {
         try {
             int id = classObj.getInt("id");
             String code = classObj.getString("codigo");
@@ -126,10 +156,8 @@ class SIGAADataConverter {
             }
             String hour = classObj.getString("descricaoHorario");
             Log.e("json", classObj.toString());
-            int successes = statObj.getInt("aprovados");
-            int quits = statObj.getInt("trancados");
-            int fails = statObj.getInt("reprovados");
-            return new ClassList.Entry(id, code, semester, professors, hour, successes, quits, fails);
+
+            return new ClassList.Entry(id, code, semester, professors, hour);
         } catch (JSONException e) {
             e.printStackTrace();
         }

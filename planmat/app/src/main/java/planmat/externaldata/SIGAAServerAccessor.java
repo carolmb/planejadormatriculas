@@ -94,22 +94,27 @@ public class SIGAAServerAccessor implements ServerAccessor {
     }
 
     public void getClassList(final Response.Listener<ClassList> finalListener, final String code) {
-        final Response.Listener classListener = new Response.Listener<String>() {
+        final Response.Listener listener = new Response.Listener<String>() {
             @Override
             public void onResponse(final String classJson) {
                 Log.d("RESPONSE", "Class json");
-                final Response.Listener<String> statListener = new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String statJson) {
-                        Log.d("RESPONSE", "Stat json");
-                        ClassList list = dataConverter.createClassList(classJson, statJson);
-                        finalListener.onResponse(list);
-                    }
-                };
-                getStatisticsByCode(code, statListener);
+                ClassList list = dataConverter.createClassList(classJson);
+                finalListener.onResponse(list);
             }
         };
-        getClassListByCode(code, classListener);
+        getClassListByCode(code, listener);
+    }
+
+    public void getStatList(final Response.Listener<StatList> finalListener, final String code) {
+        final Response.Listener listener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(final String classJson) {
+                Log.d("RESPONSE", "Stat json");
+                StatList list = dataConverter.createStatList(classJson);
+                finalListener.onResponse(list);
+            }
+        };
+        getStatisticsByCode(code, listener);
     }
 
     public void getInstitutionalRatingByProfessor(final Response.Listener<String> finalListener,

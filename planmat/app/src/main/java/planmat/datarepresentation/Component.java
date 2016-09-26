@@ -12,6 +12,7 @@ public class Component implements Serializable {
     private String code;
 
     private ClassList classList;
+    private StatList statList;
 
     public Component(String code, String name, ClassList list) {
         this.code = code;
@@ -31,9 +32,13 @@ public class Component implements Serializable {
         return classList;
     }
 
+    public StatList getStatList() { return statList; }
+
     public void setClassList(ClassList list) {
         this.classList = list;
     }
+
+    public void setStatList(StatList list) { this.statList = list; }
 
     public String toString() {
         return code + " - " + name;
@@ -41,7 +46,7 @@ public class Component implements Serializable {
 
     public float getSuccessRate() {
         float mean = 0;
-        for (ClassList.Entry entry : classList.getEntries()) {
+        for (StatList.Entry entry : statList.getEntries()) {
             float total = entry.getFails() + entry.getQuits() + entry.getSuccesses();
             mean += entry.getSuccesses() / total;
         }
