@@ -233,14 +233,40 @@ public class PlanningActivity extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            String code = data.getStringExtra("Code");
+            final String code = data.getStringExtra("Code");
+            selectedSemester.getComponents().add(selectedID + 1, code);
+            savePrefs();
+            createSemesterList();
             if (code != null) {
-                selectedSemester.getComponents().add(selectedID + 1, code);
-                savePrefs();
-                createSemesterList();
+                ApplicationCore.getInstance().requestSemester(selectedSemester, new Response.Listener<Requirements>() {
+                    @Override
+                    public void onResponse(Requirements response) {
+                        checkSemesterDifficulty(response, code);
+                    }
+                });
             }
         }
     }
+    private void checkSemesterDifficulty(Requirements req, String codeNew) {
+        float rate = 1;
+        for (String code : selectedSemester.getComponents()) {
+            Component component = req.getComponent(code);
+            rate *= component.getSuccessRate();
+        }
+        if (rate < 0.5) {
+            final Dialog dialog = new Dialog(this);
+
+            dialog.setContentView(R.layout.empty);
+            dialog.setTitle("Aviso");
+
+            TextView text = new TextView(this);
+            LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.emptyLayout);
+            text.setText("Tem muitas disciplina difíceis num semestre só!");
+            layout.addView(text);
+            dialog.show();
+        }
+    }
+
 
     private void savePrefs() {
         UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, this);

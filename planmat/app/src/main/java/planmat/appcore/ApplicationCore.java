@@ -82,6 +82,24 @@ public class ApplicationCore {
         }
     }
 
+    public void requestSemester(UserPrefs.Semester semester, final Response.Listener<Requirements> listener) {
+        requestSemester(0, semester, listener);
+    }
+
+    private void requestSemester(final int i, final UserPrefs.Semester semester, final Response.Listener<Requirements> listener) {
+        if (i >= semester.getComponents().size()) {
+            listener.onResponse(requirements);
+            return;
+        }
+        String code = semester.getComponents().get(i);
+        requestComponent(new Response.Listener<Component>() {
+            @Override
+            public void onResponse(Component response) {
+                requestSemester(i + 1, semester, listener);
+            }
+        }, code);
+    }
+
     public Requirements getRequirements() {
         return requirements;
     }

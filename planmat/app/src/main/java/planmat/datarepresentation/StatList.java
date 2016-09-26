@@ -1,13 +1,14 @@
 package planmat.datarepresentation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Luisa on 25/09/2016.
  */
-public class StatList {
+public class StatList implements Serializable {
 
-    public static class Entry {
+    public static class Entry implements Serializable {
 
         private int successes;
         private int fails;
