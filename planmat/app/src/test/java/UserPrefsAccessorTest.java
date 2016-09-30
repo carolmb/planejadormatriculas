@@ -30,8 +30,8 @@ public class UserPrefsAccessorTest {
 
     @Test
     public void testLoadUserPrefs() {
-        userPrefsAccessor.storeUserPrefs(userPrefs, activity);
-        UserPrefs uP = userPrefsAccessor.loadUserPrefs(activity);
+        userPrefsAccessor.getInstance().storeUserPrefs(userPrefs, activity);
+        UserPrefs uP = userPrefsAccessor.getInstance().loadUserPrefs(activity);
         assertEquals(userPrefs, uP);
     }
 }
