@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void redirect(User user) {
         final Activity activity = this;
-        final UserPrefs prefs = UserPrefsAccessor.getInstance().loadUserPrefs(user.getID(), activity);
+        final UserPrefs prefs = UserPrefsAccessor.getInstance().loadUserPrefs(activity);
         if (prefs != null) {
             final Intent i = new Intent(activity, PlanningActivity.class);
             Response.Listener<Requirements> listener = new Response.Listener<Requirements>() {

@@ -242,13 +242,13 @@ public class PlanningActivity extends AppCompatActivity {
                 ApplicationCore.getInstance().requestSemester(selectedSemester, new Response.Listener<Requirements>() {
                     @Override
                     public void onResponse(Requirements response) {
-                        checkSemesterDifficulty(response, code);
+                        checkSemesterDifficulty(response);
                     }
                 });
             }
         }
     }
-    private void checkSemesterDifficulty(Requirements req, String codeNew) {
+    public boolean checkSemesterDifficulty(Requirements req) {
         float rate = 1;
         for (String code : selectedSemester.getComponents()) {
             Component component = req.getComponent(code);
@@ -266,7 +266,10 @@ public class PlanningActivity extends AppCompatActivity {
             text.setTextColor(Color.BLACK);
             layout.addView(text);
             dialog.show();
+            return true;
         }
+        else
+            return false;
     }
 
 
@@ -274,4 +277,7 @@ public class PlanningActivity extends AppCompatActivity {
         UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, this);
     }
 
+    public void setSelectedSemester(UserPrefs.Semester s) {
+        selectedSemester = s;
+    }
 }

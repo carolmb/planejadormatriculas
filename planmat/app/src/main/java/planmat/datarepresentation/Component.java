@@ -50,7 +50,7 @@ public class Component implements Serializable {
             float total = entry.getFails() + entry.getQuits() + entry.getSuccesses();
             mean += entry.getSuccesses() / total;
         }
-        return mean / classList.getEntries().size();
+        return mean / statList.getEntries().size();
     }
 
 }

@@ -23,7 +23,7 @@ public class UserPrefsAccessor {
         return instance;
     }
 
-    public UserPrefs loadUserPrefs(int userID, Context cont) {
+    public UserPrefs loadUserPrefs(Context cont) {
         UserPrefs userPrefs = null;
         FileInputStream fileInputStream;
         try {
