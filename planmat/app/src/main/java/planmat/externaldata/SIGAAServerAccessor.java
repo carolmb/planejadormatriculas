@@ -128,6 +128,66 @@ public class SIGAAServerAccessor implements ServerAccessor {
         getInstitutionalRating(institutionalCode, year, semester, listener);
     }
 
+    public void getTestDate(final Response.Listener<String> finalListener, final String classID) {
+        final Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        };
+        getTestDateByClassID(classID, listener);
+    }
+
+    public void getSurvey(final Response.Listener<String> finalListener, final String classID) {
+        final Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        };
+        getSurveyByClassID(classID, listener);
+    }
+
+    public void getHomeworkList(final Response.Listener<String> finalListener, final String classID) {
+        final Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        };
+        getHomeworkListByClassID(classID, listener);
+    }
+
+    public void getStudentCalendar(final Response.Listener<String> finalListener, final String studentID) {
+        final Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        };
+        getStudentCalendarByStudentID(studentID, listener);
+    }
+
+    public void getRegistrationStatement(final Response.Listener<String> finalListener, final String studentID) {
+        final Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        };
+        getRegistrationStatementByStudentID(studentID, listener);
+    }
+
+    public void getAcademicRecord(final Response.Listener<String> finalListener, final String studentID) {
+        final Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        };
+        getAcademicRecordByStudentID(studentID, listener);
+    }
+
     // ------------------------------------------------------------------------------
     // Data request methods
     // ------------------------------------------------------------------------------
@@ -170,6 +230,36 @@ public class SIGAAServerAccessor implements ServerAccessor {
     private void getStatisticsByCode(String code, Response.Listener<String> listener) {
         dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
                 "https://apitestes.info.ufrn.br/ensino-services/services/consulta/turmas/estatisticas/GRADUACAO/" + code);
+    }
+
+    private void getTestDateByClassID(String classID, Response.Listener<String> listener) {
+        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/atividade/avaliacao/usuario/" + classID);
+    }
+
+    private void getSurveyByClassID(String classID, Response.Listener<String> listener) {
+        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/atividade/enquete/usuario/" + classID);
+    }
+
+    private void getHomeworkListByClassID(String classID, Response.Listener<String> listener) {
+        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/atividade/tarefa/usuario/" + classID);
+    }
+
+    private void getStudentCalendarByStudentID(String studentID, Response.Listener<String> listener) {
+        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/calendario/usuario/discente/" + studentID);
+    }
+
+    private void getRegistrationStatementByStudentID(String studentID, Response.Listener<String> listener) {
+        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/documento/usuario/declaracao/" + studentID);
+    }
+
+    private void getAcademicRecordByStudentID(String studentID, Response.Listener<String> listener) {
+        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/documento/usuario/historico/" + studentID);
     }
 
     // ------------------------------------------------------------------------------
