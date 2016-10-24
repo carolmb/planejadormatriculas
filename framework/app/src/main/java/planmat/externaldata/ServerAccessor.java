@@ -18,4 +18,12 @@ public interface ServerAccessor {
     void getRequirements(final Response.Listener<Requirements> finalListener, int id);
     void getClassList(final Response.Listener<ClassList> finalListener, final String code);
     void getStatList(final Response.Listener<StatList> finalListener, final String code);
+    void getInstitutionalRatingByProfessor(final Response.Listener<String> finalListener,
+                                           final int institutionalCode, final int year, final int semester);
+    void getTestDate(final Response.Listener<String> finalListener, final String classID);
+    void getSurvey(final Response.Listener<String> finalListener, final String classID);
+    void getHomeworkList(final Response.Listener<String> finalListener, final String classID);
+    void getStudentCalendar(final Response.Listener<String> finalListener, final String studentID);
+    void getRegistrationStatement(final Response.Listener<String> finalListener, final String studentID);
+    void getAcademicRecord(final Response.Listener<String> finalListener, final String studentID);
 }
