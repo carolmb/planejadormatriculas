@@ -56,9 +56,10 @@ public class PlanningActivity extends AppCompatActivity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.d("Waiting requirements", "Waiting requirements");
+                Log.d("Waiting requirements", "Waiting requirements ");
+
                 requirements = ApplicationCore.getInstance().
-                        getServerAccessor().getRequirements(userPrefs.getUserID());
+                        getServerAccessor().getRequirements(userPrefs.getRequirementsID());
                 Log.d("Got requirements", requirements.toString());
             }
         });
