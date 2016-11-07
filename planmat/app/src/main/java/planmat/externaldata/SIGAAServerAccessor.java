@@ -23,6 +23,8 @@ public class SIGAAServerAccessor implements ServerAccessor {
     private SIGAAAuthorizationRequester authorizationRequester;
     private SIGAADataConverter dataConverter;
 
+    private Requirements reqCache = null;
+
     public SIGAAServerAccessor() {
         this.dataRequester = new SIGAADataRequester();
         this.authorizationRequester = new SIGAAAuthorizationRequester();
@@ -33,238 +35,117 @@ public class SIGAAServerAccessor implements ServerAccessor {
     // Public methods
     // ------------------------------------------------------------------------------
 
-    public void login(Activity activity, final Response.Listener<String> listener) {
+    public User login(Activity activity) {
         dataRequester.createRequestQueue(activity);
-        authorizationRequester.createTokenCredential(activity, listener);
+        authorizationRequester.createTokenCredential(activity);
+        return getUser();
     }
 
     public void logout(Activity activity) {
         authorizationRequester.logout(activity, "http://apitestes.info.ufrn.br/sso-server/logout");
     }
 
-    public void getUser(final Response.Listener<User> finalListener) {
-        final Response.Listener<String> studentInfoByUserID = new Response.Listener<String>() {
-            public void onResponse(String response) {
-                int id = getUserIDFromJSON(response);
-                final String loginResponse = response;
-                final Response.Listener<String> jsonToUser = new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        User user = dataConverter.createUser(response, loginResponse);
-                        finalListener.onResponse(user);
-                    }
-                };
-                getStudentInfoByUserID(id, jsonToUser);
-            }
-        };
-        getUserInfo(studentInfoByUserID);
+    public IDList getMajorList() {
+        String json = getAllMajors();
+        IDList list = dataConverter.createMajorList(json);
+        return list;
     }
 
-    public void getMajorList(final Response.Listener<IDList> finalListener) {
-        final Response.Listener<String> listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                IDList list = dataConverter.createMajorList(response);
-                finalListener.onResponse(list);
-            }
-        };
-        getAllMajors(listener);
+    public IDList getRequirementsList(int majorID) {
+        String json = getRequirementListByMajorID(majorID);
+        IDList list = dataConverter.createRequirementsList(json);
+        return list;
     }
 
-    public void getRequirementsList(final Response.Listener<IDList> finalListener, int majorID) {
-        final Response.Listener<String> listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                IDList list = dataConverter.createRequirementsList(response);
-                finalListener.onResponse(list);
-            }
-        };
-        getRequirementListByMajorID(majorID, listener);
+    public Requirements getRequirements(final int id) {
+        if (reqCache != null && reqCache.getID() == id) {
+            return reqCache;
+        } else {
+            String json = getRequirementByID(id);
+            reqCache = dataConverter.createRequirements(id, json);
+            return reqCache;
+        }
     }
 
-    public void getRequirements(final Response.Listener<Requirements> finalListener, final int id) {
-        final Response.Listener<String> listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Requirements list = dataConverter.createRequirements(id, response);
-                finalListener.onResponse(list);
-            }
-        };
-        getRequirementByID(id, listener);
+    public Component getComponent(final String code) {
+        final Component component = reqCache.getComponent(code);
+        if (component.getClassList() == null) {
+            ClassList classList = getClassList(code);
+            component.setClassList(classList);
+            StatList statList = getStatList(code);
+            component.setStatList(statList);
+            return component;
+        } else {
+            return component;
+        }
     }
 
-    public void getClassList(final Response.Listener<ClassList> finalListener, final String code) {
-        final Response.Listener listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(final String classJson) {
-                Log.d("RESPONSE", "Class json");
-                ClassList list = dataConverter.createClassList(classJson);
-                finalListener.onResponse(list);
-            }
-        };
-        getClassListByCode(code, listener);
+    public ClassList getClassList(final String code) {
+        String json = getClassListByCode(code);
+        Log.d("RESPONSE", "Class json");
+        return dataConverter.createClassList(json);
     }
 
-    public void getStatList(final Response.Listener<StatList> finalListener, final String code) {
-        final Response.Listener listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(final String classJson) {
-                Log.d("RESPONSE", "Stat json");
-                StatList list = dataConverter.createStatList(classJson);
-                finalListener.onResponse(list);
-            }
-        };
-        getStatisticsByCode(code, listener);
-    }
-
-    public void getInstitutionalRatingByProfessor(final Response.Listener<String> finalListener,
-                               final int institutionalCode, final int year, final int semester) {
-        final Response.Listener<String> listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-            }
-        };
-        getInstitutionalRating(institutionalCode, year, semester, listener);
-    }
-
-    public void getTestDate(final Response.Listener<String> finalListener, final String classID) {
-        final Response.Listener<String> listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-            }
-        };
-        getTestDateByClassID(classID, listener);
-    }
-
-    public void getSurvey(final Response.Listener<String> finalListener, final String classID) {
-        final Response.Listener<String> listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-            }
-        };
-        getSurveyByClassID(classID, listener);
-    }
-
-    public void getHomeworkList(final Response.Listener<String> finalListener, final String classID) {
-        final Response.Listener<String> listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-            }
-        };
-        getHomeworkListByClassID(classID, listener);
-    }
-
-    public void getStudentCalendar(final Response.Listener<String> finalListener, final String studentID) {
-        final Response.Listener<String> listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-            }
-        };
-        getStudentCalendarByStudentID(studentID, listener);
-    }
-
-    public void getRegistrationStatement(final Response.Listener<String> finalListener, final String studentID) {
-        final Response.Listener<String> listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-            }
-        };
-        getRegistrationStatementByStudentID(studentID, listener);
-    }
-
-    public void getAcademicRecord(final Response.Listener<String> finalListener, final String studentID) {
-        final Response.Listener<String> listener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-            }
-        };
-        getAcademicRecordByStudentID(studentID, listener);
+    public StatList getStatList(final String code) {
+        String json = getStatisticsByCode(code);
+        Log.d("RESPONSE", "Stat json");
+        return dataConverter.createStatList(json);
     }
 
     // ------------------------------------------------------------------------------
     // Data request methods
     // ------------------------------------------------------------------------------
 
-    private void getUserInfo(Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+    private String getUserInfo() {
+        return dataRequester.requestData(authorizationRequester.getAccessToken(),
                 "http://apitestes.info.ufrn.br/usuario-services/services/usuario/info");
     }
 
-    private void getStudentInfoByUserID(int id, Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+    private String getStudentInfoByUserID(int id) {
+        return dataRequester.requestData(authorizationRequester.getAccessToken(),
                 "https://apitestes.info.ufrn.br/ensino-services/services/consulta/perfilusuario/" + id);
     }
 
-    private void getAllMajors(Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+    private String getAllMajors() {
+        return dataRequester.requestData(authorizationRequester.getAccessToken(),
                 "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/GRADUACAO");
     }
 
-    private void getRequirementListByMajorID(int id, Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+    private String getRequirementListByMajorID(int id) {
+        return dataRequester.requestData(authorizationRequester.getAccessToken(),
                 "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/matriz/graduacao/" + id);
     }
 
-    private void getRequirementByID(int id, Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+    private String getRequirementByID(int id) {
+        return dataRequester.requestData(authorizationRequester.getAccessToken(),
                 "https://apitestes.info.ufrn.br/curso-services/services/consulta/curso/componentes/" + id);
     }
 
-    private void getInstitutionalRating(int institutionalCode, int year, int semester, Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+    private String getInstitutionalRating(int institutionalCode, int year, int semester) {
+        return dataRequester.requestData(authorizationRequester.getAccessToken(),
                 "https://apitestes.info.ufrn.br/ensino-services/services/consulta/avaliacaoInstitucional/docente/" + institutionalCode + "/" + year + "/" + semester);
     }
 
-    private void getClassListByCode(String code, Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+    private String getClassListByCode(String code) {
+        return dataRequester.requestData(authorizationRequester.getAccessToken(),
                 "https://apitestes.info.ufrn.br/ensino-services/services/consulta/turmas/usuario/docente/componente/" + code);
     }
 
-    private void getStatisticsByCode(String code, Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
+    private String getStatisticsByCode(String code) {
+        return dataRequester.requestData(authorizationRequester.getAccessToken(),
                 "https://apitestes.info.ufrn.br/ensino-services/services/consulta/turmas/estatisticas/GRADUACAO/" + code);
-    }
-
-    private void getTestDateByClassID(String classID, Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
-                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/atividade/avaliacao/usuario/" + classID);
-    }
-
-    private void getSurveyByClassID(String classID, Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
-                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/atividade/enquete/usuario/" + classID);
-    }
-
-    private void getHomeworkListByClassID(String classID, Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
-                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/atividade/tarefa/usuario/" + classID);
-    }
-
-    private void getStudentCalendarByStudentID(String studentID, Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
-                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/calendario/usuario/discente/" + studentID);
-    }
-
-    private void getRegistrationStatementByStudentID(String studentID, Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
-                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/documento/usuario/declaracao/" + studentID);
-    }
-
-    private void getAcademicRecordByStudentID(String studentID, Response.Listener<String> listener) {
-        dataRequester.requestData(authorizationRequester.getAccessToken(), listener,
-                "https://apitestes.info.ufrn.br/ensino-services/services/consulta/documento/usuario/historico/" + studentID);
     }
 
     // ------------------------------------------------------------------------------
     // Auxiliary methods
     // ------------------------------------------------------------------------------
+
+    private User getUser() {
+        String userInfo = getUserInfo();
+        int id = getUserIDFromJSON(userInfo);
+        String studentInfo = getStudentInfoByUserID(id);
+        return dataConverter.createUser(studentInfo, userInfo);
+    }
 
     private int getUserIDFromJSON(String response) {
         try {

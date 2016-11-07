@@ -43,12 +43,13 @@ public class ChooseMajorActivity extends AppCompatActivity {
      * Requisita a lista de cursos do sistema e cria a lista a partir do retorno.
      */
     private void requestMajorList() {
-        ApplicationCore.getInstance().requestMajorList(new Response.Listener<IDList>() {
-            @Override
-            public void onResponse(IDList response) {
-                initializeMajorSpinner(response);
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                IDList list = ApplicationCore.getInstance().getServerAccessor().getMajorList();
+                initializeMajorSpinner(list);
             }
         });
+        thread.start();
     }
 
     /**
@@ -80,12 +81,13 @@ public class ChooseMajorActivity extends AppCompatActivity {
      */
     private void requestRequirementsList() {
         if (selectedMajorID >= 0) {
-            ApplicationCore.getInstance().requestRequirementsList(new Response.Listener<IDList>() {
-                @Override
-                public void onResponse(IDList response) {
-                    initializeRequirementsSpinner(response);
+            Thread thread = new Thread(new Runnable() {
+                public void run() {
+                    IDList list = ApplicationCore.getInstance().getServerAccessor().getRequirementsList(selectedMajorID);
+                    initializeRequirementsSpinner(list);
                 }
-            }, selectedMajorID);
+            });
+            thread.start();
         }
     }
 

@@ -36,15 +36,14 @@ public class MainActivity extends AppCompatActivity {
      * página.
      */
     private void login() {
-        Response.Listener<User> listener = new Response.Listener<User>() {
-            @Override
-            public void onResponse(User response) {
-                if (response != null) {
-                    redirect(response);
-                }
-            }
-        };
-        ApplicationCore.getInstance().login(this, listener);
+        final Activity activity = this;
+        Thread thread = new Thread(new Runnable() {
+           public void run() {
+               User user = ApplicationCore.getInstance().getServerAccessor().login(activity);
+               redirect(user);
+           }
+        });
+        thread.start();
     }
 
     /**
@@ -59,15 +58,10 @@ public class MainActivity extends AppCompatActivity {
         final UserPrefs prefs = UserPrefsAccessor.getInstance().loadUserPrefs(activity);
         if (prefs != null) {
             final Intent i = new Intent(activity, PlanningActivity.class);
-            Response.Listener<Requirements> listener = new Response.Listener<Requirements>() {
-                @Override
-                public void onResponse(Requirements response) {
-                    i.putExtra("UserPrefs", prefs);
-                    finish();
-                    activity.startActivity(i);
-                }
-            };
-            ApplicationCore.getInstance().requestRequirements(listener, prefs.getRequirementsID());
+            ApplicationCore.getInstance().getServerAccessor().getRequirements(prefs.getRequirementsID());
+            i.putExtra("UserPrefs", prefs);
+            finish();
+            activity.startActivity(i);
         } else {
             final Intent i = new Intent(activity, ChooseMajorActivity.class);
             i.putExtra("User", user);

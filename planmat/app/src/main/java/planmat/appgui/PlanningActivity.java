@@ -1,5 +1,6 @@
 package planmat.appgui;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -26,6 +27,7 @@ import ufrn.br.planmat.R;
 public class PlanningActivity extends AppCompatActivity {
 
     private UserPrefs userPrefs;
+    private Requirements requirements;
 
     private LinearLayout layout;
 
@@ -50,21 +52,35 @@ public class PlanningActivity extends AppCompatActivity {
     // ------------------------------------------------------------------------------
 
     private void createSemesterList() {
-        final Requirements requirements = ApplicationCore.getInstance().getRequirements();
-        layout.removeAllViews();
-        int i = 1;
-        for (final UserPrefs.Semester s : userPrefs.getPlanning()) {
-            TextView newText = new TextView(this);
-            newText.setText("Semestre " + i);
-            i++;
-            layout.addView(newText);
-            if (s.getComponents().size() == 0) {
-                createComponentButton(-1, s, requirements);
-            } else {
-                for (int j = 0; j < s.getComponents().size(); j++) {
-                    createComponentButton(j, s, requirements);
+        final Activity activity = this;
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("Waiting requirements", "Waiting requirements");
+                requirements = ApplicationCore.getInstance().
+                        getServerAccessor().getRequirements(userPrefs.getUserID());
+                Log.d("Got requirements", requirements.toString());
+            }
+        });
+        try {
+            thread.run();
+            layout.removeAllViews();
+            int i = 1;
+            for (final UserPrefs.Semester s : userPrefs.getPlanning()) {
+                TextView newText = new TextView(activity);
+                newText.setText("Semestre " + i);
+                i++;
+                layout.addView(newText);
+                if (s.getComponents().size() == 0) {
+                    createComponentButton(-1, s, requirements);
+                } else {
+                    for (int j = 0; j < s.getComponents().size(); j++) {
+                        createComponentButton(j, s, requirements);
+                    }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -161,26 +177,16 @@ public class PlanningActivity extends AppCompatActivity {
 
     public void seeRequirements(View view) {
         final Intent i = new Intent(this, RequirementsActivity.class);
-        Response.Listener<Requirements> listener = new Response.Listener<Requirements>() {
-            @Override
-            public void onResponse(Requirements response) {
-                i.putExtra("Requirements", response);
-                startActivity(i);
-            }
-        };
-        ApplicationCore.getInstance().requestRequirements(listener, userPrefs.getRequirementsID());
+        Requirements req = ApplicationCore.getInstance().getServerAccessor().getRequirements(userPrefs.getRequirementsID());
+        i.putExtra("Requirements", req);
+        startActivity(i);
     }
 
     public void addComponent(View view) {
         final Intent i = new Intent(this, RequirementsActivity.class);
-        Response.Listener<Requirements> listener = new Response.Listener<Requirements>() {
-            @Override
-            public void onResponse(Requirements response) {
-                i.putExtra("Requirements", response);
-                startActivityForResult(i, 0);
-            }
-        };
-        ApplicationCore.getInstance().requestRequirements(listener, userPrefs.getRequirementsID());
+        Requirements req = ApplicationCore.getInstance().getServerAccessor().getRequirements(userPrefs.getRequirementsID());
+        i.putExtra("Requirements", req);
+        startActivityForResult(i, 0);
     }
 
     public void removeComponent(View view) {
@@ -216,7 +222,7 @@ public class PlanningActivity extends AppCompatActivity {
             }
         };
         String code = selectedSemester.getComponents().get(selectedID);
-        ApplicationCore.getInstance().requestComponent(listener, code);
+        ApplicationCore.getInstance().getServerAccessor().getComponent(code);
     }
 
     public void showDetails(View view) {
@@ -229,7 +235,7 @@ public class PlanningActivity extends AppCompatActivity {
             }
         };
         String code = selectedSemester.getComponents().get(selectedID);
-        ApplicationCore.getInstance().requestComponent(listener, code);
+        ApplicationCore.getInstance().getServerAccessor().getComponent(code);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -239,39 +245,27 @@ public class PlanningActivity extends AppCompatActivity {
             savePrefs();
             createSemesterList();
             if (code != null) {
-                ApplicationCore.getInstance().requestSemester(selectedSemester, new Response.Listener<Requirements>() {
-                    @Override
-                    public void onResponse(Requirements response) {
-                        checkSemesterDifficulty(response);
-                    }
-                });
+                checkSemesterDifficulty();
             }
         }
     }
-    public boolean checkSemesterDifficulty(Requirements req) {
-        float rate = 1;
-        for (String code : selectedSemester.getComponents()) {
-            Component component = req.getComponent(code);
-            rate *= component.getSuccessRate();
-        }
-        if (rate < 0.5) {
-            final Dialog dialog = new Dialog(this);
 
-            dialog.setContentView(R.layout.empty);
-            dialog.setTitle("Aviso");
+    public void checkSemesterDifficulty() {
+        ApplicationCore.getInstance().getRecommender().checkSemester(selectedSemester);
 
-            TextView text = new TextView(this);
-            LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.emptyLayout);
-            text.setText("Tem muitas disciplina difíceis num semestre só!");
-            text.setTextColor(Color.BLACK);
-            layout.addView(text);
-            dialog.show();
-            return true;
-        }
-        else
-            return false;
+        final Dialog dialog = new Dialog(this);
+
+        dialog.setContentView(R.layout.empty);
+        dialog.setTitle("Aviso");
+
+        TextView text = new TextView(this);
+        LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.emptyLayout);
+        text.setText("Tem muitas disciplinas difíceis num semestre só!");
+        text.setTextColor(Color.BLACK);
+        layout.addView(text);
+        dialog.show();
+
     }
-
 
     private void savePrefs() {
         UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, this);

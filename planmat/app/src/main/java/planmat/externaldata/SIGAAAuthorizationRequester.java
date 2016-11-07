@@ -6,6 +6,7 @@ import android.util.Log;
 import android.webkit.WebView;
 
 import com.android.volley.Response;
+import com.android.volley.toolbox.RequestFuture;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
@@ -32,27 +33,25 @@ class SIGAAAuthorizationRequester {
         return credential.getAccessToken();
     }
 
-    public Credential createTokenCredential(final Activity activity, final Response.Listener<String> listener) {
+    public String createTokenCredential(final Activity activity) {
         createOAuth("http://apitestes.info.ufrn.br/authz-server", activity);
         try {
             OAuthManager.OAuthCallback<Credential> callback = new OAuthManager.OAuthCallback<Credential>() {
                 @Override public void run(OAuthManager.OAuthFuture<Credential> future) {
                     try {
                         credential = future.getResult();
-                        listener.onResponse(credential.getAccessToken());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             };
-            oauth.authorizeExplicitly("userId", callback, null);
-            if(credential != null){
-                Log.d("TOKEN", credential.getAccessToken());
-            }
+            OAuthManager.OAuthFuture<Credential> future = oauth.authorizeExplicitly("userId", callback, null);
+            credential = future.getResult();
+            return credential.getAccessToken();
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return credential;
     }
 
     private void createOAuth(String oauthServerURL, Activity activity) {
@@ -71,7 +70,6 @@ class SIGAAAuthorizationRequester {
         AuthorizationUIController controller = new DialogFragmentController(activity.getFragmentManager()) {
             @Override
             public String getRedirectUri() throws IOException {
-                //return "http://android.local/";
                 return "http://localhost/Callback";
             }
 

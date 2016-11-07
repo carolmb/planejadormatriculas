@@ -20,11 +20,13 @@ public class RequirementsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_requirements);
-        createListView();
+
+        Requirements req = (Requirements) getIntent().getSerializableExtra("Requirements");
+
+        createListView(req);
     }
 
-    private void createListView() {
-        final Requirements requirements = ApplicationCore.getInstance().getRequirements();
+    private void createListView(final Requirements requirements) {
         RelativeLayout relativeLayout = new RelativeLayout(this);
         String[] semesters = new String[requirements.getSemesters().size()];
         for(int i = 0; i < requirements.getSemesters().size(); i++) {
