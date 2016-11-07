@@ -16,6 +16,8 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 class SIGAADataRequester {
 
@@ -46,11 +48,17 @@ class SIGAADataRequester {
         requestQueue.add(stringRequest);
 
         try {
-            String response = future.get();
+            String response = future.get(10, TimeUnit.SECONDS);
+            Log.d("Successful fetch", response);
             return response;
         } catch (InterruptedException e) {
+            Log.d("Failed fetch", e.getMessage());
             return null;
         } catch (ExecutionException e) {
+            Log.d("Failed fetch", e.getMessage());
+            return null;
+        } catch (TimeoutException e) {
+            Log.d("Failed fetch", "Time out");
             return null;
         }
 

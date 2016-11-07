@@ -33,7 +33,7 @@ public class UserPrefsAccessor {
             inputStream.close();
             fileInputStream.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.d("UserPrefs not found: ", e.getMessage());
         }
         return userPrefs;
     }

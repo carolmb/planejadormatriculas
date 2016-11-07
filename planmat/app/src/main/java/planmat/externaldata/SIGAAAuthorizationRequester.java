@@ -47,6 +47,7 @@ class SIGAAAuthorizationRequester {
             };
             OAuthManager.OAuthFuture<Credential> future = oauth.authorizeExplicitly("userId", callback, null);
             credential = future.getResult();
+            Log.d("Token", credential.getAccessToken());
             return credential.getAccessToken();
         } catch (Exception e) {
             e.printStackTrace();

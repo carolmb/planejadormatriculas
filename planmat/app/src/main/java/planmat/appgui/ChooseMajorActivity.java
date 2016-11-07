@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 import planmat.appcore.ApplicationCore;
 import planmat.datarepresentation.IDList;
 import planmat.datarepresentation.User;
@@ -29,6 +31,11 @@ public class ChooseMajorActivity extends AppCompatActivity {
     private int selectedMajorID = -1;
     private int selectedRequirementsID = -1;
 
+    private ReentrantLock fetchLock = new ReentrantLock();
+
+    IDList majorList;
+    IDList reqList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,20 +43,26 @@ public class ChooseMajorActivity extends AppCompatActivity {
 
         user = (User) getIntent().getSerializableExtra("User");
 
-        requestMajorList();
+        fetchMajorList();
+        initializeMajorSpinner(majorList);
     }
 
-    /**
-     * Requisita a lista de cursos do sistema e cria a lista a partir do retorno.
-     */
-    private void requestMajorList() {
+    private void fetchMajorList() {
         Thread thread = new Thread(new Runnable() {
             public void run() {
-                IDList list = ApplicationCore.getInstance().getServerAccessor().getMajorList();
-                initializeMajorSpinner(list);
+                fetchLock.lock();
+                majorList = ApplicationCore.getInstance().getServerAccessor().getMajorList();
+                fetchLock.unlock();
             }
         });
         thread.start();
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        fetchLock.lock();
+        fetchLock.unlock();
     }
 
     /**
@@ -62,7 +75,10 @@ public class ChooseMajorActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedMajorID = list.getEntries().get(position).getID();
-                requestRequirementsList();
+                if (selectedMajorID >= 0) {
+                    fetchRequirementsList();
+                    initializeRequirementsSpinner(list);
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -76,19 +92,22 @@ public class ChooseMajorActivity extends AppCompatActivity {
         selectedMajorID = -1;
     }
 
-    /**
-     * Requisita a lista de matrizes do sistema e cria a lista a partir do retorno.
-     */
-    private void requestRequirementsList() {
-        if (selectedMajorID >= 0) {
-            Thread thread = new Thread(new Runnable() {
-                public void run() {
-                    IDList list = ApplicationCore.getInstance().getServerAccessor().getRequirementsList(selectedMajorID);
-                    initializeRequirementsSpinner(list);
-                }
-            });
-            thread.start();
+    private void fetchRequirementsList() {
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                fetchLock.lock();
+                reqList = ApplicationCore.getInstance().getServerAccessor().getRequirementsList(selectedMajorID);
+                fetchLock.unlock();
+            }
+        });
+        thread.start();
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        fetchLock.lock();
+        fetchLock.unlock();
     }
 
     /**
