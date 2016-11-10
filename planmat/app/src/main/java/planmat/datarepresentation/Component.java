@@ -14,10 +14,9 @@ public class Component implements Serializable {
     private ClassList classList;
     private StatList statList;
 
-    public Component(String code, String name, ClassList list) {
+    public Component(String code, String name) {
         this.code = code;
         this.name = name;
-        this.classList = list;
     }
 
     public String getName() {

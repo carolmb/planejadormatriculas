@@ -1,14 +1,12 @@
 package planmat.externaldata;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -19,9 +17,19 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-class SIGAADataRequester {
+/**
+ * Created by Luisa on 09/11/2016.
+ */
+public class DataRequester {
 
     private RequestQueue requestQueue;
+    private String bearerString;
+    private String authString;
+
+    public DataRequester(String bearerString, String authString) {
+        this.bearerString = bearerString;
+        this.authString = authString;
+    }
 
     public void createRequestQueue(Context context) {
         requestQueue = Volley.newRequestQueue(context);
@@ -38,8 +46,8 @@ class SIGAADataRequester {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                String auth = "Bearer "+ accessToken;
-                headers.put("Authorization", auth);
+                String auth = bearerString + accessToken;
+                headers.put(authString, auth);
                 return headers;
             }
         };

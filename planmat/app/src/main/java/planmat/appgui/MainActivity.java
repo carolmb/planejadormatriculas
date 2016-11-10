@@ -10,6 +10,10 @@ import android.view.MenuItem;
 
 import com.android.volley.Response;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 
 import planmat.appcore.ApplicationCore;
@@ -39,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
         final Activity activity = this;
         Thread thread = new Thread(new Runnable() {
            public void run() {
-               User user = ApplicationCore.getInstance().getServerAccessor().login(activity);
+               ApplicationCore.getInstance().getServerAccessor().login(activity);
+               User user = ApplicationCore.getInstance().getUser();
                redirect(user);
            }
         });
@@ -58,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         final UserPrefs prefs = UserPrefsAccessor.getInstance().loadUserPrefs(activity);
         if (prefs != null) {
             final Intent i = new Intent(activity, PlanningActivity.class);
-            ApplicationCore.getInstance().getServerAccessor().getRequirements(prefs.getRequirementsID());
             i.putExtra("UserPrefs", prefs);
             finish();
             activity.startActivity(i);

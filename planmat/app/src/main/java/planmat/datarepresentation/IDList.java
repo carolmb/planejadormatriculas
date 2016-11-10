@@ -10,15 +10,15 @@ public class IDList implements Serializable {
 
     public static class Entry {
 
-        private int id;
+        private String id;
         private String name;
 
-        public Entry(int id, String name) {
+        public Entry(String id, String name) {
             this.id = id;
             this.name = name;
         }
 
-        public int getID() {
+        public String getID() {
             return id;
         }
 

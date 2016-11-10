@@ -8,30 +8,20 @@ import java.util.ArrayList;
  */
 public class User implements Serializable {
 
-    public static class Entry {
-        public int id;
-    }
-
-    private int id;
+    private String id;
     private String name;
-    private ArrayList<Entry> entries;
 
-    public User(int id, String name, ArrayList<Entry> entries) {
+    public User(String id, String name) {
         this.id = id;
         this.name = name;
-        this.entries = entries;
     }
 
-    public int getID() {
+    public String getID() {
         return id;
     }
 
     public String getName() {
         return name;
-    }
-
-    public ArrayList<Entry> getEntries() {
-        return entries;
     }
 
 }

@@ -9,18 +9,22 @@ import java.util.HashMap;
  */
 public class Requirements implements Serializable {
 
-    private int id;
+    private String id;
     private ArrayList<Semester> semesters;
     private HashMap<String, Component> map;
 
-    public Requirements(int id, ArrayList<Semester> semesters) {
+    public Requirements(String id, ArrayList<Semester> semesters) {
         this.id = id;
         this.semesters = semesters;
         createComponentMap();
     }
 
-    public int getID() {
+    public String getID() {
         return id;
+    }
+
+    public void putComponent(String code, Component comp) {
+        map.put(code, comp);
     }
 
     public Component getComponent(String code) {

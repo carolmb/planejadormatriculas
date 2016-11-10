@@ -7,6 +7,7 @@ import planmat.internaldata.UserPrefs;
  */
 public interface Recommender {
 
-    boolean checkSemester(UserPrefs.Semester semester);
+    String checkSemester(UserPrefs.Semester semester);
+    UserPrefs.Semester recommendSemester(UserPrefs prefs, int s);
 
 }

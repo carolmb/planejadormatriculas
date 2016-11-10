@@ -5,8 +5,6 @@ import android.content.Context;
 import android.util.Log;
 import android.webkit.WebView;
 
-import com.android.volley.Response;
-import com.android.volley.toolbox.RequestFuture;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
@@ -20,21 +18,39 @@ import com.wuman.android.auth.OAuthManager;
 
 import java.io.IOException;
 
-class SIGAAAuthorizationRequester {
+/**
+ * Created by Luisa on 09/11/2016.
+ */
+public class AuthorizationRequester {
 
     private Credential credential;
 
-    private String clientId = "plan-mat-id";
-    private String clientSecret = "segredo";
+    private String clientId;
+    private String clientSecret;
+
+    private String idString;
+    private String authURL;
+    private String tokenURL;
+    private String logoutURL;
 
     private OAuthManager oauth;
+
+    public AuthorizationRequester(String idString, String clientID, String clientSecret,
+                                  String authURL, String tokenURL, String logoutURL) {
+        this.idString = idString;
+        this.clientId = clientID;
+        this.clientSecret = clientSecret;
+        this.authURL = authURL;
+        this.tokenURL = tokenURL;
+        this.logoutURL = logoutURL;
+    }
 
     public String getAccessToken() {
         return credential.getAccessToken();
     }
 
     public String createTokenCredential(final Activity activity) {
-        createOAuth("http://apitestes.info.ufrn.br/authz-server", activity);
+        createOAuth(activity);
         try {
             OAuthManager.OAuthCallback<Credential> callback = new OAuthManager.OAuthCallback<Credential>() {
                 @Override public void run(OAuthManager.OAuthFuture<Credential> future) {
@@ -45,7 +61,7 @@ class SIGAAAuthorizationRequester {
                     }
                 }
             };
-            OAuthManager.OAuthFuture<Credential> future = oauth.authorizeExplicitly("userId", callback, null);
+            OAuthManager.OAuthFuture<Credential> future = oauth.authorizeExplicitly(idString, callback, null);
             credential = future.getResult();
             Log.d("Token", credential.getAccessToken());
             return credential.getAccessToken();
@@ -55,16 +71,16 @@ class SIGAAAuthorizationRequester {
         }
     }
 
-    private void createOAuth(String oauthServerURL, Activity activity) {
+    private void createOAuth(Activity activity) {
 
         AuthorizationFlow.Builder builder = new AuthorizationFlow.Builder(
                 BearerToken.authorizationHeaderAccessMethod(),
                 AndroidHttp.newCompatibleTransport(),
                 new JacksonFactory(),
-                new GenericUrl(oauthServerURL +"/oauth/token"),
+                new GenericUrl(tokenURL),
                 new ClientParametersAuthentication(clientId, clientSecret),
                 clientId,
-                oauthServerURL +"/oauth/authorize");
+                authURL);
 
         AuthorizationFlow flow = builder.build();
 
@@ -83,12 +99,10 @@ class SIGAAAuthorizationRequester {
         oauth = new OAuthManager(flow, controller);
     }
 
-    public void logout(Context context, String url) {
+    public void logout(Context context) {
         WebView w= new WebView(context);
-        w.loadUrl(url);
+        w.loadUrl(logoutURL);
         credential = null;
     }
 
 }
-
-

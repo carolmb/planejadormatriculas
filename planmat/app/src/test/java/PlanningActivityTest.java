@@ -19,9 +19,11 @@ public class PlanningActivityTest {
 
     @Before
     public void setUp() throws Exception {
+        Component c1 = new Component("IMD0017", "PRÁTICAS DE LEITURA E ESCRITA EM PORTUGUÊS I");
+        Component c2 = new Component("IMD0018", "PRÁTICAS DE LEITURA EM INGLÊS");
         cL = new ClassList();
-        Component c1 = new Component("IMD0017", "PRÁTICAS DE LEITURA E ESCRITA EM PORTUGUÊS I", cL);
-        Component c2 = new Component("IMD0018", "PRÁTICAS DE LEITURA EM INGLÊS", cL);
+        c1.setClassList(cL);
+        c2.setClassList(cL);
         StatList sL = new StatList();
         ArrayList<StatList.Entry> statEntryList = sL.getEntries();
         StatList.Entry statEntry1 = new StatList.Entry(5, 15, 5);
@@ -38,7 +40,7 @@ public class PlanningActivityTest {
         Semester s1 = new Semester(comps);
         ArrayList<Semester> semesters = new ArrayList<Semester>();
         semesters.add(s1);
-        reqs = new Requirements(1, semesters);
+        reqs = new Requirements("1", semesters);
         pA = new PlanningActivity();
         UserPrefs.Semester s = new UserPrefs.Semester();
         ArrayList<String> comps2 = s.getComponents();

@@ -9,12 +9,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.android.volley.Response;
-
 import java.util.concurrent.locks.ReentrantLock;
 
 import planmat.appcore.ApplicationCore;
 import planmat.datarepresentation.IDList;
+import planmat.datarepresentation.Requirements;
 import planmat.datarepresentation.User;
 import planmat.internaldata.UserPrefs;
 import planmat.internaldata.UserPrefsAccessor;
@@ -28,13 +27,13 @@ public class ChooseMajorActivity extends AppCompatActivity {
     private Spinner spnMajor;
     private Spinner spnRequirements;
 
-    private int selectedMajorID = -1;
-    private int selectedRequirementsID = -1;
+    private String selectedMajorID = null;
+    private String selectedRequirementsID = null;
 
     private ReentrantLock fetchLock = new ReentrantLock();
 
-    IDList majorList;
-    IDList reqList;
+    private IDList majorList;
+    private IDList reqList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +46,15 @@ public class ChooseMajorActivity extends AppCompatActivity {
         initializeMajorSpinner(majorList);
     }
 
+    /**
+     * Salva a lista dos IDs dos cursos.
+     * Bloqueia até que a lista seja retornada.
+     */
     private void fetchMajorList() {
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 fetchLock.lock();
-                majorList = ApplicationCore.getInstance().getServerAccessor().getMajorList();
+                majorList = ApplicationCore.getInstance().getMajorList();
                 fetchLock.unlock();
             }
         });
@@ -75,28 +78,32 @@ public class ChooseMajorActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedMajorID = list.getEntries().get(position).getID();
-                if (selectedMajorID >= 0) {
+                if (selectedMajorID != null) {
                     fetchRequirementsList();
-                    initializeRequirementsSpinner(list);
+                    initializeRequirementsSpinner(reqList);
                 }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                selectedMajorID = -1;
+                selectedMajorID = null;
             }
         };
         spnMajor.setOnItemSelectedListener(listener);
         ArrayAdapter<IDList.Entry> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, list.getEntries());
         spnMajor.setAdapter(adapter);
-        selectedMajorID = -1;
+        selectedMajorID = null;
     }
 
+    /**
+     * Salva a lista dos IDs das matrizes curriculares.
+     * Bloqueia até que a lista seja retornada.
+     */
     private void fetchRequirementsList() {
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 fetchLock.lock();
-                reqList = ApplicationCore.getInstance().getServerAccessor().getRequirementsList(selectedMajorID);
+                reqList = ApplicationCore.getInstance().getRequirementsList(selectedMajorID);
                 fetchLock.unlock();
             }
         });
@@ -123,14 +130,14 @@ public class ChooseMajorActivity extends AppCompatActivity {
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                selectedRequirementsID = -1;
+                selectedRequirementsID = null;
             }
         };
         spnRequirements.setOnItemSelectedListener(listener);
         ArrayAdapter<IDList.Entry> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, list.getEntries());
         spnRequirements.setAdapter(adapter);
-        selectedRequirementsID = -1;
+        selectedRequirementsID = null;
     }
 
     /**
@@ -139,9 +146,13 @@ public class ChooseMajorActivity extends AppCompatActivity {
      * @param view o view que faz a chamada ao método
      */
     public void buttonOK(View view) {
-        if (selectedMajorID >= 0 && selectedRequirementsID >= 0) {
-            UserPrefs userPrefs = new UserPrefs(user.getName(), user.getID(), selectedMajorID, selectedRequirementsID);
+        if (selectedMajorID != null && selectedRequirementsID != null) {
+            UserPrefs userPrefs = new UserPrefs(user.getName(), user.getID(), selectedMajorID, selectedRequirementsID, 1);
             UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, this);
+
+            Requirements req = ApplicationCore.getInstance().getRequirements(selectedRequirementsID);
+            userPrefs.setDefaultPlanning(req);
+
             Intent i = new Intent(this, PlanningActivity.class);
             i.putExtra("UserPrefs", userPrefs);
             finish();

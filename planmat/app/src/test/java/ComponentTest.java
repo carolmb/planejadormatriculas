@@ -25,8 +25,9 @@ public class ComponentTest {
         statEntryList.add(statEntry1);
         statEntryList.add(statEntry2);
         statEntryList.add(statEntry3);
-        component = new Component("DIM0549", "GRAFOS", classList);
+        component = new Component("DIM0549", "GRAFOS");
         component.setStatList(statList);
+        component.setClassList(classList);
     }
 
     @After

@@ -1,4 +1,4 @@
-package planmat.externaldata;
+package planmat.datarepresentation;
 
 import android.util.Log;
 
@@ -10,17 +10,16 @@ import java.util.ArrayList;
 
 import planmat.datarepresentation.*;
 
-class SIGAADataConverter {
+public class SIGAADataConverter implements DataConverter {
 
-    public IDList createMajorList(String json) {
+    public IDList createMajorList(JSONArray array) {
         try {
             IDList list = new IDList();
-            JSONArray jsonArray = new JSONArray(json);
-            for(int i = 0; i < jsonArray.length(); i++) {
-                JSONObject obj = jsonArray.getJSONObject(i);
+            for(int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
                 int id = obj.getInt("idCurso");
                 String name = obj.getString("curso") + " (" + obj.getString("municipio") + ")";
-                IDList.Entry entry = new IDList.Entry(id, name);
+                IDList.Entry entry = new IDList.Entry("" + id, name);
                 list.getEntries().add(entry);
             }
             return list;
@@ -30,12 +29,11 @@ class SIGAADataConverter {
         return null;
     }
 
-    public IDList createRequirementsList(String json) {
+    public IDList createRequirementsList(JSONArray array) {
         try {
             IDList list = new IDList();
-            JSONArray jsonArray = new JSONArray(json);
-            for(int i = 0; i < jsonArray.length(); i++) {
-                JSONObject obj = jsonArray.getJSONObject(i);
+            for(int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
                 if (obj.getBoolean("ativo")) {
                     int id = obj.getInt("idCurriculo");
                     String name = obj.getString("nome") + " (" + obj.getInt("ano") + ")";
@@ -43,7 +41,7 @@ class SIGAADataConverter {
                     if (e != null && !e.isEmpty() && !e.equals("null")) {
                         name += " - " + e;
                     }
-                    IDList.Entry entry = new IDList.Entry(id, name);
+                    IDList.Entry entry = new IDList.Entry("" + id, name);
                     list.getEntries().add(entry);
                 }
             }
@@ -54,9 +52,8 @@ class SIGAADataConverter {
         return null;
     }
 
-    public Requirements createRequirements(int id, String json) {
+    public Requirements createRequirements(String id, JSONArray arr) {
         try {
-            JSONArray arr = new JSONArray(json);
             ArrayList<Semester> semesters = new ArrayList<>();
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject obj = arr.getJSONObject(i);
@@ -78,12 +75,12 @@ class SIGAADataConverter {
         return null;
     }
 
-    private Component createComponent(JSONObject obj) {
+    public Component createComponent(JSONObject obj) {
         try {
             String name, code;
             name = obj.getString("nome");
             code = obj.getString("codigo");
-            Component component = new Component(code, name, null);
+            Component component = new Component(code, name);
             return component;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -91,10 +88,9 @@ class SIGAADataConverter {
         return null;
     }
 
-    public StatList createStatList(String statJson) {
+    public StatList createStatList(JSONArray statArray) {
         try {
             StatList statList = new StatList();
-            JSONArray statArray = new JSONArray(statJson);
             for(int i = 0; i < statArray.length(); i++) {
                 JSONObject statObj = statArray.getJSONObject(i);
                 StatList.Entry entry = createStatEntry(statObj);
@@ -123,10 +119,9 @@ class SIGAADataConverter {
         return null;
     }
 
-    public ClassList createClassList(String classJson) {
+    public ClassList createClassList(JSONArray classArray) {
         try {
             ClassList classList = new ClassList();
-            JSONArray classArray = new JSONArray(classJson);
             for(int i = 0; i < classArray.length(); i++) {
                 JSONObject classObj = classArray.getJSONObject(i);
                 ClassList.Entry entry = createClassEntry(classObj);
@@ -164,12 +159,9 @@ class SIGAADataConverter {
         return null;
     }
 
-    public User createUser(String jsonUser, String jsonLogin) {
+    public User createUser(JSONObject studentInfo, JSONObject loginInfo) {
         try {
-            JSONObject loginInfo = new JSONObject(jsonLogin);
-            JSONObject studentInfo = new JSONObject(jsonUser);
-            ArrayList<User.Entry> entries = new ArrayList<>();
-            return new User(loginInfo.getInt("id"), studentInfo.getString("nome"), entries);
+            return new User(""+ loginInfo.getInt("id"), studentInfo.getString("nome"));
         } catch (JSONException e) {
             e.printStackTrace();
         }

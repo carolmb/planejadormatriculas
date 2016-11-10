@@ -17,7 +17,7 @@ public class UserPrefsAccessorTest {
 
     @Before
     public void setUp() throws Exception {
-        userPrefs = new UserPrefs("name", 1, 1, 1);
+        userPrefs = new UserPrefs("name", "1", "1", "1", 1);
         activity = new MainActivity();
     }
 
