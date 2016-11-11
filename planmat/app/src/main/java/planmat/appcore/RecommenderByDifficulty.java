@@ -1,8 +1,11 @@
 package planmat.appcore;
 
+import java.util.ArrayList;
+
 import planmat.datarepresentation.Component;
 import planmat.datarepresentation.Requirements;
 import planmat.datarepresentation.Semester;
+import planmat.datarepresentation.StatList;
 import planmat.internaldata.UserPrefs;
 
 /**
@@ -13,8 +16,8 @@ public class RecommenderByDifficulty implements Recommender {
     public String checkSemester(UserPrefs.Semester semester) {
         float rate = 1;
         for (String code : semester.getComponents()) {
-            Component component = ApplicationCore.getInstance().getComponent(code);
-            rate *= component.getSuccessRate();
+            StatList stat = ApplicationCore.getInstance().getStatList(code);
+            rate *= stat.getSuccessRate();
         }
         if (rate < 0.5) {
             return null;
@@ -42,6 +45,19 @@ public class RecommenderByDifficulty implements Recommender {
             }
         }
         return semester;
+    }
+
+    public ArrayList<UserPrefs.Semester> getDefaultPlanning(Requirements requirements) {
+        ArrayList<UserPrefs.Semester> planning = new ArrayList<>();
+        for (planmat.datarepresentation.Semester reqSemester : requirements.getSemesters()) {
+            UserPrefs.Semester userSemester = new UserPrefs.Semester();
+            for(Component comp : reqSemester.getComponents()) {
+                userSemester.getComponents().add(comp.getCode());
+            }
+            planning.add(userSemester);
+        }
+        planning.remove(0);
+        return planning;
     }
 
 }

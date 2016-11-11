@@ -4,6 +4,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 import planmat.datarepresentation.*;
 import planmat.externaldata.SIGAAServerAccessor;
 import planmat.externaldata.ServerAccessor;
@@ -18,11 +20,15 @@ public class ApplicationCore {
     private Recommender recommender;
 
     private Requirements requirementsCache;
+    private HashMap<String, StatList> statCache;
+    private HashMap<String, ClassList> classCache;
 
     private ApplicationCore() {
         this.serverAccessor = new SIGAAServerAccessor();
         this.dataConverter = new SIGAADataConverter();
         this.recommender = new RecommenderByDifficulty();
+        statCache = new HashMap<>();
+        classCache = new HashMap<>();
     }
 
     public ServerAccessor getServerAccessor() {
@@ -73,22 +79,37 @@ public class ApplicationCore {
         }
     }
 
-    public Component getComponent(String code) {
-        if (requirementsCache != null) {
-            Component comp = requirementsCache.getComponent(code);
-            if (comp != null)
-                return comp;
+    public ClassList getClassList(String code) {
+        ClassList list = classCache.get(code);
+        if (list == null){
+            JSONArray classArray = serverAccessor.getJsonArray("ClassList", code);
+            list = dataConverter.createClassList(classArray);
+            classCache.put(code, list);
         }
-        JSONObject obj = serverAccessor.getJsonObject("Component", code);
-        Component comp = dataConverter.createComponent(obj);
-        JSONArray classArray = serverAccessor.getJsonArray("ClassList", code);
-        ClassList classList = dataConverter.createClassList(classArray);
-        JSONArray statArray = serverAccessor.getJsonArray("StatList", code);
-        StatList statList = dataConverter.createStatList(statArray);
-        comp.setClassList(classList);
-        comp.setStatList(statList);
+        return list;
+    }
+
+    public StatList getStatList(String code) {
+        StatList list = statCache.get(code);
+        if (list == null) {
+            JSONArray statArray = serverAccessor.getJsonArray("StatList", code);
+            list = dataConverter.createStatList(statArray);
+            statCache.put(code, list);
+        }
+        return list;
+    }
+
+    public Component getComponent(String code) {
+        Component comp = null;
         if (requirementsCache != null) {
-            requirementsCache.putComponent(code, comp);
+            comp = requirementsCache.getComponent(code);
+        }
+        if (comp == null) {
+            JSONObject obj = serverAccessor.getJsonObject("Component", code);
+            comp = dataConverter.createComponent(obj);
+            if (requirementsCache != null) {
+                requirementsCache.putComponent(code, comp);
+            }
         }
         return comp;
     }

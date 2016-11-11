@@ -49,4 +49,13 @@ public class StatList implements Serializable {
         return entries;
     }
 
+    public float getSuccessRate() {
+        float mean = 0;
+        for (StatList.Entry entry : entries) {
+            float total = entry.getFails() + entry.getQuits() + entry.getSuccesses();
+            mean += entry.getSuccesses() / total;
+        }
+        return mean / entries.size();
+    }
+
 }

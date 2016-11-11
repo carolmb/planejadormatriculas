@@ -35,21 +35,12 @@ public class StatisticsActivity extends AppCompatActivity {
     private void seeComponentStatistics(Component component) {
         Log.e("component", component.getName());
         RelativeLayout relativeLayout = new RelativeLayout(this);
-        if(component.getStatList() == null || component.getClassList() == null) {
-            Log.e("NULL LIST", "seeComponentStatistics");
-            error();
-            return;
-        }
-        if(component.getStatList().getEntries() == null||component.getClassList().getEntries() == null) {
-            Log.e("Entries is NULL", "seeComponentStatistics");
-            error();
-            return;
-        }
+        StatList list = ApplicationCore.getInstance().getStatList(component.getCode());
 
-        String[] entries = new String[component.getStatList().getEntries().size()];
-        for(int i = 0; i < component.getStatList().getEntries().size(); i++) {
-            entries[i] = component.getClassList().getEntries().get(i).toString() + "\n";
-            entries[i] += component.getStatList().getEntries().get(i).toString();
+        String[] entries = new String[list.getEntries().size()];
+        for(int i = 0; i < list.getEntries().size(); i++) {
+            entries[i] = list.getEntries().get(i).toString() + "\n";
+            entries[i] += list.getEntries().get(i).toString();
         }
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,

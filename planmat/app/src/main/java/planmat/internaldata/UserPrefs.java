@@ -31,6 +31,14 @@ public class UserPrefs implements Serializable {
     private int currentSemester;
     private ArrayList<Semester> planning;
 
+    public UserPrefs() {
+        name = "Luísa";
+        userID = "361283";
+        majorID = "92127264";
+        requirementsID = "102200805";
+        currentSemester = 6;
+    }
+
     public UserPrefs(String name, String userID, String majorID, String requirementsID, int currentSemester) {
         this.name = name;
         this.userID = userID;
@@ -61,15 +69,8 @@ public class UserPrefs implements Serializable {
         return planning;
     }
 
-    public void setDefaultPlanning(Requirements requirements) {
-        planning = new ArrayList<>();
-        for (planmat.datarepresentation.Semester reqSemester : requirements.getSemesters()) {
-            Semester userSemester = new Semester();
-            for(Component comp : reqSemester.getComponents()) {
-                userSemester.getComponents().add(comp.getCode());
-            }
-            planning.add(userSemester);
-        }
+    public void setPlanning(ArrayList<Semester> planning) {
+        this.planning = planning;
     }
 
 }

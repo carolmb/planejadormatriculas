@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import planmat.appcore.ApplicationCore;
 import planmat.datarepresentation.ClassList;
 import planmat.datarepresentation.Component;
 import ufrn.br.planmat.R;
@@ -33,7 +34,8 @@ public class ComponentActivity extends AppCompatActivity {
         addText("Nome: " + component.getName());
         addText("Código: " + component.getCode());
         addText("Turmas:");
-        for (ClassList.Entry entry : component.getClassList().getEntries()) {
+        ClassList list = ApplicationCore.getInstance().getClassList(component.getCode());
+        for (ClassList.Entry entry : list.getEntries()) {
             addText(entry.toString());
             addText("   Docente(s):");
             for (String prof : entry.getProfessors()) {

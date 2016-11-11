@@ -60,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void redirect(User user) {
         final Activity activity = this;
-        final UserPrefs prefs = UserPrefsAccessor.getInstance().loadUserPrefs(activity);
-        if (prefs != null) {
+        UserPrefs prefs = UserPrefsAccessor.getInstance().loadUserPrefs(activity);
+        /*if (prefs != null) {
             final Intent i = new Intent(activity, PlanningActivity.class);
             i.putExtra("UserPrefs", prefs);
             finish();
@@ -71,7 +71,16 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("User", user);
             finish();
             activity.startActivity(i);
+        }*/
+        if (prefs == null) {
+            prefs = new UserPrefs();
         }
+        Requirements req = ApplicationCore.getInstance().getRequirements(prefs.getRequirementsID());
+        prefs.setPlanning(ApplicationCore.getInstance().getRecommender().getDefaultPlanning(req));
+        final Intent i = new Intent(activity, PlanningActivity.class);
+        i.putExtra("UserPrefs", prefs);
+        finish();
+        activity.startActivity(i);
     }
 
     @Override

@@ -151,7 +151,7 @@ public class ChooseMajorActivity extends AppCompatActivity {
             UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, this);
 
             Requirements req = ApplicationCore.getInstance().getRequirements(selectedRequirementsID);
-            userPrefs.setDefaultPlanning(req);
+            userPrefs.setPlanning(ApplicationCore.getInstance().getRecommender().getDefaultPlanning(req));
 
             Intent i = new Intent(this, PlanningActivity.class);
             i.putExtra("UserPrefs", userPrefs);

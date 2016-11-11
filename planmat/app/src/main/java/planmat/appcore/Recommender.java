@@ -1,5 +1,8 @@
 package planmat.appcore;
 
+import java.util.ArrayList;
+
+import planmat.datarepresentation.Requirements;
 import planmat.internaldata.UserPrefs;
 
 /**
@@ -9,5 +12,6 @@ public interface Recommender {
 
     String checkSemester(UserPrefs.Semester semester);
     UserPrefs.Semester recommendSemester(UserPrefs prefs, int s);
+    ArrayList<UserPrefs.Semester> getDefaultPlanning(Requirements requirements);
 
 }

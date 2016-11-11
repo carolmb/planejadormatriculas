@@ -56,7 +56,7 @@ public class DataRequester {
         requestQueue.add(stringRequest);
 
         try {
-            String response = future.get(10, TimeUnit.SECONDS);
+            String response = future.get(30, TimeUnit.SECONDS);
             Log.d("Successful fetch", response);
             return response;
         } catch (InterruptedException e) {
