@@ -31,14 +31,6 @@ public class UserPrefs implements Serializable {
     private int currentSemester;
     private ArrayList<Semester> planning;
 
-    public UserPrefs() {
-        name = "Luísa";
-        userID = "361283";
-        majorID = "92127264";
-        requirementsID = "102200805";
-        currentSemester = 6;
-    }
-
     public UserPrefs(String name, String userID, String majorID, String requirementsID, int currentSemester) {
         this.name = name;
         this.userID = userID;

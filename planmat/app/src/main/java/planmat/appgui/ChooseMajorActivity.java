@@ -2,6 +2,8 @@ package planmat.appgui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,11 +32,6 @@ public class ChooseMajorActivity extends AppCompatActivity {
     private String selectedMajorID = null;
     private String selectedRequirementsID = null;
 
-    private ReentrantLock fetchLock = new ReentrantLock();
-
-    private IDList majorList;
-    private IDList reqList;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,29 +40,17 @@ public class ChooseMajorActivity extends AppCompatActivity {
         user = (User) getIntent().getSerializableExtra("User");
 
         fetchMajorList();
-        initializeMajorSpinner(majorList);
     }
 
-    /**
-     * Salva a lista dos IDs dos cursos.
-     * Bloqueia até que a lista seja retornada.
-     */
     private void fetchMajorList() {
-        Thread thread = new Thread(new Runnable() {
-            public void run() {
-                fetchLock.lock();
-                majorList = ApplicationCore.getInstance().getMajorList();
-                fetchLock.unlock();
+        Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                IDList list = (IDList) msg.obj;
+                initializeMajorSpinner(list);
             }
-        });
-        thread.start();
-        try {
-            Thread.sleep(10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        fetchLock.lock();
-        fetchLock.unlock();
+        };
+        ApplicationCore.getInstance().getMajorList(handler);
     }
 
     /**
@@ -80,7 +65,6 @@ public class ChooseMajorActivity extends AppCompatActivity {
                 selectedMajorID = list.getEntries().get(position).getID();
                 if (selectedMajorID != null) {
                     fetchRequirementsList();
-                    initializeRequirementsSpinner(reqList);
                 }
             }
             @Override
@@ -100,21 +84,14 @@ public class ChooseMajorActivity extends AppCompatActivity {
      * Bloqueia até que a lista seja retornada.
      */
     private void fetchRequirementsList() {
-        Thread thread = new Thread(new Runnable() {
-            public void run() {
-                fetchLock.lock();
-                reqList = ApplicationCore.getInstance().getRequirementsList(selectedMajorID);
-                fetchLock.unlock();
+        Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                IDList list = (IDList) msg.obj;
+                initializeRequirementsSpinner(list);
             }
-        });
-        thread.start();
-        try {
-            Thread.sleep(10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        fetchLock.lock();
-        fetchLock.unlock();
+        };
+        ApplicationCore.getInstance().getRequirementsList(handler, selectedMajorID);
     }
 
     /**
@@ -147,16 +124,20 @@ public class ChooseMajorActivity extends AppCompatActivity {
      */
     public void buttonOK(View view) {
         if (selectedMajorID != null && selectedRequirementsID != null) {
-            UserPrefs userPrefs = new UserPrefs(user.getName(), user.getID(), selectedMajorID, selectedRequirementsID, 1);
+            final Intent i = new Intent(this, PlanningActivity.class);
+            final UserPrefs userPrefs = new UserPrefs(user.getName(), user.getID(),
+                    selectedMajorID, selectedRequirementsID, 1);
             UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, this);
-
-            Requirements req = ApplicationCore.getInstance().getRequirements(selectedRequirementsID);
-            userPrefs.setPlanning(ApplicationCore.getInstance().getRecommender().getDefaultPlanning(req));
-
-            Intent i = new Intent(this, PlanningActivity.class);
-            i.putExtra("UserPrefs", userPrefs);
-            finish();
-            startActivity(i);
+            Thread thread = new Thread(new Runnable() {
+                public void run() {
+                    Requirements req = ApplicationCore.getInstance().getRequirements(selectedRequirementsID);
+                    userPrefs.setPlanning(ApplicationCore.getInstance().getRecommender().getDefaultPlanning(req));
+                    i.putExtra("UserPrefs", userPrefs);
+                    finish();
+                    startActivity(i);
+                }
+            });
+            thread.start();
         }
     }
 

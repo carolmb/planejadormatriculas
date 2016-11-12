@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -21,8 +23,10 @@ import org.json.JSONObject;
 import java.io.Serializable;
 
 import planmat.appcore.ApplicationCore;
+import planmat.datarepresentation.ClassList;
 import planmat.datarepresentation.Component;
 import planmat.datarepresentation.Requirements;
+import planmat.datarepresentation.StatList;
 import planmat.internaldata.UserPrefs;
 import planmat.internaldata.UserPrefsAccessor;
 import ufrn.br.planmat.R;
@@ -47,7 +51,14 @@ public class PlanningActivity extends AppCompatActivity {
 
         layout = (LinearLayout) findViewById(R.id.semesters);
 
-        createSemesterList();
+        Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                requirements = (Requirements) msg.obj;
+                createSemesterList();
+            }
+        };
+        ApplicationCore.getInstance().getRequirements(handler, userPrefs.getRequirementsID());
     }
 
     // ------------------------------------------------------------------------------
@@ -55,36 +66,20 @@ public class PlanningActivity extends AppCompatActivity {
     // ------------------------------------------------------------------------------
 
     private void createSemesterList() {
-        final Activity activity = this;
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d("Waiting requirements", "Waiting requirements ");
-
-                requirements = ApplicationCore.getInstance().getRequirements(userPrefs.getRequirementsID());
-
-                Log.d("Got requirements", requirements.toString());
-            }
-        });
-        try {
-            thread.run();
-            layout.removeAllViews();
-            int i = 1;
-            for (final UserPrefs.Semester s : userPrefs.getPlanning()) {
-                TextView newText = new TextView(activity);
-                newText.setText("Semestre " + i);
-                i++;
-                layout.addView(newText);
-                if (s.getComponents().size() == 0) {
-                    createComponentButton(-1, s, requirements);
-                } else {
-                    for (int j = 0; j < s.getComponents().size(); j++) {
-                        createComponentButton(j, s, requirements);
-                    }
+        layout.removeAllViews();
+        int i = 1;
+        for (final UserPrefs.Semester s : userPrefs.getPlanning()) {
+            TextView newText = new TextView(this);
+            newText.setText("Semestre " + i);
+            i++;
+            layout.addView(newText);
+            if (s.getComponents().size() == 0) {
+                createComponentButton(-1, s, requirements);
+            } else {
+                for (int j = 0; j < s.getComponents().size(); j++) {
+                    createComponentButton(j, s, requirements);
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -216,18 +211,32 @@ public class PlanningActivity extends AppCompatActivity {
 
     public void seeStatistics(View view) {
         final Intent i = new Intent(this, StatisticsActivity.class);
-        String code = selectedSemester.getComponents().get(selectedID);
-        Component comp = ApplicationCore.getInstance().getComponent(code);
-        i.putExtra("Component", comp);
-        startActivity(i);
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                String code = selectedSemester.getComponents().get(selectedID);
+                Component comp = ApplicationCore.getInstance().getComponent(code);
+                StatList list = ApplicationCore.getInstance().getStatList(code);
+                i.putExtra("Component", comp);
+                i.putExtra("StatList", list);
+                startActivity(i);
+            }
+        });
+        thread.start();
     }
 
     public void showDetails(View view) {
         final Intent i = new Intent(this, ComponentActivity.class);
-        String code = selectedSemester.getComponents().get(selectedID);
-        Component comp = ApplicationCore.getInstance().getComponent(code);
-        i.putExtra("Component", comp);
-        startActivity(i);
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                String code = selectedSemester.getComponents().get(selectedID);
+                Component comp = ApplicationCore.getInstance().getComponent(code);
+                ClassList list = ApplicationCore.getInstance().getClassList(code);
+                i.putExtra("Component", comp);
+                i.putExtra("ClassList", list);
+                startActivity(i);
+            }
+        });
+        thread.start();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

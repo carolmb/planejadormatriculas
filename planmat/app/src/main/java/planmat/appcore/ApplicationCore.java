@@ -1,5 +1,8 @@
 package planmat.appcore;
 
+import android.os.Handler;
+import android.os.Message;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,14 +62,35 @@ public class ApplicationCore {
 
     public IDList getMajorList() {
         JSONArray array = serverAccessor.getJsonArray("MajorList");
-        IDList list = dataConverter.createMajorList(array);
-        return list;
+        return dataConverter.createMajorList(array);
+    }
+
+    public void getMajorList(final Handler handler) {
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                Message msg = new Message();
+                msg.obj = getMajorList();
+                handler.sendMessage(msg);
+            }
+        });
+        thread.start();
     }
 
     public IDList getRequirementsList(String majorID) {
         JSONArray array = serverAccessor.getJsonArray("RequirementsList", majorID);
         IDList list = dataConverter.createRequirementsList(array);
         return list;
+    }
+
+    public void getRequirementsList(final Handler handler, final String majorID) {
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                Message msg = new Message();
+                msg.obj = getRequirementsList(majorID);
+                handler.sendMessage(msg);
+            }
+        });
+        thread.start();
     }
 
     public Requirements getRequirements(String id) {
@@ -77,6 +101,17 @@ public class ApplicationCore {
             requirementsCache = ApplicationCore.getInstance().getConverter().createRequirements(id, arr);
             return requirementsCache;
         }
+    }
+
+    public void getRequirements(final Handler handler, final String id) {
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                Message msg = new Message();
+                msg.obj = getRequirements(id);
+                handler.sendMessage(msg);
+            }
+        });
+        thread.start();
     }
 
     public ClassList getClassList(String code) {

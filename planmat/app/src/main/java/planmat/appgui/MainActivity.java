@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 
 import planmat.appcore.ApplicationCore;
+import planmat.datarepresentation.IDList;
 import planmat.datarepresentation.Requirements;
 import planmat.datarepresentation.User;
 import planmat.internaldata.UserPrefs;
@@ -61,9 +62,13 @@ public class MainActivity extends AppCompatActivity {
     private void redirect(User user) {
         final Activity activity = this;
         UserPrefs prefs = UserPrefsAccessor.getInstance().loadUserPrefs(activity);
-        /*if (prefs != null) {
+        if (prefs != null) {
             final Intent i = new Intent(activity, PlanningActivity.class);
             i.putExtra("UserPrefs", prefs);
+            if (prefs.getPlanning() == null) {
+                Requirements req = ApplicationCore.getInstance().getRequirements(prefs.getRequirementsID());
+                prefs.setPlanning(ApplicationCore.getInstance().getRecommender().getDefaultPlanning(req));
+            }
             finish();
             activity.startActivity(i);
         } else {
@@ -71,16 +76,7 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("User", user);
             finish();
             activity.startActivity(i);
-        }*/
-        if (prefs == null) {
-            prefs = new UserPrefs();
         }
-        Requirements req = ApplicationCore.getInstance().getRequirements(prefs.getRequirementsID());
-        prefs.setPlanning(ApplicationCore.getInstance().getRecommender().getDefaultPlanning(req));
-        final Intent i = new Intent(activity, PlanningActivity.class);
-        i.putExtra("UserPrefs", prefs);
-        finish();
-        activity.startActivity(i);
     }
 
     @Override

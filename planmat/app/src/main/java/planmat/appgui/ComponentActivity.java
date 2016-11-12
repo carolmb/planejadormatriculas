@@ -21,7 +21,8 @@ public class ComponentActivity extends AppCompatActivity {
 
         layout = (LinearLayout) findViewById(R.id.detailsLayout);
         Component component = (Component) getIntent().getSerializableExtra("Component");
-        showComponentDetails(component);
+        ClassList classList = (ClassList) getIntent().getSerializableExtra("ClassList");
+        showComponentDetails(component, classList);
     }
 
     private void addText(String string) {
@@ -30,11 +31,10 @@ public class ComponentActivity extends AppCompatActivity {
         layout.addView(text);
     }
 
-    private void showComponentDetails(Component component) {
+    private void showComponentDetails(Component component, ClassList list) {
         addText("Nome: " + component.getName());
         addText("Código: " + component.getCode());
         addText("Turmas:");
-        ClassList list = ApplicationCore.getInstance().getClassList(component.getCode());
         for (ClassList.Entry entry : list.getEntries()) {
             addText(entry.toString());
             addText("   Docente(s):");

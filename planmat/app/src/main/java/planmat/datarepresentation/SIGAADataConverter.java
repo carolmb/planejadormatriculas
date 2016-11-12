@@ -150,8 +150,6 @@ public class SIGAADataConverter implements DataConverter {
                 professors.add(prof.getString("nome"));
             }
             String hour = classObj.getString("descricaoHorario");
-            Log.e("json", classObj.toString());
-
             return new ClassList.Entry(id, code, semester, professors, hour);
         } catch (JSONException e) {
             e.printStackTrace();

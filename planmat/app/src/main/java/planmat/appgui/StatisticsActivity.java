@@ -29,13 +29,13 @@ public class StatisticsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_statistics);
 
         Component component = (Component) getIntent().getSerializableExtra("Component");
-        seeComponentStatistics(component);
+        StatList list = (StatList) getIntent().getSerializableExtra("StatList");
+        seeComponentStatistics(component, list);
     }
 
-    private void seeComponentStatistics(Component component) {
+    private void seeComponentStatistics(Component component, StatList list) {
         Log.e("component", component.getName());
         RelativeLayout relativeLayout = new RelativeLayout(this);
-        StatList list = ApplicationCore.getInstance().getStatList(component.getCode());
 
         String[] entries = new String[list.getEntries().size()];
         for(int i = 0; i < list.getEntries().size(); i++) {
