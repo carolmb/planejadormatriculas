@@ -27,6 +27,7 @@ public class SIGAAServerAccessor extends ServerAccessor {
         urlMap.put("MajorList", "curso-services/services/consulta/curso/GRADUACAO");
         urlMap.put("RequirementsList", "curso-services/services/consulta/curso/matriz/graduacao/");
         urlMap.put("Requirements", "curso-services/services/consulta/curso/componentes/");
+        urlMap.put("Requirements", "curso-services/services/consulta/curso/componentes/detalhes");
         urlMap.put("ClassList", "ensino-services/services/consulta/turmas/usuario/docente/componente/");
         urlMap.put("StatList", "ensino-services/services/consulta/turmas/estatisticas/GRADUACAO/");
     }

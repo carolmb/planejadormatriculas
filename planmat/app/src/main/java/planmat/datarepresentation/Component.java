@@ -11,9 +11,17 @@ public class Component implements Serializable {
     private String name;
     private String code;
 
+    private int workload;
+
     public Component(String code, String name) {
         this.code = code;
         this.name = name;
+    }
+
+    public Component(String code, String name, int workload) {
+        this.code = code;
+        this.name = name;
+        this.workload = workload;
     }
 
     public String getName() {

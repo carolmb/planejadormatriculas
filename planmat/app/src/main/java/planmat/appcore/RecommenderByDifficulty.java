@@ -11,7 +11,7 @@ import planmat.internaldata.UserPrefs;
 /**
  * Created by Luisa on 24/10/2016.
  */
-public class RecommenderByDifficulty implements Recommender {
+public class RecommenderByDifficulty {
 
     public String checkSemester(UserPrefs.Semester semester) {
         float rate = 1;
