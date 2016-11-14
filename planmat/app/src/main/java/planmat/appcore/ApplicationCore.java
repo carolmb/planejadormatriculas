@@ -30,11 +30,7 @@ public class ApplicationCore {
         this.serverAccessor = new SIGAAServerAccessor();
         this.dataConverter = new SIGAADataConverter();
 
-        int type1 = PlanningRecommenderFactory.BYNORMAL;
-        int type2 = CheckSemesterFactory.BYSUCCESSES;
-        this.recommender = new Recommender(
-                PlanningRecommenderFactory.getInstance().getPlanningRecommender(type1),
-                CheckSemesterFactory.getInstance().getCheckSemester(type2));
+        this.recommender = new RecommenderByDifficulty();
         statCache = new HashMap<>();
         classCache = new HashMap<>();
     }

@@ -9,23 +9,11 @@ import planmat.internaldata.UserPrefs;
 /**
  * Created by Luisa on 24/10/2016.
  */
-public class Recommender {
+public abstract class Recommender {
 
-    private PlanningRecommender planningRecommender;
-    private CheckSemester checkSemester;
+    public abstract String checkSemester(UserPrefs.Semester semester);
 
-    public Recommender(PlanningRecommender planningRecommender, CheckSemester checkSemester){
-        this.planningRecommender = planningRecommender;
-        this.checkSemester = checkSemester;
-    }
-
-    public String checkSemester(UserPrefs.Semester semester) {
-        return checkSemester.checkSemester(semester);
-    }
-
-    public UserPrefs.Semester recommendSemester(UserPrefs prefs, int s) {
-        return planningRecommender.recommendSemester(prefs, s);
-    }
+    public abstract UserPrefs.Semester recommendSemester(UserPrefs prefs, int s);
 
     public ArrayList<UserPrefs.Semester> getDefaultPlanning(Requirements requirements) {
         ArrayList<UserPrefs.Semester> planning = new ArrayList<>();

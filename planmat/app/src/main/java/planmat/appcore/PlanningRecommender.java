@@ -1,10 +1,50 @@
 package planmat.appcore;
 
+import java.util.Iterator;
+
+import planmat.datarepresentation.Component;
+import planmat.datarepresentation.Requirements;
+import planmat.datarepresentation.Semester;
 import planmat.internaldata.UserPrefs;
 
 /**
  * Created by Ana Caroline on 13/11/2016.
  */
-public interface PlanningRecommender {
-    UserPrefs.Semester recommendSemester(UserPrefs prefs, int s);
+public class PlanningRecommender {
+    static UserPrefs.Semester recommendSemesterNormal(UserPrefs prefs, int s){
+        UserPrefs.Semester semester = new UserPrefs.Semester();
+        Requirements req = ApplicationCore.getInstance().getRequirements(prefs.getRequirementsID());
+        // Adicionar todos os componentes que deviam ter sido cursados até agora
+        for(int i = 0; i < s; i++) {
+            Semester reqSemester = req.getSemesters().get(i);
+            for(Component comp : reqSemester.getComponents()) {
+                semester.getComponents().add(comp.getCode());
+            }
+        }
+        // Retirar os que já foram cursados
+        for(int i = 0; i < s; i++) {
+            UserPrefs.Semester userSemester = prefs.getPlanning().get(i);
+            for (String code : userSemester.getComponents()) {
+                semester.getComponents().remove(code);
+            }
+        }
+        return semester;
+    }
+
+    static public UserPrefs.Semester recommendSemesterByWorkload(UserPrefs prefs, int s, int maxWorkload) {
+
+        UserPrefs.Semester semester = recommendSemesterNormal(prefs, s + 1);
+
+        int sum = 0;
+        Iterator<String> it = semester.getComponents().iterator();
+        while(it.hasNext()) {
+            int workload = ApplicationCore.getInstance().getComponent(it.next()).getWorkload();
+            if(sum + workload > maxWorkload){
+                it.remove();
+            } else {
+                sum+=workload;
+            }
+        }
+        return semester;
+    }
 }
