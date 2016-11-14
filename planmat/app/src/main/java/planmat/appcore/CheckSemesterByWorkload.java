@@ -6,7 +6,7 @@ import planmat.internaldata.UserPrefs;
 /**
  * Created by User on 14/11/2016.
  */
-public class CheckSemesterMyWorkload implements CheckSemester {
+public class CheckSemesterByWorkload implements CheckSemester {
 
     static int maxWorkload = 360;
 
