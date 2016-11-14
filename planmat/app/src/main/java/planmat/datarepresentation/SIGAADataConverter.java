@@ -8,8 +8,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import planmat.datarepresentation.*;
-
 public class SIGAADataConverter implements DataConverter {
 
     public IDList createMajorList(JSONArray array) {
@@ -67,6 +65,7 @@ public class SIGAADataConverter implements DataConverter {
                     semesters.add(newSemester);
                 }
                 semesters.get(semesterOffer).getComponents().add(component);
+
             }
             return new Requirements(id, semesters);
         } catch (JSONException e) {
@@ -78,9 +77,11 @@ public class SIGAADataConverter implements DataConverter {
     public Component createComponent(JSONObject obj) {
         try {
             String name, code;
+            int workload;
             name = obj.getString("nome");
             code = obj.getString("codigo");
-            Component component = new Component(code, name);
+            workload = obj.getInt("cargaHorariaTotal");
+            Component component = new Component(code, name, workload);
             return component;
         } catch (JSONException e) {
             e.printStackTrace();

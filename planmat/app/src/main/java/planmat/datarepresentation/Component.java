@@ -32,6 +32,8 @@ public class Component implements Serializable {
         return code;
     }
 
+    public int getWorkload() { return workload; }
+
     public String toString() {
         return code + " - " + name;
     }

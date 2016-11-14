@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Created by Luisa on 09/11/2016.
+ * Created by Luísa on 09/11/2016.
  */
 public class DataRequester {
 
