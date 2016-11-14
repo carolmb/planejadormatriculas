@@ -5,6 +5,7 @@ import java.util.Iterator;
 import planmat.datarepresentation.Component;
 import planmat.datarepresentation.Requirements;
 import planmat.datarepresentation.Semester;
+import planmat.datarepresentation.StatList;
 import planmat.internaldata.UserPrefs;
 
 /**
@@ -32,7 +33,6 @@ public class PlanningRecommender {
     }
 
     static public UserPrefs.Semester recommendSemesterByWorkload(UserPrefs prefs, int s, int maxWorkload) {
-
         UserPrefs.Semester semester = recommendSemesterNormal(prefs, s + 1);
 
         int sum = 0;
@@ -45,6 +45,23 @@ public class PlanningRecommender {
                 sum+=workload;
             }
         }
+        return semester;
+    }
+
+    static public UserPrefs.Semester recommendSemesterBySuccesses(UserPrefs prefs, int s, float minRate) {
+        UserPrefs.Semester semester = recommendSemesterNormal(prefs, s);
+
+        float rate = 1;
+        Iterator<String> it = semester.getComponents().iterator();
+        while(it.hasNext()) {
+            StatList statList = ApplicationCore.getInstance().getStatList(it.next());
+            if(rate * statList.getSuccessRate() < minRate){
+                it.remove();
+            } else {
+                rate *= statList.getSuccessRate();
+            }
+        }
+
         return semester;
     }
 }

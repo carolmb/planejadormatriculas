@@ -14,7 +14,7 @@ import planmat.internaldata.UserPrefs;
 public class RecommenderByDifficulty extends Recommender{
 
     public String checkSemester(UserPrefs.Semester semester) {
-        return CheckSemester.checkSemesterRate(semester);
+        return CheckSemester.checkSemesterSuccesses(semester);
     }
 
     public UserPrefs.Semester recommendSemester(UserPrefs prefs, int s) {
