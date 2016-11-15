@@ -9,10 +9,9 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import planmat.custom.Custom;
 import planmat.datarepresentation.*;
-import planmat.externaldata.SIGAAServerAccessor;
 import planmat.externaldata.ServerAccessor;
-import planmat.datarepresentation.SIGAADataConverter;
 
 public class ApplicationCore {
 
@@ -27,10 +26,11 @@ public class ApplicationCore {
     private HashMap<String, ClassList> classCache;
 
     private ApplicationCore() {
-        this.serverAccessor = new SIGAAServerAccessor();
-        this.dataConverter = new SIGAADataConverter();
+        Custom custom = new Custom();
+        this.serverAccessor = custom.getServerAccessor();
+        this.dataConverter = custom.getDataConverter();
 
-        this.recommender = new RecommenderByDifficulty();
+        this.recommender = custom.getRecommender();
         statCache = new HashMap<>();
         classCache = new HashMap<>();
     }

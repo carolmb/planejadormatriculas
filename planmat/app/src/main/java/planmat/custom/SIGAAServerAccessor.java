@@ -1,4 +1,4 @@
-package planmat.externaldata;
+package planmat.custom;
 
 import android.util.Log;
 
@@ -7,6 +7,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import planmat.datarepresentation.*;
+import planmat.externaldata.AuthorizationRequester;
+import planmat.externaldata.DataRequester;
+import planmat.externaldata.ServerAccessor;
 
 /**
  * Created by Ana Caroline on 03/09/2016.

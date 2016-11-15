@@ -1,4 +1,4 @@
-package planmat.datarepresentation;
+package planmat.custom;
 
 import android.util.Log;
 
@@ -7,6 +7,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import planmat.datarepresentation.ClassList;
+import planmat.datarepresentation.Component;
+import planmat.datarepresentation.DataConverter;
+import planmat.datarepresentation.IDList;
+import planmat.datarepresentation.Requirements;
+import planmat.datarepresentation.Semester;
+import planmat.datarepresentation.StatList;
+import planmat.datarepresentation.User;
 
 public class SIGAADataConverter implements DataConverter {
 

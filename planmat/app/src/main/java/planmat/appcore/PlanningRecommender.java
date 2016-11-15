@@ -12,7 +12,7 @@ import planmat.internaldata.UserPrefs;
  * Created by Ana Caroline on 13/11/2016.
  */
 public class PlanningRecommender {
-    static UserPrefs.Semester recommendSemesterNormal(UserPrefs prefs, int s){
+    public static UserPrefs.Semester recommendSemesterNormal(UserPrefs prefs, int s){
         UserPrefs.Semester semester = new UserPrefs.Semester();
         Requirements req = ApplicationCore.getInstance().getRequirements(prefs.getRequirementsID());
         // Adicionar todos os componentes que deviam ter sido cursados até agora
@@ -32,8 +32,8 @@ public class PlanningRecommender {
         return semester;
     }
 
-    static public UserPrefs.Semester recommendSemesterByWorkload(UserPrefs prefs, int s, int maxWorkload) {
-        UserPrefs.Semester semester = recommendSemesterNormal(prefs, s + 1);
+    public static UserPrefs.Semester recommendSemesterByWorkload(UserPrefs prefs, int s, int maxWorkload) {
+        UserPrefs.Semester semester = recommendSemesterNormal(prefs, s);
 
         int sum = 0;
         Iterator<String> it = semester.getComponents().iterator();
@@ -48,7 +48,7 @@ public class PlanningRecommender {
         return semester;
     }
 
-    static public UserPrefs.Semester recommendSemesterBySuccesses(UserPrefs prefs, int s, float minRate) {
+    public static UserPrefs.Semester recommendSemesterBySuccesses(UserPrefs prefs, int s, float minRate) {
         UserPrefs.Semester semester = recommendSemesterNormal(prefs, s);
 
         float rate = 1;
@@ -61,7 +61,6 @@ public class PlanningRecommender {
                 rate *= statList.getSuccessRate();
             }
         }
-
         return semester;
     }
 }

@@ -1,17 +1,14 @@
-package planmat.appcore;
+package planmat.custom;
 
-import java.util.ArrayList;
-
-import planmat.datarepresentation.Component;
-import planmat.datarepresentation.Requirements;
-import planmat.datarepresentation.Semester;
-import planmat.datarepresentation.StatList;
+import planmat.appcore.CheckSemester;
+import planmat.appcore.PlanningRecommender;
+import planmat.appcore.Recommender;
 import planmat.internaldata.UserPrefs;
 
 /**
  * Created by Luisa on 24/10/2016.
  */
-public class RecommenderByDifficulty extends Recommender{
+public class RecommenderByDifficulty extends Recommender {
 
     public String checkSemester(UserPrefs.Semester semester) {
         return CheckSemester.checkSemesterSuccesses(semester);
