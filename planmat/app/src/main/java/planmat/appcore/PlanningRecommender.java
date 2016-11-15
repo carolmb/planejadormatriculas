@@ -16,7 +16,7 @@ public class PlanningRecommender {
         UserPrefs.Semester semester = new UserPrefs.Semester();
         Requirements req = ApplicationCore.getInstance().getRequirements(prefs.getRequirementsID());
         // Adicionar todos os componentes que deviam ter sido cursados até agora
-        for(int i = 0; i < s; i++) {
+        for(int i = 1; i < s + 1; i++) {
             Semester reqSemester = req.getSemesters().get(i);
             for(Component comp : reqSemester.getComponents()) {
                 semester.getComponents().add(comp.getCode());

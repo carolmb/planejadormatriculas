@@ -193,9 +193,8 @@ public class PlanningActivity extends AppCompatActivity {
     }
 
     public void addSemester(View view) {
-        userPrefs.getPlanning().add(new UserPrefs.Semester());
+        planningRecommenderMessage();
         savePrefs();
-        createSemesterList();
         selectedSemester = null;
     }
 
@@ -207,6 +206,43 @@ public class PlanningActivity extends AppCompatActivity {
             createSemesterList();
             selectedSemester = null;
         }
+    }
+
+    protected void planningRecommenderMessage() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_planning);
+
+        TextView textView = (TextView) dialog.findViewById(R.id.textView2);
+
+        textView.setText("Deseja usar nossa sugestão de planejamento?");
+        textView.setTextColor(Color.BLACK);
+
+        Button btnYes = (Button) dialog.findViewById(R.id.buttonYes);
+        Button btnNo = (Button) dialog.findViewById(R.id.buttonNo);
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int s = userPrefs.getPlanning().size();
+                if(s == 0){
+                    s++;
+                }
+                UserPrefs.Semester semester = ApplicationCore.getInstance().getRecommender().recommendSemester(userPrefs, s);
+                userPrefs.getPlanning().add(semester);
+                createSemesterList();
+                dialog.cancel();
+            }
+        });
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userPrefs.getPlanning().add(new UserPrefs.Semester());
+                dialog.cancel();
+            }
+        });
+
+        dialog.show();
     }
 
     public void seeStatistics(View view) {
