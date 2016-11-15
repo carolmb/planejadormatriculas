@@ -238,6 +238,7 @@ public class PlanningActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 userPrefs.getPlanning().add(new UserPrefs.Semester());
+                createSemesterList();
                 dialog.cancel();
             }
         });
