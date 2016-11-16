@@ -223,10 +223,7 @@ public class PlanningActivity extends AppCompatActivity {
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int s = userPrefs.getPlanning().size();
-                if(s == 0){
-                    s++;
-                }
+                int s = userPrefs.getPlanning().size() + 1;
                 UserPrefs.Semester semester = ApplicationCore.getInstance().getRecommender().recommendSemester(userPrefs, s);
                 userPrefs.getPlanning().add(semester);
                 createSemesterList();

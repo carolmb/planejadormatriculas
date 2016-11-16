@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import planmat.custom.Custom;
+import planmat.custom.CustomFactory;
 import planmat.datarepresentation.*;
 import planmat.externaldata.ServerAccessor;
 
@@ -26,7 +26,7 @@ public class ApplicationCore {
     private HashMap<String, ClassList> classCache;
 
     private ApplicationCore() {
-        Custom custom = new Custom();
+        CustomFactory custom = new CustomFactory();
         this.serverAccessor = custom.getServerAccessor();
         this.dataConverter = custom.getDataConverter();
 

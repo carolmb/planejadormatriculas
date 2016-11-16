@@ -12,7 +12,8 @@ import planmat.internaldata.UserPrefs;
  * Created by Ana Caroline on 13/11/2016.
  */
 public class PlanningRecommender {
-    public static UserPrefs.Semester recommendSemesterNormal(UserPrefs prefs, int s){
+
+    public static UserPrefs.Semester recommendSemesterNormal(UserPrefs prefs, int s) {
         UserPrefs.Semester semester = new UserPrefs.Semester();
         Requirements req = ApplicationCore.getInstance().getRequirements(prefs.getRequirementsID());
         // Adicionar todos os componentes que deviam ter sido cursados até agora
@@ -63,4 +64,5 @@ public class PlanningRecommender {
         }
         return semester;
     }
+
 }
