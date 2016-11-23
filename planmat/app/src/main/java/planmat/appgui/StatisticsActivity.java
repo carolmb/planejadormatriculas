@@ -39,8 +39,7 @@ public class StatisticsActivity extends AppCompatActivity {
 
         String[] entries = new String[list.getEntries().size()];
         for(int i = 0; i < list.getEntries().size(); i++) {
-            entries[i] = list.getEntries().get(i).toString() + "\n";
-            entries[i] += list.getEntries().get(i).toString();
+            entries[i] = list.getEntries().get(i).toString();
         }
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
