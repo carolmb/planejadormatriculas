@@ -11,8 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -21,6 +24,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import planmat.appcore.ApplicationCore;
 import planmat.datarepresentation.ClassList;
@@ -66,8 +71,26 @@ public class PlanningActivity extends AppCompatActivity {
     // ------------------------------------------------------------------------------
 
     private void createSemesterList() {
-        layout.removeAllViews();
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        List<String> categories = new ArrayList<String>();
         int i = 1;
+        for(final UserPrefs.Semester s : userPrefs.getPlanning()){
+            categories.add("" + i);
+            i++;
+        }
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        spinner.setAdapter(dataAdapter);
+        spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //selectedSemester = userPrefs.getPlanning().get(position); TODO: TESTAR
+            }
+        });
+
+        layout.removeAllViews();
+        i = 1;
         for (final UserPrefs.Semester s : userPrefs.getPlanning()) {
             TextView newText = new TextView(this);
             newText.setText("Semestre " + i);
@@ -236,6 +259,7 @@ public class PlanningActivity extends AppCompatActivity {
             public void onClick(View v) {
                 userPrefs.getPlanning().add(new UserPrefs.Semester());
                 createSemesterList();
+
                 dialog.cancel();
             }
         });
