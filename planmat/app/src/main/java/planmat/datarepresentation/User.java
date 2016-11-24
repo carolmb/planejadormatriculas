@@ -10,10 +10,12 @@ public class User implements Serializable {
 
     private String id;
     private String name;
+    private String userName;
 
-    public User(String id, String name) {
+    public User(String id, String name, String userName) {
         this.id = id;
         this.name = name;
+        this.userName = userName;
     }
 
     public String getID() {
@@ -23,5 +25,7 @@ public class User implements Serializable {
     public String getName() {
         return name;
     }
+
+    public String getUserName() { return userName; }
 
 }

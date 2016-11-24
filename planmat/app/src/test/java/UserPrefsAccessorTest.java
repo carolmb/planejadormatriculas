@@ -17,7 +17,7 @@ public class UserPrefsAccessorTest {
 
     @Before
     public void setUp() throws Exception {
-        userPrefs = new UserPrefs("name", "1", "1", "1", 1);
+        userPrefs = new UserPrefs("username", "name", "1", "1", "1", 1);
         activity = new MainActivity();
     }
 
@@ -30,8 +30,8 @@ public class UserPrefsAccessorTest {
 
     @Test
     public void testLoadUserPrefs() {
-        userPrefsAccessor.getInstance().storeUserPrefs(userPrefs, activity);
-        UserPrefs uP = userPrefsAccessor.getInstance().loadUserPrefs(activity);
+        userPrefsAccessor.getInstance().storeUserPrefs(userPrefs, userPrefs.getUserName(), activity);
+        UserPrefs uP = userPrefsAccessor.getInstance().loadUserPrefs(activity, userPrefs.getUserName());
         assertEquals(userPrefs, uP);
     }
 }

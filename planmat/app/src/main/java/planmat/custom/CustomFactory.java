@@ -1,7 +1,6 @@
 package planmat.custom;
 
 import planmat.appcore.Recommender;
-import planmat.datarepresentation.DataConverter;
 import planmat.externaldata.ServerAccessor;
 
 /**
@@ -9,10 +8,15 @@ import planmat.externaldata.ServerAccessor;
  */
 public class CustomFactory {
 
-    public ServerAccessor getServerAccessor() { return new FakeServerAccessor(); }
+    private static CustomFactory instance = new CustomFactory();
+    private CustomFactory() {}
 
-    public DataConverter getDataConverter() {
-        return new SIGAADataConverter();
+    public static CustomFactory getInstance() {
+        return instance;
+    }
+
+    public ServerAccessor getServerAccessor() {
+        return new FakeServerAccessor();
     }
 
     public Recommender getRecommender() {

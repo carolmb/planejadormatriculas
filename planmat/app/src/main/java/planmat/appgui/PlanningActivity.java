@@ -305,7 +305,7 @@ public class PlanningActivity extends AppCompatActivity {
     }
 
     private void savePrefs() {
-        UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, this);
+        UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, userPrefs.getUserName(), this);
     }
 
     public void setSelectedSemester(UserPrefs.Semester s) {

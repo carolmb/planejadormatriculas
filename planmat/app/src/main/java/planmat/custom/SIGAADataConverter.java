@@ -10,14 +10,13 @@ import java.util.ArrayList;
 
 import planmat.datarepresentation.ClassList;
 import planmat.datarepresentation.Component;
-import planmat.datarepresentation.DataConverter;
 import planmat.datarepresentation.IDList;
 import planmat.datarepresentation.Requirements;
 import planmat.datarepresentation.Semester;
 import planmat.datarepresentation.StatList;
 import planmat.datarepresentation.User;
 
-public class SIGAADataConverter implements DataConverter {
+public class SIGAADataConverter {
 
     public IDList createMajorList(JSONArray array) {
         try {
@@ -169,7 +168,7 @@ public class SIGAADataConverter implements DataConverter {
 
     public User createUser(JSONObject studentInfo, JSONObject loginInfo) {
         try {
-            return new User(""+ loginInfo.getInt("id"), studentInfo.getString("nome"));
+            return new User(""+ loginInfo.getInt("id"), studentInfo.getString("nome"), "");
         } catch (JSONException e) {
             e.printStackTrace();
         }

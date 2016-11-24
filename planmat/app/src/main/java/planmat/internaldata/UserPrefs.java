@@ -24,6 +24,7 @@ public class UserPrefs implements Serializable {
         }
     }
 
+    private String userName;
     private String name;
     private String userID;
     private String majorID;
@@ -31,12 +32,17 @@ public class UserPrefs implements Serializable {
     private int currentSemester;
     private ArrayList<Semester> planning;
 
-    public UserPrefs(String name, String userID, String majorID, String requirementsID, int currentSemester) {
+    public UserPrefs(String userName, String name, String userID, String majorID, String requirementsID, int currentSemester) {
+        this.userName = userName;
         this.name = name;
         this.userID = userID;
         this.majorID = majorID;
         this.requirementsID = requirementsID;
         this.currentSemester = currentSemester;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public String getName() {

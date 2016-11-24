@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         final Activity activity = this;
         Thread thread = new Thread(new Runnable() {
            public void run() {
-               ApplicationCore.getInstance().getServerAccessor().login(activity);
+               ApplicationCore.getInstance().login(activity);
                User user = ApplicationCore.getInstance().getUser();
                redirect(user);
            }
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void redirect(User user) {
         final Activity activity = this;
-        UserPrefs prefs = UserPrefsAccessor.getInstance().loadUserPrefs(activity);
+        UserPrefs prefs = UserPrefsAccessor.getInstance().loadUserPrefs(activity, user.getUserName());
         if (prefs != null) {
             final Intent i = new Intent(activity, PlanningActivity.class);
             i.putExtra("UserPrefs", prefs);

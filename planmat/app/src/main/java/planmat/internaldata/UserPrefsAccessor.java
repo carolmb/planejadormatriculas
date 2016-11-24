@@ -23,11 +23,11 @@ public class UserPrefsAccessor {
         return instance;
     }
 
-    public UserPrefs loadUserPrefs(Context cont) {
+    public UserPrefs loadUserPrefs(Context cont, String fileName) {
         UserPrefs userPrefs = null;
         FileInputStream fileInputStream;
         try {
-            fileInputStream = cont.openFileInput("file");
+            fileInputStream = cont.openFileInput(fileName);
             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream);
             userPrefs = (UserPrefs) inputStream.readObject();
             inputStream.close();
@@ -38,10 +38,10 @@ public class UserPrefsAccessor {
         return userPrefs;
     }
 
-    public void storeUserPrefs(UserPrefs userPrefs, Context cont) {
+    public void storeUserPrefs(UserPrefs userPrefs, String fileName, Context cont) {
         FileOutputStream fileOutputStream;
         try {
-            fileOutputStream = cont.openFileOutput("file", Context.MODE_PRIVATE);
+            fileOutputStream = cont.openFileOutput(fileName, Context.MODE_PRIVATE);
             ObjectOutputStream outputStream = new ObjectOutputStream(fileOutputStream);
             outputStream.writeObject(userPrefs);
             outputStream.close();

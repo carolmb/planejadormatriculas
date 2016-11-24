@@ -15,7 +15,7 @@ import planmat.datarepresentation.*;
 /**
  * Created by Ana Caroline on 03/09/2016.
  */
-public class ServerAccessor {
+public abstract class ServerAccessor {
 
     protected String serverURL;
 
@@ -35,6 +35,13 @@ public class ServerAccessor {
         dataRequester = dr;
         authorizationRequester = ar;
     }
+
+    public abstract User getUser();
+    public abstract IDList getMajorList();
+    public abstract IDList getRequirementsList(String code);
+    public abstract Requirements getRequirements(String code);
+    public abstract ClassList getClassList(String code);
+    public abstract StatList getStatList(String code);
 
     public void login(Activity activity) {
         dataRequester.createRequestQueue(activity);

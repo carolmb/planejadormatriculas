@@ -23,7 +23,6 @@ import ufrn.br.planmat.R;
 
 public class ChooseMajorActivity extends AppCompatActivity {
 
-    private TextView textView;
     private User user;
 
     private Spinner spnMajor;
@@ -125,12 +124,13 @@ public class ChooseMajorActivity extends AppCompatActivity {
     public void buttonOK(View view) {
         if (selectedMajorID != null && selectedRequirementsID != null) {
             final Intent i = new Intent(this, PlanningActivity.class);
-            final UserPrefs userPrefs = new UserPrefs(user.getName(), user.getID(),
+            final UserPrefs userPrefs = new UserPrefs(user.getUserName(), user.getName(), user.getID(),
                     selectedMajorID, selectedRequirementsID, 1);
-            UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, this);
+            UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, user.getUserName(), this);
             Thread thread = new Thread(new Runnable() {
                 public void run() {
                     Requirements req = ApplicationCore.getInstance().getRequirements(selectedRequirementsID);
+
                     userPrefs.setPlanning(ApplicationCore.getInstance().getRecommender().getDefaultPlanning(req));
                     i.putExtra("UserPrefs", userPrefs);
                     finish();

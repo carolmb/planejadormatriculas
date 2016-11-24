@@ -1,5 +1,6 @@
 package planmat.appcore;
 
+import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
 
@@ -12,34 +13,24 @@ import java.util.HashMap;
 import planmat.custom.CustomFactory;
 import planmat.datarepresentation.*;
 import planmat.externaldata.ServerAccessor;
+import planmat.internaldata.DatabaseAccessor;
 
 public class ApplicationCore {
 
     private static ApplicationCore instance = new ApplicationCore();
 
-    private ServerAccessor serverAccessor;
-    private DataConverter dataConverter;
     private Recommender recommender;
 
+    private User userCache;
     private Requirements requirementsCache;
     private HashMap<String, StatList> statCache;
     private HashMap<String, ClassList> classCache;
 
     private ApplicationCore() {
-        CustomFactory custom = new CustomFactory();
-        this.serverAccessor = custom.getServerAccessor();
-        this.dataConverter = custom.getDataConverter();
-
-        this.recommender = custom.getRecommender();
+        this.recommender = CustomFactory.getInstance().getRecommender();
         statCache = new HashMap<>();
         classCache = new HashMap<>();
     }
-
-    public ServerAccessor getServerAccessor() {
-        return serverAccessor;
-    }
-
-    public DataConverter getConverter() { return dataConverter; }
 
     public Recommender getRecommender() {
         return recommender;
@@ -49,21 +40,16 @@ public class ApplicationCore {
         return instance;
     }
 
+    public void login(Activity activity) {
+        DatabaseAccessor.getInstance().login(activity);
+    }
+
     public User getUser() {
-        JSONObject userInfo = serverAccessor.getJsonObject("UserInfo");
-        String id = "";
-        try {
-            id = "" + userInfo.getInt("id");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        JSONObject studentInfo = ApplicationCore.getInstance().getServerAccessor().getJsonObject("StudentInfo", id);
-        return dataConverter.createUser(studentInfo, userInfo);
+        return DatabaseAccessor.getInstance().getUser();
     }
 
     public IDList getMajorList() {
-        JSONArray array = serverAccessor.getJsonArray("MajorList");
-        return dataConverter.createMajorList(array);
+        return DatabaseAccessor.getInstance().getMajorList();
     }
 
     public void getMajorList(final Handler handler) {
@@ -78,9 +64,7 @@ public class ApplicationCore {
     }
 
     public IDList getRequirementsList(String majorID) {
-        JSONArray array = serverAccessor.getJsonArray("RequirementsList", majorID);
-        IDList list = dataConverter.createRequirementsList(array);
-        return list;
+        return DatabaseAccessor.getInstance().getRequirementsList(majorID);
     }
 
     public void getRequirementsList(final Handler handler, final String majorID) {
@@ -95,13 +79,8 @@ public class ApplicationCore {
     }
 
     public Requirements getRequirements(String id) {
-        if (requirementsCache != null && requirementsCache.getID().equals(id))
-            return requirementsCache;
-        else {
-            JSONArray arr = ApplicationCore.getInstance().getServerAccessor().getJsonArray("Requirements", id);
-            requirementsCache = ApplicationCore.getInstance().getConverter().createRequirements(id, arr);
-            return requirementsCache;
-        }
+        requirementsCache = DatabaseAccessor.getInstance().getRequirements(id);
+        return requirementsCache;
     }
 
     public void getRequirements(final Handler handler, final String id) {
@@ -117,9 +96,8 @@ public class ApplicationCore {
 
     public ClassList getClassList(String code) {
         ClassList list = classCache.get(code);
-        if (list == null){
-            JSONArray classArray = serverAccessor.getJsonArray("ClassList", code);
-            list = dataConverter.createClassList(classArray);
+        if (list == null) {
+            list = DatabaseAccessor.getInstance().getClassList(code);
             classCache.put(code, list);
         }
         return list;
@@ -128,26 +106,14 @@ public class ApplicationCore {
     public StatList getStatList(String code) {
         StatList list = statCache.get(code);
         if (list == null) {
-            JSONArray statArray = serverAccessor.getJsonArray("StatList", code);
-            list = dataConverter.createStatList(statArray);
+            list = DatabaseAccessor.getInstance().getStatList(code);
             statCache.put(code, list);
         }
         return list;
     }
 
     public Component getComponent(String code) {
-        Component comp = null;
-        if (requirementsCache != null) {
-            comp = requirementsCache.getComponent(code);
-        }
-        if (comp == null) {
-            JSONObject obj = serverAccessor.getJsonObject("Component", code);
-            comp = dataConverter.createComponent(obj);
-            if (requirementsCache != null) {
-                requirementsCache.putComponent(code, comp);
-            }
-        }
-        return comp;
+        return requirementsCache.getComponent(code);
     }
 
 }
