@@ -9,7 +9,7 @@ import planmat.externaldata.ServerAccessor;
  */
 public class CustomFactory {
 
-    public ServerAccessor getServerAccessor() { return new SIGAAServerAccessor(); }
+    public ServerAccessor getServerAccessor() { return new FakeServerAccessor(); }
 
     public DataConverter getDataConverter() {
         return new SIGAADataConverter();
