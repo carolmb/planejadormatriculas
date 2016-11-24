@@ -45,6 +45,11 @@
                 android:text="Ver estrutura"
                 android:id="@+id/reqButton"
                 android:onClick="seeRequirements" />
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:id="@+id/spinner" />
         </LinearLayout>
 
         <ScrollView
