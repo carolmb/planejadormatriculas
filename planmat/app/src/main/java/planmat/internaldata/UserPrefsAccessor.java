@@ -17,6 +17,8 @@ public class UserPrefsAccessor {
 
     private static UserPrefsAccessor instance = new UserPrefsAccessor();
 
+    public static UserPrefs prefs;
+
     private UserPrefsAccessor() {}
 
     public static UserPrefsAccessor getInstance() {
@@ -35,11 +37,13 @@ public class UserPrefsAccessor {
         } catch (Exception e) {
             Log.d("UserPrefs not found: ", e.getMessage());
         }
+        prefs = userPrefs;
         return userPrefs;
     }
 
     public void storeUserPrefs(UserPrefs userPrefs, String fileName, Context cont) {
         FileOutputStream fileOutputStream;
+        prefs = userPrefs;
         try {
             fileOutputStream = cont.openFileOutput(fileName, Context.MODE_PRIVATE);
             ObjectOutputStream outputStream = new ObjectOutputStream(fileOutputStream);

@@ -20,7 +20,7 @@ public class CustomFactory {
     }
 
     public Recommender getRecommender() {
-        return new RecommenderByWorkload();
+        return new RecommenderByPersonal();
     }
 
 }
