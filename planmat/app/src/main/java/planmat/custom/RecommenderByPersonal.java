@@ -1,11 +1,11 @@
 package planmat.custom;
 
-import planmat.appcore.CheckSemester;
-import planmat.appcore.PlanningRecommender;
+import planmat.appcore.SemesterCheckHelper;
+import planmat.appcore.PlanningHelper;
 import planmat.appcore.Recommender;
 import planmat.internaldata.UserPrefs;
 import planmat.internaldata.UserPrefsAccessor;
-import android.util.Log;
+
 import java.lang.String;
 
 /**
@@ -18,23 +18,23 @@ public class RecommenderByPersonal extends Recommender {
         int s = prefs.getPlanning().size();
         int workload;
         if(s > 1) {
-            workload = PlanningRecommender.findTotalWorkload(prefs, s);
+            workload = PlanningHelper.findTotalWorkload(prefs, s);
             workload /= s;
         }
         else
             workload = 360;
-        return CheckSemester.checkSemesterByWorkload(semester, workload);
+        return SemesterCheckHelper.checkSemesterByWorkload(semester, workload);
     }
 
     public UserPrefs.Semester recommendSemester(UserPrefs prefs, int s) {
         int workload;
         if(s>1) {
-            workload = PlanningRecommender.findTotalWorkload(prefs, s);
+            workload = PlanningHelper.findTotalWorkload(prefs, s);
             workload /= s-1;
         }
         else
             workload = 360;
-        return PlanningRecommender.recommendSemesterByWorkload(prefs, s, workload);
+        return PlanningHelper.recommendSemesterByWorkload(prefs, s, workload);
     }
 
 }

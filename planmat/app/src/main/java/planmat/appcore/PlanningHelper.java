@@ -11,7 +11,7 @@ import planmat.internaldata.UserPrefs;
 /**
  * Created by Ana Caroline on 13/11/2016.
  */
-public class PlanningRecommender {
+public class PlanningHelper {
 
     public static UserPrefs.Semester recommendSemesterNormal(UserPrefs prefs, int s) {
         UserPrefs.Semester semester = new UserPrefs.Semester();
