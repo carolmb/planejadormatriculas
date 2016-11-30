@@ -51,8 +51,7 @@ public class PlanningActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_planning);
 
-        //userPrefs = (UserPrefs) getIntent().getSerializableExtra("UserPrefs");
-        userPrefs = UserPrefsAccessor.prefs;
+        userPrefs = UserPrefsAccessor.getInstance().getPrefs();
         Log.d("User Prefs", "Nome: " + userPrefs.getName() + ", ID: " + userPrefs.getUserID());
 
         layout = (LinearLayout) findViewById(R.id.semesters);
@@ -335,7 +334,7 @@ public class PlanningActivity extends AppCompatActivity {
     }
 
     private void savePrefs() {
-        UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, userPrefs.getUserName(), this);
+        UserPrefsAccessor.getInstance().saveUserPrefs(this);
     }
 
     public void setSelectedSemester(UserPrefs.Semester s) {

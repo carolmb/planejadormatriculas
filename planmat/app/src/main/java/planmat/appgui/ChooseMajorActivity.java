@@ -126,13 +126,12 @@ public class ChooseMajorActivity extends AppCompatActivity {
             final Intent i = new Intent(this, PlanningActivity.class);
             final UserPrefs userPrefs = new UserPrefs(user.getUserName(), user.getName(), user.getID(),
                     selectedMajorID, selectedRequirementsID, 1);
-            UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, user.getUserName(), this);
+            UserPrefsAccessor.getInstance().setPrefs(userPrefs);
+            UserPrefsAccessor.getInstance().saveUserPrefs(this);
             Thread thread = new Thread(new Runnable() {
                 public void run() {
                     Requirements req = ApplicationCore.getInstance().getRequirements(selectedRequirementsID);
-
                     userPrefs.setPlanning(ApplicationCore.getInstance().getRecommender().getDefaultPlanning(req));
-                    i.putExtra("UserPrefs", userPrefs);
                     finish();
                     startActivity(i);
                 }

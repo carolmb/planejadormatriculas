@@ -16,8 +16,7 @@ import java.io.FileInputStream;
 public class UserPrefsAccessor {
 
     private static UserPrefsAccessor instance = new UserPrefsAccessor();
-
-    public static UserPrefs prefs;
+    private UserPrefs prefs;
 
     private UserPrefsAccessor() {}
 
@@ -25,29 +24,36 @@ public class UserPrefsAccessor {
         return instance;
     }
 
-    public UserPrefs loadUserPrefs(Context cont, String fileName) {
-        UserPrefs userPrefs = null;
+    public UserPrefs getPrefs() {
+        return prefs;
+    }
+
+    public void setPrefs(UserPrefs prefs) {
+        this.prefs = prefs;
+    }
+
+    public boolean loadUserPrefs(Context cont, String fileName) {
         FileInputStream fileInputStream;
         try {
             fileInputStream = cont.openFileInput(fileName);
             ObjectInputStream inputStream = new ObjectInputStream(fileInputStream);
-            userPrefs = (UserPrefs) inputStream.readObject();
+            UserPrefs userPrefs = (UserPrefs) inputStream.readObject();
             inputStream.close();
             fileInputStream.close();
+            prefs = userPrefs;
+            return true;
         } catch (Exception e) {
             Log.d("UserPrefs not found: ", e.getMessage());
+            return false;
         }
-        prefs = userPrefs;
-        return userPrefs;
     }
 
-    public void storeUserPrefs(UserPrefs userPrefs, String fileName, Context cont) {
+    public void saveUserPrefs(Context cont) {
         FileOutputStream fileOutputStream;
-        prefs = userPrefs;
         try {
-            fileOutputStream = cont.openFileOutput(fileName, Context.MODE_PRIVATE);
+            fileOutputStream = cont.openFileOutput(prefs.getUserName(), Context.MODE_PRIVATE);
             ObjectOutputStream outputStream = new ObjectOutputStream(fileOutputStream);
-            outputStream.writeObject(userPrefs);
+            outputStream.writeObject(prefs);
             outputStream.close();
             fileOutputStream.close();
         } catch (Exception e) {

@@ -14,7 +14,7 @@ import java.lang.String;
 public class RecommenderByPersonal extends Recommender {
 
     public String checkSemester(UserPrefs.Semester semester) {
-        UserPrefs prefs = UserPrefsAccessor.prefs;
+        UserPrefs prefs = UserPrefsAccessor.getInstance().getPrefs();
         int s = prefs.getPlanning().size();
         int workload;
         if(s > 1) {
@@ -36,4 +36,5 @@ public class RecommenderByPersonal extends Recommender {
             workload = 360;
         return PlanningRecommender.recommendSemesterByWorkload(prefs, s, workload);
     }
+
 }
