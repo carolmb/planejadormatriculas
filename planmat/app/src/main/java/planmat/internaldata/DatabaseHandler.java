@@ -4,6 +4,11 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import planmat.datarepresentation.ClassList;
+import planmat.datarepresentation.Component;
+import planmat.datarepresentation.Requirements;
+import planmat.datarepresentation.StatList;
+
 /**
  * Created by Luisa on 09/12/2016.
  */
@@ -45,6 +50,38 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         // Create tables again
         onCreate(db);
+    }
+
+    public boolean hasComponent(Component comp) {
+        // TODO: verificar se tal componente já foi inserido no DB
+        return false;
+    }
+
+    public void insertComponent(Component comp) {
+        // TODO
+    }
+
+    public void insertStat(StatList.Entry entry) {
+        // TODO
+    }
+
+    public void insertClass(ClassList.Entry entry) {
+        // TODO
+    }
+
+    public Requirements getRequirements(String code) {
+        // TODO
+        return null;
+    }
+
+    public StatList getStatList(String code) {
+        // TODO
+        return null;
+    }
+
+    public ClassList getClassList(String code) {
+        // TODO
+        return null;
     }
 
 }
