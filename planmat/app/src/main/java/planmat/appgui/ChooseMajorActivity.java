@@ -17,6 +17,7 @@ import planmat.appcore.ApplicationCore;
 import planmat.datarepresentation.IDList;
 import planmat.datarepresentation.Requirements;
 import planmat.datarepresentation.User;
+import planmat.internaldata.DatabaseAccessor;
 import planmat.internaldata.UserPrefs;
 import planmat.internaldata.UserPrefsAccessor;
 import ufrn.br.planmat.R;
@@ -123,6 +124,7 @@ public class ChooseMajorActivity extends AppCompatActivity {
      */
     public void buttonOK(View view) {
         if (selectedMajorID != null && selectedRequirementsID != null) {
+            final ChooseMajorActivity context = this;
             final Intent i = new Intent(this, PlanningActivity.class);
             final UserPrefs userPrefs = new UserPrefs(user.getUserName(), user.getName(), user.getID(),
                     selectedMajorID, selectedRequirementsID, 1);
@@ -130,8 +132,15 @@ public class ChooseMajorActivity extends AppCompatActivity {
             UserPrefsAccessor.getInstance().saveUserPrefs(this);
             Thread thread = new Thread(new Runnable() {
                 public void run() {
-                    Requirements req = ApplicationCore.getInstance().getRequirements(selectedRequirementsID);
+                    final Requirements req = ApplicationCore.getInstance().getRequirements(selectedRequirementsID);
                     userPrefs.setPlanning(ApplicationCore.getInstance().getRecommender().getDefaultPlanning(req));
+                    Thread dbthread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DatabaseAccessor.getInstance().storeRequirements(req, context);
+                        }
+                    });
+                    dbthread.start();
                     finish();
                     startActivity(i);
                 }

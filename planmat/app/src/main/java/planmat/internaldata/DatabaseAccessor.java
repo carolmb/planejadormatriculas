@@ -1,6 +1,7 @@
 package planmat.internaldata;
 
 import android.app.Activity;
+import android.content.Context;
 
 import planmat.custom.CustomFactory;
 import planmat.datarepresentation.ClassList;
@@ -18,6 +19,7 @@ public class DatabaseAccessor {
     private static DatabaseAccessor instance = new DatabaseAccessor();
 
     private ServerAccessor serverAccessor;
+    private DatabaseHandler databaseHandler;
 
     private DatabaseAccessor() {
         serverAccessor = CustomFactory.getInstance().getServerAccessor();
@@ -27,7 +29,10 @@ public class DatabaseAccessor {
         return instance;
     }
 
-    public void storeRequirements(Requirements req) {
+    public void storeRequirements(Requirements req, Context context) {
+        if (databaseHandler == null) {
+            databaseHandler = new DatabaseHandler(context);
+        }
         // TODO: salvar no banco de dados interno os componentes
         // TODO: substituir os métodos marcados abaixo pelo acesso ao BD
     }
