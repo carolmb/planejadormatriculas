@@ -51,7 +51,7 @@ public class PlanningActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_planning);
 
-        userPrefs = (UserPrefs) getIntent().getSerializableExtra("UserPrefs");
+        userPrefs = UserPrefsAccessor.getInstance().getPrefs();
         Log.d("User Prefs", "Nome: " + userPrefs.getName() + ", ID: " + userPrefs.getUserID());
 
         layout = (LinearLayout) findViewById(R.id.semesters);
@@ -85,7 +85,7 @@ public class PlanningActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //selectedSemester = userPrefs.getPlanning().get(position); TODO: TESTAR
+                selectedSemester = userPrefs.getPlanning().get(position);
             }
 
             @Override
@@ -229,7 +229,7 @@ public class PlanningActivity extends AppCompatActivity {
     public void removeSemester(View view) {
         int n = userPrefs.getPlanning().size() - 1;
         if (n >= 0) {
-            userPrefs.getPlanning().remove(n);
+            userPrefs.getPlanning().remove(selectedSemester);
             savePrefs();
             createSemesterList();
             selectedSemester = null;
@@ -334,7 +334,7 @@ public class PlanningActivity extends AppCompatActivity {
     }
 
     private void savePrefs() {
-        UserPrefsAccessor.getInstance().storeUserPrefs(userPrefs, userPrefs.getUserName(), this);
+        UserPrefsAccessor.getInstance().saveUserPrefs(this);
     }
 
     public void setSelectedSemester(UserPrefs.Semester s) {

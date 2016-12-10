@@ -7,7 +7,8 @@ import planmat.internaldata.UserPrefs;
 /**
  * Created by Ana Caroline on 13/11/2016.
  */
-public class CheckSemester {
+public class SemesterCheckHelper {
+
     public static String checkSemesterSuccesses(UserPrefs.Semester semester) {
         float rate = 1;
         for (String code : semester.getComponents()) {

@@ -11,7 +11,7 @@ import planmat.internaldata.UserPrefs;
 /**
  * Created by Ana Caroline on 13/11/2016.
  */
-public class PlanningRecommender {
+public class PlanningHelper {
 
     public static UserPrefs.Semester recommendSemesterNormal(UserPrefs prefs, int s) {
         UserPrefs.Semester semester = new UserPrefs.Semester();
@@ -65,4 +65,18 @@ public class PlanningRecommender {
         return semester;
     }
 
+    public static int findTotalWorkload(UserPrefs prefs, int s) {
+        int wl = 0;
+        Requirements req = ApplicationCore.getInstance().getRequirements(prefs.getRequirementsID());
+
+        for(int i = 0; i < s && i < prefs.getPlanning().size(); i++) {
+            UserPrefs.Semester userSemester = prefs.getPlanning().get(i);
+            for (String code : userSemester.getComponents()) {
+                Component comp = req.getComponent(code);
+                wl += comp.getWorkload();
+            }
+        }
+
+        return wl;
+    }
 }

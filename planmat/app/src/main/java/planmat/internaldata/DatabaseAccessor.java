@@ -1,11 +1,14 @@
 package planmat.internaldata;
 
 import android.app.Activity;
+import android.content.Context;
 
 import planmat.custom.CustomFactory;
 import planmat.datarepresentation.ClassList;
+import planmat.datarepresentation.Component;
 import planmat.datarepresentation.IDList;
 import planmat.datarepresentation.Requirements;
+import planmat.datarepresentation.Semester;
 import planmat.datarepresentation.StatList;
 import planmat.datarepresentation.User;
 import planmat.externaldata.ServerAccessor;
@@ -18,6 +21,7 @@ public class DatabaseAccessor {
     private static DatabaseAccessor instance = new DatabaseAccessor();
 
     private ServerAccessor serverAccessor;
+    private DatabaseHandler databaseHandler;
 
     private DatabaseAccessor() {
         serverAccessor = CustomFactory.getInstance().getServerAccessor();
@@ -27,9 +31,29 @@ public class DatabaseAccessor {
         return instance;
     }
 
-    public void storeRequirements(Requirements req) {
-        // TODO: salvar no banco de dados interno os componentes
-        // TODO: substituir os métodos marcados abaixo pelo acesso ao BD
+    public void storeRequirements(Requirements req, Context context) {
+        if (databaseHandler == null) {
+            databaseHandler = new DatabaseHandler(context);
+        }
+        for(Semester s : req.getSemesters()) {
+            for(Component c : s.getComponents()) {
+                if (!databaseHandler.hasComponent(c)) {
+                    storeComponent(c);
+                }
+            }
+        }
+    }
+
+    private void storeComponent(Component comp) {
+        databaseHandler.insertComponent(comp);
+        ClassList classList = serverAccessor.getClassList(comp.getCode());
+        StatList statList = serverAccessor.getStatList(comp.getCode());
+        for(ClassList.Entry entry : classList.getEntries()) {
+            databaseHandler.insertClass(entry);
+        }
+        for(StatList.Entry entry : statList.getEntries()) {
+            databaseHandler.insertStat(entry);
+        }
     }
 
     public void login(Activity activity) {
@@ -49,18 +73,15 @@ public class DatabaseAccessor {
     }
 
     public Requirements getRequirements(String code) {
-        // TODO: pegar do BD
-        return serverAccessor.getRequirements(code);
+        return databaseHandler.getRequirements(code);
     }
 
     public ClassList getClassList(String code) {
-        // TODO: pegar do BD
-        return serverAccessor.getClassList(code);
+        return databaseHandler.getClassList(code);
     }
 
     public StatList getStatList(String code) {
-        // TODO: pegar do BD
-        return serverAccessor.getStatList(code);
+        return databaseHandler.getStatList(code);
     }
 
 }

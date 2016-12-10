@@ -12,7 +12,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose Major:"
+        android:text="Curso:"
         android:id="@+id/txtMajor"
         android:textColor="@color/abc_primary_text_material_light"
         android:textSize="20dp"
@@ -34,7 +34,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose Requirements:"
+        android:text="Grade:"
         android:id="@+id/txtRequirements"
         android:layout_marginTop="42dp"
         android:textColor="@color/abc_primary_text_material_light"
