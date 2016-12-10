@@ -82,6 +82,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // metadata
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "PlanmatDB";
+    private static DBTable componentTable, classTable;
     private static List<DBTable> tables;
 
     public DatabaseHandler(Context context) {
@@ -90,9 +91,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         tables = new ArrayList<DBTable>();
 
         //Create database scheme
-        DBTable t1 = new DBTable("Table1");
-        t1.fields.add( new DBField("Field1", "INTEGER") );
-        tables.add(t1);
+        componentTable = new DBTable("Component");
+        tables.add(componentTable);
+        componentTable.fields.add( new DBField("Code", "VARCHAR(7)", true) );
+        componentTable.fields.add( new DBField("Name", "VARCHAR(256)") );
+        componentTable.fields.add( new DBField("Workload", "INTEGER") );
+
+        classTable = new DBTable("Class");
+        tables.add(classTable);
+        classTable.fields.add( new DBField("Code", "INTEGER") );
+        classTable.fields.add( new DBField("Year", "INTEGER") );
+        classTable.fields.add( new DBField("Semester", "INTEGER") );
+        classTable.fields.add( new DBField("Hour", "VARCHAR(16)") );
+        classTable.fields.add( new DBField("Professors", "VARCHAR(256)") );
+        classTable.fields.add( new DBField("ComponentCode", "VARCHAR(7)") );
 
         Log.e("DATABASE HANDLER", "Database was created.");
     }
@@ -114,6 +126,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Upgrading database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        Log.e("DATABASE HANDLER", "updating database...");
+
         // Drop older table if existed
         //db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
 
@@ -128,7 +143,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void insertComponent(Component comp) {
-        // TODO
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String s = "INSERT INTO ";
+        s += componentTable.name + " VALUES (";
+        s += "\"" + comp.getCode() + "\", ";
+        s += "\"" + comp.getName() + "\", ";
+        s += comp.getWorkload() + ")";
+
+        db.execSQL(s);
+        db.close();
+
+        Log.e("DATABASE INSERT", s);
     }
 
     public void insertStat(StatList.Entry entry) {
@@ -137,11 +163,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void insertClass(ClassList.Entry entry) {
         // TODO
-        SQLiteDatabase db = getWritableDatabase();
-        String s = "INSERT INTO Table1 VALUES (" + entry.getID() + ")";
-        db.execSQL(s);
-
-        Log.e("DATABASE HANDLER", "Inserted value");
     }
 
     public Requirements getRequirements(String code) {

@@ -74,6 +74,9 @@ public class DatabaseAccessor {
         return serverAccessor.getRequirementsList(code);
     }
 
+    // TODO
+    // Mudar isso de volta para pegar os dados do banco de dados.
+    // Só comentei para poder testar.
     public Requirements getRequirements(String code) {
         // return databaseHandler.getRequirements(code);
         return serverAccessor.getRequirements(code);
