@@ -2,6 +2,7 @@ package planmat.internaldata;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import planmat.custom.CustomFactory;
 import planmat.datarepresentation.ClassList;
@@ -28,6 +29,7 @@ public class DatabaseAccessor {
     }
 
     public static DatabaseAccessor getInstance() {
+        Log.e("DATABASE HANDLER", "requesting instance");
         return instance;
     }
 
@@ -73,15 +75,18 @@ public class DatabaseAccessor {
     }
 
     public Requirements getRequirements(String code) {
-        return databaseHandler.getRequirements(code);
+        // return databaseHandler.getRequirements(code);
+        return serverAccessor.getRequirements(code);
     }
 
     public ClassList getClassList(String code) {
-        return databaseHandler.getClassList(code);
+        // return databaseHandler.getClassList(code);
+        return serverAccessor.getClassList(code);
     }
 
     public StatList getStatList(String code) {
-        return databaseHandler.getStatList(code);
+        // return databaseHandler.getStatList(code);
+        return serverAccessor.getStatList(code);
     }
 
 }

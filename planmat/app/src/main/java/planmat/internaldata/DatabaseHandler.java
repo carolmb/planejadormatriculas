@@ -3,6 +3,10 @@ package planmat.internaldata;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import planmat.datarepresentation.ClassList;
 import planmat.datarepresentation.Component;
@@ -14,41 +18,107 @@ import planmat.datarepresentation.StatList;
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    // All Static variables
-    // Database Version
+    private class DBField {
+        //[LUÍS] Tudo público pra não dar trabalho.
+        public String fieldName;
+        public String fieldType;
+        public boolean pk;
+        public boolean fk;
+        public String refTable;
+        public String refField;
+
+        public DBField(String fieldName, String fieldType, boolean PK,
+                       boolean FK, String refTable, String refField) {
+            this.fieldName = fieldName;
+            this.fieldType = fieldType;
+            this.pk = PK;
+            this.fk = FK;
+            this.refTable = refTable;
+            this.refField = refField;
+        }
+
+        public DBField(String fieldName, String fieldType, boolean PK) {
+            this(fieldName, fieldType, PK, false, null, null);
+        }
+
+        public DBField(String fieldName, String fieldType) {
+            this(fieldName, fieldType, false);
+        }
+
+        @Override
+        public String toString() {
+            String str = fieldName + " " + fieldType;
+
+            if (pk) str += " PRIMARY KEY";
+            if (fk) str += ", FOREIGN KEY(" + fieldName + ") REFERENCES (" + refTable + "(" + refField + ")";
+
+            return str;
+        }
+    }
+
+    private class DBTable {
+        public String name;
+        public List<DBField> fields;
+
+        public DBTable(String name) {
+            this.name = name;
+            fields = new ArrayList<DBField>();
+        }
+
+        @Override
+        public String toString() {
+            if(fields.isEmpty()) return null;
+
+            String str = "CREATE TABLE " + name + "(";
+            str += fields.get(0).toString();
+            for(int i = 1; i < fields.size(); i++)
+                str += ", " + fields.get(i).toString();
+            str += ")";
+
+            return str;
+        }
+    }
+
+    // metadata
     private static final int DATABASE_VERSION = 1;
-
-    // Database Name
-    private static final String DATABASE_NAME = "contactsManager";
-
-    // Contacts table name
-    private static final String TABLE_CONTACTS = "contacts";
-
-    // Contacts Table Columns names
-    private static final String KEY_ID = "id";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_PH_NO = "phone_number";
+    private static final String DATABASE_NAME = "PlanmatDB";
+    private static List<DBTable> tables;
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+
+        tables = new ArrayList<DBTable>();
+
+        //Create database scheme
+        DBTable t1 = new DBTable("Table1");
+        t1.fields.add( new DBField("Field1", "INTEGER") );
+        tables.add(t1);
+
+        Log.e("DATABASE HANDLER", "Database was created.");
     }
 
     // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_CONTACTS + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
-                + KEY_PH_NO + " TEXT" + ")";
-        db.execSQL(CREATE_CONTACTS_TABLE);
+        Log.e("DATABASE HANDLER", "creating tables:");
+        for(DBTable t : tables) {
+            String script = t.toString();
+
+            if(script != null) {
+                db.execSQL(t.toString());
+                Log.e(t.name, t.toString());
+            }
+        }
     }
 
     // Upgrading database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
+        //db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
 
-        // Create tables again
+        // Create tables again -> [LUÍS] Se não dropar
+        // as tabelas antes vai dar erro.
         onCreate(db);
     }
 
@@ -67,6 +137,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void insertClass(ClassList.Entry entry) {
         // TODO
+        SQLiteDatabase db = getWritableDatabase();
+        String s = "INSERT INTO Table1 VALUES (" + entry.getID() + ")";
+        db.execSQL(s);
+
+        Log.e("DATABASE HANDLER", "Inserted value");
     }
 
     public Requirements getRequirements(String code) {

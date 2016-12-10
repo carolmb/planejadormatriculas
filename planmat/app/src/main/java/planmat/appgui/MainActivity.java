@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private void redirect(User user) {
         final Activity activity = this;
         boolean success = UserPrefsAccessor.getInstance().loadUserPrefs(activity, user.getUserName());
+
         if (success) {
             UserPrefs prefs = UserPrefsAccessor.getInstance().getPrefs();
             final Intent i = new Intent(activity, PlanningActivity.class);
