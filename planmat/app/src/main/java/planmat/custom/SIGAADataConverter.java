@@ -121,7 +121,9 @@ public class SIGAADataConverter {
             int successes = statObj.getInt("aprovados");
             int quits = statObj.getInt("trancados");
             int fails = statObj.getInt("reprovados");
-            return new StatList.Entry(successes, quits, fails);
+            int year = statObj.getInt("ano");
+            int s = statObj.getInt("periodo");
+            return new StatList.Entry(successes, quits, fails, year, s);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -150,8 +152,9 @@ public class SIGAADataConverter {
     private ClassList.Entry createClassEntry(JSONObject classObj) {
         try {
             int id = classObj.getInt("id");
+            int y = classObj.getInt("ano");
+            int s = classObj.getInt("periodo");
             String code = classObj.getString("codigo");
-            String semester = classObj.getString("anoPeriodoString");
             ArrayList<String> professors = new ArrayList<>();
             JSONArray array = classObj.getJSONArray("docentesList");
             for (int i = 0; i < array.length(); i++) {
@@ -159,7 +162,7 @@ public class SIGAADataConverter {
                 professors.add(prof.getString("nome"));
             }
             String hour = classObj.getString("descricaoHorario");
-            return new ClassList.Entry(id, code, semester, professors, hour);
+            return new ClassList.Entry(id, code, professors, hour, y, s);
         } catch (JSONException e) {
             e.printStackTrace();
         }

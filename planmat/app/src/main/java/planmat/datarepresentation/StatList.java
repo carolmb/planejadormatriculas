@@ -13,11 +13,15 @@ public class StatList implements Serializable {
         private int successes;
         private int fails;
         private int quits;
+        private int year;
+        private int semester;
 
-        public Entry(int successes, int fails, int quits) {
+        public Entry(int successes, int fails, int quits, int year, int semester) {
             this.successes = successes;
             this.fails = fails;
             this.quits = quits;
+            this.year = year;
+            this.semester = semester;
         }
 
         public int getSuccesses() {
@@ -30,6 +34,14 @@ public class StatList implements Serializable {
 
         public int getQuits() {
             return quits;
+        }
+
+        public int getYear() {
+            return year;
+        }
+
+        public int getSemester() {
+            return semester;
         }
 
         public String toString() {

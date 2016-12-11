@@ -11,14 +11,17 @@ public class ClassList implements Serializable {
     public static class Entry implements Serializable {
         private int id;
         private String code;
-        private String semester;
         private ArrayList<String> professors;
         private String hour;
+        private int year;
+        private int semester;
 
-        public Entry(int id, String code, String semester, ArrayList<String> professors, String hour) {
+        public Entry(int id, String code, ArrayList<String> professors,
+                     String hour, int y, int s) {
             this.id = id;
             this.code = code;
-            this.semester = semester;
+            this.year = y;
+            this.semester = s;
             this.professors = professors;
             this.hour = hour;
         }
@@ -27,8 +30,16 @@ public class ClassList implements Serializable {
             return id;
         }
 
-        public String getSemester() {
+        public int getYear() {
+            return year;
+        }
+
+        public int getSemester() {
             return semester;
+        }
+
+        public String getSemesterString() {
+            return year + "." + semester;
         }
 
         public ArrayList<String> getProfessors() {
@@ -40,7 +51,7 @@ public class ClassList implements Serializable {
         }
 
         public String toString() {
-            return semester + " - " + code;
+            return getSemesterString() + " - " + code;
         }
     }
 
