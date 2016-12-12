@@ -43,7 +43,7 @@ public class UserPrefsAccessor {
             prefs = userPrefs;
             return true;
         } catch (Exception e) {
-            Log.d("UserPrefs not found: ", e.getMessage());
+            Log.e("UserPrefs not found", fileName);
             return false;
         }
     }

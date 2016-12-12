@@ -124,7 +124,6 @@ public class ChooseMajorActivity extends AppCompatActivity {
      */
     public void buttonOK(View view) {
         if (selectedMajorID != null && selectedRequirementsID != null) {
-            final ChooseMajorActivity context = this;
             final Intent i = new Intent(this, PlanningActivity.class);
             final UserPrefs userPrefs = new UserPrefs(user.getUserName(), user.getName(), user.getID(),
                     selectedMajorID, selectedRequirementsID, 1);
@@ -137,7 +136,7 @@ public class ChooseMajorActivity extends AppCompatActivity {
                     Thread dbthread = new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            DatabaseAccessor.getInstance().storeRequirements(req, context);
+                            DatabaseAccessor.getInstance().storeRequirements(req);
                         }
                     });
                     dbthread.start();

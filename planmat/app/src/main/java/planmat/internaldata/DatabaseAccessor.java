@@ -33,28 +33,37 @@ public class DatabaseAccessor {
         return instance;
     }
 
-    public void storeRequirements(Requirements req, Context context) {
+    public void createHandler(Context context) {
         if (databaseHandler == null) {
             databaseHandler = new DatabaseHandler(context);
         }
+    }
+
+    public void storeRequirements(Requirements req) {
+        int i = 1;
         for(Semester s : req.getSemesters()) {
             for(Component c : s.getComponents()) {
                 if (!databaseHandler.hasComponent(c)) {
-                    storeComponent(c);
+                    storeComponent(c, req, i);
                 }
             }
+            i++;
         }
     }
 
-    private void storeComponent(Component comp) {
-        databaseHandler.insertComponent(comp);
+    private void storeComponent(Component comp, Requirements req, int s) {
+        databaseHandler.insertComponent(comp, req, s);
         ClassList classList = serverAccessor.getClassList(comp.getCode());
         StatList statList = serverAccessor.getStatList(comp.getCode());
-        for(ClassList.Entry entry : classList.getEntries()) {
-            databaseHandler.insertClass(entry, comp.getCode());
+        if (classList != null) {
+            for (ClassList.Entry entry : classList.getEntries()) {
+                databaseHandler.insertClass(entry, comp.getCode());
+            }
         }
-        for(StatList.Entry entry : statList.getEntries()) {
-            databaseHandler.insertStat(entry, comp.getCode());
+        if (statList != null) {
+            for (StatList.Entry entry : statList.getEntries()) {
+                databaseHandler.insertStat(entry, comp.getCode());
+            }
         }
     }
 
@@ -88,8 +97,8 @@ public class DatabaseAccessor {
     }
 
     public StatList getStatList(String code) {
-        // return databaseHandler.getStatList(code);
-        return serverAccessor.getStatList(code);
+        return databaseHandler.getStatList(code);
+        //return serverAccessor.getStatList(code);
     }
 
 }

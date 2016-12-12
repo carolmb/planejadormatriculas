@@ -11,12 +11,12 @@ public class ClassList implements Serializable {
     public static class Entry implements Serializable {
         private int id;
         private String code;
-        private ArrayList<String> professors;
+        private String professors;
         private String hour;
         private int year;
         private int semester;
 
-        public Entry(int id, String code, ArrayList<String> professors,
+        public Entry(int id, String code, String professors,
                      String hour, int y, int s) {
             this.id = id;
             this.code = code;
@@ -42,7 +42,7 @@ public class ClassList implements Serializable {
             return year + "." + semester;
         }
 
-        public ArrayList<String> getProfessors() {
+        public String getProfessors() {
             return professors;
         }
 

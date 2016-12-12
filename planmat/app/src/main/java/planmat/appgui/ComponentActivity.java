@@ -37,10 +37,7 @@ public class ComponentActivity extends AppCompatActivity {
         addText("Turmas:");
         for (ClassList.Entry entry : list.getEntries()) {
             addText(entry.toString());
-            addText("   Docente(s):");
-            for (String prof : entry.getProfessors()) {
-                addText("       " + prof);
-            }
+            addText("   Docente(s): " + entry.getProfessors());
             addText("   Horário:" + entry.getHour());
         }
     }

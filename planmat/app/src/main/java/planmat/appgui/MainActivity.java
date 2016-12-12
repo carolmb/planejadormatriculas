@@ -21,6 +21,7 @@ import planmat.appcore.ApplicationCore;
 import planmat.datarepresentation.IDList;
 import planmat.datarepresentation.Requirements;
 import planmat.datarepresentation.User;
+import planmat.internaldata.DatabaseAccessor;
 import planmat.internaldata.UserPrefs;
 import planmat.internaldata.UserPrefsAccessor;
 import ufrn.br.planmat.R;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         login();
+        DatabaseAccessor.getInstance().createHandler(this);
     }
 
     /**
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         final Activity activity = this;
         boolean success = UserPrefsAccessor.getInstance().loadUserPrefs(activity, user.getUserName());
 
+        Log.e("Redirect", "" + success);
         if (success) {
             UserPrefs prefs = UserPrefsAccessor.getInstance().getPrefs();
             final Intent i = new Intent(activity, PlanningActivity.class);

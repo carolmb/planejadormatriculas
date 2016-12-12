@@ -10,18 +10,24 @@ public class StatList implements Serializable {
 
     public static class Entry implements Serializable {
 
+        private String code;
         private int successes;
         private int fails;
         private int quits;
         private int year;
         private int semester;
 
-        public Entry(int successes, int fails, int quits, int year, int semester) {
+        public Entry(String code, int successes, int fails, int quits, int year, int semester) {
+            this.code = code;
             this.successes = successes;
             this.fails = fails;
             this.quits = quits;
             this.year = year;
             this.semester = semester;
+        }
+
+        public String getCode() {
+            return code;
         }
 
         public int getSuccesses() {
@@ -45,7 +51,7 @@ public class StatList implements Serializable {
         }
 
         public String toString() {
-            return "Aprovados: " + successes + "\nReprovados: " + quits + "\nTrancamentos: " + quits;
+            return "Aprovados: " + successes + "\nReprovados: " + fails + "\nTrancamentos: " + quits;
         }
 
     }

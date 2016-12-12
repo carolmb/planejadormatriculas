@@ -18,6 +18,8 @@ import planmat.datarepresentation.User;
 
 public class SIGAADataConverter {
 
+    private int statCode = 0;
+
     public IDList createMajorList(JSONArray array) {
         try {
             IDList list = new IDList();
@@ -118,12 +120,13 @@ public class SIGAADataConverter {
 
     private StatList.Entry createStatEntry(JSONObject statObj) {
         try {
+            String code = statObj.getString("codigo");
             int successes = statObj.getInt("aprovados");
             int quits = statObj.getInt("trancados");
             int fails = statObj.getInt("reprovados");
             int year = statObj.getInt("ano");
             int s = statObj.getInt("periodo");
-            return new StatList.Entry(successes, quits, fails, year, s);
+            return new StatList.Entry(code, successes, quits, fails, year, s);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -155,11 +158,15 @@ public class SIGAADataConverter {
             int y = classObj.getInt("ano");
             int s = classObj.getInt("periodo");
             String code = classObj.getString("codigo");
-            ArrayList<String> professors = new ArrayList<>();
             JSONArray array = classObj.getJSONArray("docentesList");
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject prof = array.getJSONObject(i);
-                professors.add(prof.getString("nome"));
+            String professors = "";
+            if (array.length() > 0) {
+                JSONObject prof = array.getJSONObject(0);
+                professors = prof.getString("nome");
+                for (int i = 1; i < array.length(); i++) {
+                    prof = array.getJSONObject(i);
+                    professors += ", " + prof.getString("nome");
+                }
             }
             String hour = classObj.getString("descricaoHorario");
             return new ClassList.Entry(id, code, professors, hour, y, s);
@@ -171,7 +178,7 @@ public class SIGAADataConverter {
 
     public User createUser(JSONObject studentInfo, JSONObject loginInfo) {
         try {
-            return new User(""+ loginInfo.getInt("id"), studentInfo.getString("nome"), "");
+            return new User(""+ loginInfo.getInt("id"), studentInfo.getString("nome"), loginInfo.getString("username"));
         } catch (JSONException e) {
             e.printStackTrace();
         }

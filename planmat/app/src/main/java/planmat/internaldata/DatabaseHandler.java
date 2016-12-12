@@ -1,9 +1,10 @@
 package planmat.internaldata;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteCursor;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -19,93 +20,8 @@ import planmat.datarepresentation.StatList;
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    //[LUÍS] Tudo público pra não dar trabalho.
-    private class DBField {
-        public String fieldName;
-        public String fieldType;
-        public boolean pk;
-        public boolean fk;
-        public String refTable;
-        public String refField;
-
-        public DBField(String fieldName, String fieldType, boolean PK,
-                       boolean FK, String refTable, String refField) {
-            this.fieldName = fieldName;
-            this.fieldType = fieldType;
-            this.pk = PK;
-            this.fk = FK;
-            this.refTable = refTable;
-            this.refField = refField;
-        }
-
-        public DBField(String fieldName, String fieldType, boolean PK) {
-            this(fieldName, fieldType, PK, false, null, null);
-        }
-
-        public DBField(String fieldName, String fieldType) {
-            this(fieldName, fieldType, false);
-        }
-
-        @Override
-        public String toString() {
-            String str = fieldName + " " + fieldType;
-            //if (fk) str += ", FOREIGN KEY(" + fieldName + ") REFERENCES " + refTable + "(" + refField + ")";
-            return str;
-        }
-    }
-
-    private class DBTable {
-        public String name;
-        public List<DBField> fields;
-
-        public DBTable(String name) {
-            this.name = name;
-            fields = new ArrayList<DBField>();
-        }
-
-        @Override
-        public String toString() {
-            if(fields.isEmpty()) return null;
-
-            String str = "CREATE TABLE " + name + "(";
-            //add fields
-            str += fields.get(0).toString();
-            for(int i = 1; i < fields.size(); i++)
-                str += ", " + fields.get(i).toString();
-
-            //gather primary keys
-            List<String> pks = new ArrayList<String>();
-            for(DBField f : fields)
-                if(f.pk) pks.add(f.fieldName);
-
-            //add primary key constraints
-            //not having at least ONE primary key will cause it to crash.
-            //This is "correct", as every table must have a primary key,
-            //but we should be less drastic and throws an error message
-            //instead of allowing it to crash.
-            str += ", CONSTRAINT pks PRIMARY KEY (";
-            str += pks.get(0);
-            for(int i = 1; i < pks.size(); i++)
-                str += ", " + pks.get(i);
-            str += ")";
-
-            //gather foreign keys
-            List<DBField> fks = new ArrayList<DBField>();
-            for(DBField f : fields)
-                if(f.fk) fks.add(f);
-
-            //add foreign key constraints
-            for(DBField f : fks)
-                str += ", FOREIGN KEY(" + f.fieldName + ") REFERENCES " + f.refTable + "(" + f.refField + ")";
-
-            str += ")";
-
-            return str;
-        }
-    }
-
     // metadata
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
     private static final String DATABASE_NAME = "PlanmatDB";
     private static DBTable componentTable, classTable, statTable, reqCompTable, reqTable;
     private static List<DBTable> tables;
@@ -113,7 +29,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
-        tables = new ArrayList<DBTable>();
+        tables = new ArrayList<>();
 
         //Create database scheme
         componentTable = new DBTable("Component");
@@ -124,7 +40,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         classTable = new DBTable("Class");
         tables.add(classTable);
-        classTable.fields.add( new DBField("Code", "INTEGER", true) );
+        classTable.fields.add( new DBField("Code", "VARCHAR(8)", true) );
         classTable.fields.add( new DBField("Year", "INTEGER", true) );
         classTable.fields.add( new DBField("Semester", "INTEGER", true) );
         classTable.fields.add( new DBField("Hour", "VARCHAR(16)") );
@@ -186,18 +102,35 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public boolean hasComponent(Component comp) {
-        // TODO: verificar se tal componente já foi inserido no DB
-        return false;
+        String s = "SELECT Code ";
+        s += "FROM " + componentTable.name + " ";
+        s += "WHERE Code = \"" + comp.getCode() + "\"";
+
+        Cursor cursor = getReadableDatabase().rawQuery(s, null);
+        if (cursor.moveToNext()) {
+            Log.d("Component Exists", comp.getCode());
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public void insertComponent(Component comp) {
+    public void insertComponent(Component comp, Requirements req, int i) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         String s = "INSERT INTO ";
         s += componentTable.name + " VALUES (";
         s += "\"" + comp.getCode() + "\", ";
-        s += "\"" + comp.getName() + "\", ";
+        s += "\"" + comp.getName().replace("\"", "") + "\", ";
         s += comp.getWorkload() + ")";
+
+        db.execSQL(s);
+
+        s = "INSERT INTO ";
+        s += reqCompTable.name + " VALUES (";
+        s += i + ", ";
+        s += req.getID() + ", ";
+        s += "\"" + comp.getCode() + "\")";
 
         db.execSQL(s);
         db.close();
@@ -207,49 +140,44 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public void insertStat(StatList.Entry entry, String code) { // It's incomplete
         SQLiteDatabase db = this.getWritableDatabase();
-
-        int statCode = 0; // It REALLY needs to be changed
-
-        String s = "INSERT INTO ";
-        s += statTable.name + " VALUES(";
-        s += statCode + ", ";
-        s += entry.getYear() + ", ";
-        s += entry.getSemester() + ", ";
-        s += entry.getSuccesses() + ", ";
-        s += entry.getFails() + ", ";
-        s += entry.getQuits() + ", ";
-        s += "\"" + code + "\"";
-        s += ")";
-
-        db.execSQL(s);
-        db.close();
-
-        Log.e("DATABASE INSERT", s);
+        try {
+            String s = "INSERT INTO ";
+            s += statTable.name + " VALUES(";
+            s += entry.getCode() + ", ";
+            s += entry.getYear() + ", ";
+            s += entry.getSemester() + ", ";
+            s += entry.getSuccesses() + ", ";
+            s += entry.getFails() + ", ";
+            s += entry.getQuits() + ", ";
+            s += "\"" + code + "\"";
+            s += ")";
+            db.execSQL(s);
+            db.close();
+            Log.e("DATABASE INSERT", s);
+        } catch(SQLiteConstraintException e) {
+            e.printStackTrace();
+        }
     }
 
     public void insertClass(ClassList.Entry entry, String code) {
-        // TODO
         SQLiteDatabase db = this.getWritableDatabase();
-
-        String professors = entry.getProfessors().get(0);
-        for (int i = 1; i < entry.getProfessors().size() ; i++ ) {
-            professors += ", " + entry.getProfessors().get(i);
+        try {
+            // id, year, semester, hour, professors, componentCode
+            String s = "INSERT INTO ";
+            s += classTable.name + " VALUES(";
+            s += entry.getID() + ", ";
+            s += entry.getYear() + ", ";
+            s += entry.getSemester() + ", ";
+            s += "\"" + entry.getHour() + "\"" + ", ";
+            s += "\"" + entry.getProfessors() + "\"" + ", ";
+            s += "\"" + code + "\"";
+            s += ")";
+            db.execSQL(s);
+            db.close();
+            Log.e("DATABASE INSERT", s);
+        } catch(SQLiteConstraintException e) {
+            e.printStackTrace();
         }
-
-        // id, year, semester, hour, professors, componentCode
-        String s = "INSERT INTO ";
-        s += classTable.name + " VALUES(";
-        s += entry.getID() + ", ";
-        s += entry.getYear() + ", ";
-        s += entry.getSemester() + ", ";
-        s += "\"" + professors + "\"" + ", ";
-        s += "\"" + entry.getCode() + "\"";
-        s += ")";
-
-        db.execSQL(s);
-        db.close();
-
-        Log.e("DATABASE INSERT", s);
     }
 
     public Requirements getRequirements(String code) {
@@ -257,19 +185,33 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return null;
     }
 
-    public StatList getStatList(String code) { //It's incomplete
-        SQLiteDatabase db = this.getWritableDatabase();
+    public StatList getStatList(String code) {
+        SQLiteDatabase db = this.getReadableDatabase();
 
         String s = "SELECT * ";
         s += "FROM " + statTable.name + " ";
         s += "WHERE ComponentCode = \"" + code + "\";";
 
-        db.execSQL(s);
+        StatList list = new StatList();
+        Cursor cursor = db.rawQuery(s, null);
+        while(cursor.moveToNext()) {
+            String id = cursor.getString(0);
+            int year = cursor.getInt(1);
+            int sem = cursor.getInt(2);
+            int suc = cursor.getInt(3);
+            int fail = cursor.getInt(4);
+            int quit = cursor.getInt(5);
+            //Log.d("Stat query", "Success: " + suc);
+            //Log.d("Stat query", "Fails: " + fail);
+            //Log.d("Stat query", "Quits: " + quit);
+            StatList.Entry entry = new StatList.Entry(id, suc, quit, fail, year, sem);
+            list.getEntries().add(entry);
+        }
         db.close();
 
         Log.e("DATABASE SELECT", s);
 
-        //return null;
+        return list;
     }
 
     public ClassList getClassList(String code) {

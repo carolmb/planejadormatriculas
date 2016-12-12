@@ -16,6 +16,8 @@ import planmat.externaldata.ServerAccessor;
  */
 public class FakeServerAccessor extends SIGAAServerAccessor {
 
+    private int statCode = 0;
+
     public JSONArray getJsonArray(String path, String arg) {
         if (path.equals("StatList")) {
             String s = generateStatList();
@@ -46,7 +48,7 @@ public class FakeServerAccessor extends SIGAAServerAccessor {
         return  "  {\n" +
                 "    \"ano\": 0,\n" +
                 "    \"periodo\": 0,\n" +
-                "    \"codigo\": \"string\",\n" +
+                "    \"codigo\": \"" + (statCode++) + "\",\n" +
                 "    \"nomeComponente\": \"string\",\n" +
                 "    \"codigoComponente\": \"string\",\n" +
                 "    \"aprovados\": " + (r.nextInt(20) + 10) + ",\n" +
