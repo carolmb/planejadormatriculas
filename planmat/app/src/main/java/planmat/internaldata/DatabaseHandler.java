@@ -204,11 +204,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Log.e("DATABASE INSERT", s);
     }
 
-    public void insertStat(StatList.Entry entry) {
+    public void insertStat(StatList.Entry entry, String code) {
         // TODO
     }
 
-    public void insertClass(ClassList.Entry entry) {
+    public void insertClass(ClassList.Entry entry, String code) {
         // TODO
     }
 

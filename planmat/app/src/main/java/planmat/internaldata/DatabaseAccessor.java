@@ -51,10 +51,10 @@ public class DatabaseAccessor {
         ClassList classList = serverAccessor.getClassList(comp.getCode());
         StatList statList = serverAccessor.getStatList(comp.getCode());
         for(ClassList.Entry entry : classList.getEntries()) {
-            databaseHandler.insertClass(entry);
+            databaseHandler.insertClass(entry, comp.getCode());
         }
         for(StatList.Entry entry : statList.getEntries()) {
-            databaseHandler.insertStat(entry);
+            databaseHandler.insertStat(entry, comp.getCode());
         }
     }
 
