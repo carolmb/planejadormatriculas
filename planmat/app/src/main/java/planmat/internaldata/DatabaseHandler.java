@@ -3,6 +3,7 @@ package planmat.internaldata;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteCursor;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -204,12 +205,51 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Log.e("DATABASE INSERT", s);
     }
 
-    public void insertStat(StatList.Entry entry, String code) {
-        // TODO
+    public void insertStat(StatList.Entry entry, String code) { // It's incomplete
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        int statCode = 0; // It REALLY needs to be changed
+
+        String s = "INSERT INTO ";
+        s += statTable.name + " VALUES(";
+        s += statCode + ", ";
+        s += entry.getYear() + ", ";
+        s += entry.getSemester() + ", ";
+        s += entry.getSuccesses() + ", ";
+        s += entry.getFails() + ", ";
+        s += entry.getQuits() + ", ";
+        s += "\"" + code + "\"";
+        s += ")";
+
+        db.execSQL(s);
+        db.close();
+
+        Log.e("DATABASE INSERT", s);
     }
 
     public void insertClass(ClassList.Entry entry, String code) {
         // TODO
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String professors = entry.getProfessors().get(0);
+        for (int i = 1; i < entry.getProfessors().size() ; i++ ) {
+            professors += ", " + entry.getProfessors().get(i);
+        }
+
+        // id, year, semester, hour, professors, componentCode
+        String s = "INSERT INTO ";
+        s += classTable.name + " VALUES(";
+        s += entry.getID() + ", ";
+        s += entry.getYear() + ", ";
+        s += entry.getSemester() + ", ";
+        s += "\"" + professors + "\"" + ", ";
+        s += "\"" + entry.getCode() + "\"";
+        s += ")";
+
+        db.execSQL(s);
+        db.close();
+
+        Log.e("DATABASE INSERT", s);
     }
 
     public Requirements getRequirements(String code) {
@@ -217,9 +257,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return null;
     }
 
-    public StatList getStatList(String code) {
-        // TODO
-        return null;
+    public StatList getStatList(String code) { //It's incomplete
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String s = "SELECT * ";
+        s += "FROM " + statTable.name + " ";
+        s += "WHERE ComponentCode = \"" + code + "\";";
+
+        db.execSQL(s);
+        db.close();
+
+        Log.e("DATABASE SELECT", s);
+
+        //return null;
     }
 
     public ClassList getClassList(String code) {
