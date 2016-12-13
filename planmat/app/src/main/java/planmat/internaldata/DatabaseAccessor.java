@@ -87,13 +87,16 @@ public class DatabaseAccessor {
     // Mudar isso de volta para pegar os dados do banco de dados.
     // Só comentei para poder testar.
     public Requirements getRequirements(String code) {
-        // return databaseHandler.getRequirements(code);
-        return serverAccessor.getRequirements(code);
+        Requirements req = databaseHandler.getRequirements(code);
+        if (req.getSemesters().isEmpty()) {
+            req = serverAccessor.getRequirements(code);
+        }
+        return req;
     }
 
     public ClassList getClassList(String code) {
-        // return databaseHandler.getClassList(code);
-        return serverAccessor.getClassList(code);
+        return databaseHandler.getClassList(code);
+        //return serverAccessor.getClassList(code);
     }
 
     public StatList getStatList(String code) {

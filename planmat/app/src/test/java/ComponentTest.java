@@ -16,16 +16,17 @@ public class ComponentTest {
 
     @Before
     public void setUp() throws Exception{
+        /*
         classList = new ClassList();
         statList = new StatList();
         ArrayList<StatList.Entry> statEntryList = statList.getEntries();
-        StatList.Entry statEntry1 = new StatList.Entry(5, 15, 5);
-        StatList.Entry statEntry2 = new StatList.Entry(15, 10, 5);
-        StatList.Entry statEntry3 = new StatList.Entry(10, 0, 10);
+        StatList.Entry statEntry1 = new StatList.Entry("5", 15, 5, );
+        StatList.Entry statEntry2 = new StatList.Entry("15", 10, 5);
+        StatList.Entry statEntry3 = new StatList.Entry("10", 0, 10);
         statEntryList.add(statEntry1);
         statEntryList.add(statEntry2);
         statEntryList.add(statEntry3);
-        component = new Component("DIM0549", "GRAFOS");
+        component = new Component("DIM0549", "GRAFOS");*/
         //component.setStatList(statList);
         //component.setClassList(classList);
     }

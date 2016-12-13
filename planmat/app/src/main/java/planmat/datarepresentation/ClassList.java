@@ -9,16 +9,14 @@ import java.util.ArrayList;
 public class ClassList implements Serializable {
 
     public static class Entry implements Serializable {
-        private int id;
         private String code;
         private String professors;
         private String hour;
         private int year;
         private int semester;
 
-        public Entry(int id, String code, String professors,
+        public Entry(String code, String professors,
                      String hour, int y, int s) {
-            this.id = id;
             this.code = code;
             this.year = y;
             this.semester = s;
@@ -26,8 +24,8 @@ public class ClassList implements Serializable {
             this.hour = hour;
         }
 
-        public int getID() {
-            return id;
+        public String getCode() {
+            return code;
         }
 
         public int getYear() {

@@ -18,8 +18,6 @@ import planmat.datarepresentation.User;
 
 public class SIGAADataConverter {
 
-    private int statCode = 0;
-
     public IDList createMajorList(JSONArray array) {
         try {
             IDList list = new IDList();
@@ -154,7 +152,6 @@ public class SIGAADataConverter {
 
     private ClassList.Entry createClassEntry(JSONObject classObj) {
         try {
-            int id = classObj.getInt("id");
             int y = classObj.getInt("ano");
             int s = classObj.getInt("periodo");
             String code = classObj.getString("codigo");
@@ -169,7 +166,7 @@ public class SIGAADataConverter {
                 }
             }
             String hour = classObj.getString("descricaoHorario");
-            return new ClassList.Entry(id, code, professors, hour, y, s);
+            return new ClassList.Entry(code, professors, hour, y, s);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -19,7 +19,7 @@ public class PlanningActivityTest {
 
     @Before
     public void setUp() throws Exception {
-        Component c1 = new Component("IMD0017", "PRÁTICAS DE LEITURA E ESCRITA EM PORTUGUÊS I");
+        /*Component c1 = new Component("IMD0017", "PRÁTICAS DE LEITURA E ESCRITA EM PORTUGUÊS I");
         Component c2 = new Component("IMD0018", "PRÁTICAS DE LEITURA EM INGLÊS");
         cL = new ClassList();
         //c1.setClassList(cL);
@@ -47,7 +47,7 @@ public class PlanningActivityTest {
         comps2.add("IMD0017");
         comps2.add("IMD0018");
         pA.setSelectedSemester(s);
-
+*/
     }
 
     @After

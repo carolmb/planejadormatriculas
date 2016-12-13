@@ -13,6 +13,7 @@ import java.util.List;
 import planmat.datarepresentation.ClassList;
 import planmat.datarepresentation.Component;
 import planmat.datarepresentation.Requirements;
+import planmat.datarepresentation.Semester;
 import planmat.datarepresentation.StatList;
 
 /**
@@ -21,7 +22,7 @@ import planmat.datarepresentation.StatList;
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     // metadata
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
     private static final String DATABASE_NAME = "PlanmatDB";
     private static DBTable componentTable, classTable, statTable, reqCompTable, reqTable;
     private static List<DBTable> tables;
@@ -34,7 +35,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         //Create database scheme
         componentTable = new DBTable("Component");
         tables.add(componentTable);
-        componentTable.fields.add( new DBField("Code", "VARCHAR(7)", true) );
+        componentTable.fields.add( new DBField("Code", "VARCHAR(32)", true) );
         componentTable.fields.add( new DBField("Name", "VARCHAR(256)") );
         componentTable.fields.add( new DBField("Workload", "INTEGER") );
 
@@ -45,7 +46,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         classTable.fields.add( new DBField("Semester", "INTEGER", true) );
         classTable.fields.add( new DBField("Hour", "VARCHAR(16)") );
         classTable.fields.add( new DBField("Professors", "VARCHAR(256)") );
-        classTable.fields.add( new DBField("ComponentCode", "VARCHAR(7)", false,
+        classTable.fields.add( new DBField("ComponentCode", "VARCHAR(32)", true,
                                             true, componentTable.name, componentTable.fields.get(0).fieldName) );
 
         statTable = new DBTable("Stat");
@@ -56,20 +57,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         statTable.fields.add( new DBField("Successes", "INTEGER") );
         statTable.fields.add( new DBField("Fails", "INTEGER") );
         statTable.fields.add( new DBField("Quits", "INTEGER") );
-        statTable.fields.add( new DBField("ComponentCode", "VARCHAR(7)", false,
+        statTable.fields.add( new DBField("ComponentCode", "VARCHAR(32)", true,
                                             true, componentTable.name, componentTable.fields.get(0).fieldName) );
 
         reqTable = new DBTable("Requirements");
         tables.add(reqTable);
-        reqTable.fields.add( new DBField("Code", "INTEGER", true) );
+        reqTable.fields.add( new DBField("Code", "VARCHAR(32)", true) );
         reqTable.fields.add( new DBField("Name", "VARCHAR(256)"));
 
         reqCompTable = new DBTable("RequirementsComponent");
         tables.add(reqCompTable);
         reqCompTable.fields.add( new DBField("Semester", "INTEGER") );
-        reqCompTable.fields.add( new DBField("RequirementsCode", "INTEGER", true,
+        reqCompTable.fields.add( new DBField("RequirementsCode", "VARCHAR(32)", true,
                                             true, reqTable.name, "Code") );
-        reqCompTable.fields.add( new DBField("ComponentCode", "VARCHAR(7)", true,
+        reqCompTable.fields.add( new DBField("ComponentCode", "VARCHAR(32)", true,
                                             true, componentTable.name, "Code") );
 
         Log.e("DATABASE HANDLER", "Database was created.");
@@ -129,13 +130,47 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         s = "INSERT INTO ";
         s += reqCompTable.name + " VALUES (";
         s += i + ", ";
-        s += req.getID() + ", ";
+        s += "\"" + req.getID() + "\", ";
         s += "\"" + comp.getCode() + "\")";
 
         db.execSQL(s);
         db.close();
 
         Log.e("DATABASE INSERT", s);
+    }
+
+    public Requirements getRequirements(String code) {
+        ArrayList<Semester> semesters = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT * FROM " + componentTable.name
+                + " JOIN " + reqCompTable.name
+                + " ON " + reqCompTable.fields.get(2).fieldName + " = " + componentTable.fields.get(0).fieldName
+                + " WHERE " + reqCompTable.fields.get(1).fieldName + " = \"" + code + "\""
+                + " ORDER BY " + reqCompTable.fields.get(0).fieldName;
+        Cursor cursor = db.rawQuery(query, null);
+
+        Log.e("DATABASE SELECT", query);
+
+        int currentSemester = -1;
+        Semester semester = new Semester(new ArrayList<Component>());
+
+        while(cursor.moveToNext()) {
+            int newSemester = cursor.getInt(3);
+            if (newSemester != currentSemester) {
+                currentSemester = newSemester;
+                semester = new Semester(new ArrayList<Component>());
+            }
+            String c = cursor.getString(0);
+            String name = cursor.getString(1);
+            int workload = cursor.getInt(2);
+            Component comp = new Component(c, name, workload);
+            semester.getComponents().add(comp);
+        }
+
+        Requirements req = new Requirements(code, semesters);
+        return req;
     }
 
     public void insertStat(StatList.Entry entry, String code) { // It's incomplete
@@ -159,13 +194,36 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
     }
 
+    public StatList getStatList(String code) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String s = "SELECT * ";
+        s += "FROM " + statTable.name + " ";
+        s += "WHERE ComponentCode = \"" + code + "\";";
+        StatList list = new StatList();
+        Cursor cursor = db.rawQuery(s, null);
+        while(cursor.moveToNext()) {
+            String id = cursor.getString(0);
+            int year = cursor.getInt(1);
+            int sem = cursor.getInt(2);
+            int suc = cursor.getInt(3);
+            int fail = cursor.getInt(4);
+            int quit = cursor.getInt(5);
+            StatList.Entry entry = new StatList.Entry(id, suc, quit, fail, year, sem);
+            list.getEntries().add(entry);
+        }
+        db.close();
+        Log.e("DATABASE SELECT", s);
+        return list;
+    }
+
+
     public void insertClass(ClassList.Entry entry, String code) {
         SQLiteDatabase db = this.getWritableDatabase();
         try {
             // id, year, semester, hour, professors, componentCode
             String s = "INSERT INTO ";
             s += classTable.name + " VALUES(";
-            s += entry.getID() + ", ";
+            s += "\"" + entry.getCode() + "\"" + ", ";
             s += entry.getYear() + ", ";
             s += entry.getSemester() + ", ";
             s += "\"" + entry.getHour() + "\"" + ", ";
@@ -180,43 +238,30 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    public Requirements getRequirements(String code) {
-        // TODO
-        return null;
-    }
-
-    public StatList getStatList(String code) {
+    public ClassList getClassList(String code) {
         SQLiteDatabase db = this.getReadableDatabase();
-
         String s = "SELECT * ";
-        s += "FROM " + statTable.name + " ";
+        s += "FROM " + classTable.name + " ";
         s += "WHERE ComponentCode = \"" + code + "\";";
-
-        StatList list = new StatList();
+        ClassList list = new ClassList();
         Cursor cursor = db.rawQuery(s, null);
         while(cursor.moveToNext()) {
             String id = cursor.getString(0);
             int year = cursor.getInt(1);
             int sem = cursor.getInt(2);
-            int suc = cursor.getInt(3);
-            int fail = cursor.getInt(4);
-            int quit = cursor.getInt(5);
-            //Log.d("Stat query", "Success: " + suc);
-            //Log.d("Stat query", "Fails: " + fail);
-            //Log.d("Stat query", "Quits: " + quit);
-            StatList.Entry entry = new StatList.Entry(id, suc, quit, fail, year, sem);
+            String h = cursor.getString(3);
+            String prof = cursor.getString(4);
+            Log.e("Code", id);
+            Log.e("ano", "" + year);
+            Log.e("semstre", "" + sem);
+            Log.e("horario", h);
+            Log.e("prof", prof);
+            ClassList.Entry entry = new ClassList.Entry(id, prof, h, year, sem);
             list.getEntries().add(entry);
         }
         db.close();
-
         Log.e("DATABASE SELECT", s);
-
         return list;
-    }
-
-    public ClassList getClassList(String code) {
-        // TODO
-        return null;
     }
 
 }
